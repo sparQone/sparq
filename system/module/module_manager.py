@@ -1,8 +1,8 @@
 import pluggy
 
 # Define hookspecs and hookimpl markers
-hookspec = pluggy.HookspecMarker("flaskapp")
-hookimpl = pluggy.HookimplMarker("flaskapp")
+hookspec = pluggy.HookspecMarker("sparqone")
+hookimpl = pluggy.HookimplMarker("sparqone")
 
 class ModuleSpecs:
     @hookspec
@@ -10,14 +10,6 @@ class ModuleSpecs:
         """Add custom elements to module views.
         Returns:
             list: List of HTML strings to be inserted into the view
-        """
-        pass
-
-    @hookspec
-    def get_form_scripts(self):
-        """Get scripts to be added to the core form.
-        Returns:
-            list: List of script strings to be inserted into the form
         """
         pass
 

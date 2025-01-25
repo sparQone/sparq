@@ -5,7 +5,7 @@ from .module_manager import ModuleSpecs
 
 class ModuleLoader:
     def __init__(self):
-        self.pm = pluggy.PluginManager("flaskapp")
+        self.pm = pluggy.PluginManager("sparqone")
         self.pm.add_hookspecs(ModuleSpecs)
         
     def load_modules(self, modules_dir="modules"):
