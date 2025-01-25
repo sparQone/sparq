@@ -21,12 +21,4 @@ class ModuleSpecs:
         Returns:
             list: List containing the module model instance
         """
-        pass
-
-    @hookspec
-    def get_routes(self):
-        """Get module's routes and blueprints.
-        Returns:
-            list: List containing (blueprint, url_prefix) tuples
-        """
         pass 

@@ -1,5 +1,9 @@
 # This file can be empty or contain weather module initialization logic
 
-from .module import WeatherModule
+from .controllers.weather import blueprint
 
-module_instance = WeatherModule()
+# Create module instance with routes
+module_instance = type('WeatherModule', (), {
+    'blueprint': blueprint,
+    'get_routes': lambda self: [(blueprint, "/weather")]
+})()

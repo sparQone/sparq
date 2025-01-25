@@ -71,7 +71,6 @@ class CoreModule:
             return "fa-solid fa-user-tag"
         return "fa-solid fa-puzzle-piece"
 
-    @hookimpl
     def get_routes(self):
         return [(self.blueprint, "/")]
 

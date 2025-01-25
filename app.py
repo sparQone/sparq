@@ -20,15 +20,12 @@ def create_app():
     # Store manifests in app config
     app.config['INSTALLED_MODULES'] = module_loader.manifests
     
-    # Register all module routes
-    for results in module_loader.pm.hook.get_routes():
-        if results:
-            for blueprint, url_prefix in results:
-                app.register_blueprint(blueprint, url_prefix=url_prefix)
+    # Register routes directly
+    module_loader.register_routes(app)
     
     # Register Jinja filters from core module
     core_module = next(
-        (m for m in module_loader.pm.get_plugins() 
+        (m for m in module_loader.modules 
          if m.__class__.__name__ == 'CoreModule'), 
         None
     )

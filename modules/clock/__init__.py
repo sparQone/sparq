@@ -1,5 +1,9 @@
 # This file can be empty or contain clock module initialization logic
 
-from .module import ClockModule
+from .controllers.clock import blueprint
 
-module_instance = ClockModule()
+# Create module instance with routes
+module_instance = type('ClockModule', (), {
+    'blueprint': blueprint,
+    'get_routes': lambda self: [(blueprint, "/clock")]
+})()
