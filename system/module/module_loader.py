@@ -7,6 +7,7 @@ class ModuleLoader:
     def __init__(self):
         self.pm = pluggy.PluginManager("sparqone")
         self.pm.add_hookspecs(ModuleSpecs)
+        self.manifests = []
         
     def load_modules(self, modules_dir="modules"):
         """Load modules dynamically from the modules folder"""
@@ -19,10 +20,13 @@ class ModuleLoader:
             
             if os.path.isdir(module_path) and not module_name.startswith('__'):
                 try:
-                    # Import the module
+                    # Import the module and its manifest
                     module = importlib.import_module(f"modules.{module_name}")
+                    manifest = importlib.import_module(f"modules.{module_name}.__manifest__").manifest
+                    
                     if hasattr(module, 'module_instance'):
                         self.pm.register(module.module_instance)
+                        self.manifests.append(manifest)
                         print(f"Successfully loaded module: {module_name}")
                 except Exception as e:
                     print(f"Failed to load module {module_name}: {str(e)}") 

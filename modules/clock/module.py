@@ -1,6 +1,7 @@
 from flask import Blueprint, jsonify
 import datetime
 from system.module.module_manager import hookimpl
+from . import __manifest__
 
 class ClockModule:
     def __init__(self):
@@ -24,13 +25,8 @@ class ClockModule:
 
     @hookimpl
     def get_manifest(self):
-        return {
-            'name': 'Clock',
-            'version': '1.0.0',
-            'main_route': '/clock',
-            'icon_class': 'fa-regular fa-clock',
-            'type': 'app'  # Clock is a standalone app
-        }
+        """Return module manifest"""
+        return __manifest__.manifest
 
     @hookimpl
     def modify_view(self):

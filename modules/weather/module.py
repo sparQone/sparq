@@ -1,6 +1,7 @@
 from flask import Blueprint, jsonify
 import requests
 from system.module.module_manager import hookimpl
+from . import __manifest__  # Import manifest
 
 class WeatherModule:
     def __init__(self):
@@ -68,12 +69,7 @@ class WeatherModule:
 
     @hookimpl
     def get_manifest(self):
-        return {
-            'name': 'Weather',
-            'version': '1.0.0',
-            'main_route': '/weather',
-            'icon_class': 'fa-solid fa-cloud-sun-rain',
-            'type': 'app'  # Weather is a standalone app
-        }
+        """Return module manifest"""
+        return __manifest__.manifest
 
     

@@ -17,14 +17,8 @@ def create_app():
     # Load all modules
     module_loader.load_modules()
     
-    # Get all module manifests
-    manifests = []
-    for result in module_loader.pm.hook.get_manifest():
-        if result:
-            manifests.extend(result if isinstance(result, list) else [result])
-    
     # Store manifests in app config
-    app.config['INSTALLED_MODULES'] = manifests
+    app.config['INSTALLED_MODULES'] = module_loader.manifests
     
     # Register all module routes
     for results in module_loader.pm.hook.get_routes():

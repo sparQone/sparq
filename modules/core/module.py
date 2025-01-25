@@ -77,6 +77,7 @@ class CoreModule:
 
     @hookimpl
     def get_manifest(self):
+        """Return module manifest"""
         return __manifest__.manifest
 
     @hookimpl

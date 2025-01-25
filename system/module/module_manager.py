@@ -29,12 +29,4 @@ class ModuleSpecs:
         Returns:
             list: List containing (blueprint, url_prefix) tuples
         """
-        pass
-
-    @hookspec
-    def get_manifest(self):
-        """Get module's manifest information.
-        Returns:
-            dict: Module manifest containing name, version, routes, etc.
-        """
         pass 
