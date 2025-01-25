@@ -53,10 +53,25 @@
         margin-bottom: 20px;
         color: #666;
       }
+      .user-info {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        text-align: right;
+      }
+      .user-info .user-name {
+        font-weight: bold;
+        margin-bottom: 5px;
+      }
     </style>
 </head>
 <body>
     <div class="container">
+        <div class="user-info">
+            <div class="user-name">{{ current_user.first_name }} {{ current_user.last_name }}</div>
+            <a href="{{ url_for('core_bp.logout') }}" class="btn btn-outline-secondary btn-sm">Logout</a>
+        </div>
+
         <!-- Apps Section -->
         <h2 class="section-header">Applications</h2>
         <div class="apps-container">

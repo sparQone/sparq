@@ -1,6 +1,6 @@
-from modules.core.models import Model
+from modules.core.models.core import Core
 
-class NicknameModel(Model):
+class NicknameModel(Core):
     def save(self, data):
         # Let parent handle core fields
         super().save(data)

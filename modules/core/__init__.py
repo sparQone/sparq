@@ -1,5 +1,10 @@
 # This file can be empty or contain core module initialization logic
 
-from .module import CoreModule
+from .controllers.core import blueprint, icon_class_filter
 
-module_instance = CoreModule()
+# Create module instance with routes and filter
+module_instance = type('CoreModule', (), {
+    'blueprint': blueprint,
+    'get_routes': lambda self: [(blueprint, "/")],
+    'icon_class_filter': staticmethod(icon_class_filter)
+})()
