@@ -1,4 +1,5 @@
-from flask import Blueprint, render_template
+from flask import Blueprint, render_template, request, redirect, url_for, flash
+from flask_login import login_required
 from ..models.user import User
 
 # Create blueprint
@@ -9,6 +10,26 @@ blueprint = Blueprint(
 )
 
 @blueprint.route("/")
+@login_required
 def people_home():
-    """People module home page"""
-    return render_template("people.html") 
+    """People module home page with user management"""
+    users = User.query.all()
+    return render_template("people.html", users=users)
+
+@blueprint.route("/add", methods=['POST'])
+@login_required
+def add_user():
+    """Add a new user"""
+    try:
+        User.create(
+            email=request.form.get('email'),
+            password=request.form.get('password'),
+            first_name=request.form.get('first_name'),
+            last_name=request.form.get('last_name'),
+            is_admin=bool(request.form.get('is_admin'))
+        )
+        flash('User added successfully', 'success')
+    except Exception as e:
+        flash(f'Error adding user: {str(e)}', 'error')
+    
+    return redirect(url_for('people_bp.people_home')) 
