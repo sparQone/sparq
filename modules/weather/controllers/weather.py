@@ -1,5 +1,6 @@
-from flask import Blueprint, render_template, jsonify, request
+from flask import Blueprint, render_template, jsonify, request, current_app, g
 from ..models.weather import Weather
+from flask_login import login_required
 
 # Create blueprint
 blueprint = Blueprint(
@@ -12,9 +13,14 @@ blueprint = Blueprint(
 weather = Weather()
 
 @blueprint.route("/")
+@login_required
 def weather_home():
     """Weather lookup page"""
-    return render_template("weather.html")
+    return render_template("weather.html",
+                         module_name="Weather",
+                         module_icon="fa-solid fa-cloud-sun-rain",
+                         module_home='weather_bp.weather_home',
+                         installed_modules=g.installed_modules)
 
 @blueprint.route("/lookup", methods=['POST'])
 def lookup_weather():

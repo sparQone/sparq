@@ -1,133 +1,123 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Weather Lookup</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <style>
-        .weather-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: #f8f9fa;
-            flex-direction: column;
-        }
-        .weather-card {
-            background: white;
-            padding: 2rem;
-            border-radius: 1rem;
-            box-shadow: 0 0 20px rgba(0,0,0,0.1);
-            min-width: 300px;
-            text-align: center;
-        }
-        .search-container {
-            margin-bottom: 2rem;
-            width: 100%;
-            max-width: 300px;
-        }
-        .weather-info {
-            display: none;
-            margin-top: 1rem;
-        }
-        .temperature {
-            font-size: 3rem;
-            font-weight: bold;
-            color: #343a40;
-        }
-        .description {
-            color: #6c757d;
-            margin: 1rem 0;
-            font-size: 1.2rem;
-        }
-        .humidity {
-            color: #6c757d;
-        }
-        .weather-icon {
-            width: 100px;
-            height: 100px;
-        }
-    </style>
-</head>
-<body>
-    <div class="weather-container">
-        <div class="weather-card">
-            <div class="search-container">
-                <div class="input-group">
-                    <input type="text" 
-                           class="form-control" 
-                           id="cityInput" 
-                           placeholder="Enter city name"
-                           value="Minneapolis"
-                           aria-label="City name">
-                    <button class="btn btn-primary" type="button" onclick="lookupWeather()">
-                        <i class="fas fa-search"></i>
-                    </button>
-                </div>
+{% extends "base.html" %}
+
+{% block title %}Weather{% endblock %}
+
+{% block app_class %}weather-app{% endblock %}
+
+{% block additional_styles %}
+.weather-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: calc(100vh - 200px);
+    background-color: #f8f9fa;
+    flex-direction: column;
+}
+.weather-card {
+    background: white;
+    padding: 2rem;
+    border-radius: 1rem;
+    box-shadow: 0 0 20px rgba(0,0,0,0.1);
+    min-width: 300px;
+    text-align: center;
+}
+.search-container {
+    margin-bottom: 2rem;
+    width: 100%;
+    max-width: 300px;
+}
+.weather-info {
+    display: none;
+    margin-top: 1rem;
+}
+.temperature {
+    font-size: 3rem;
+    font-weight: bold;
+    color: #343a40;
+}
+.description {
+    color: #6c757d;
+}
+{% endblock %}
+
+{% block content %}
+<div class="weather-container">
+    <div class="weather-card">
+        <div class="search-container">
+            <div class="input-group">
+                <input type="text" 
+                       class="form-control" 
+                       id="cityInput" 
+                       placeholder="Enter city name"
+                       value="Minneapolis"
+                       aria-label="City name">
+                <button class="btn btn-primary" type="button" onclick="lookupWeather()">
+                    <i class="fas fa-search"></i>
+                </button>
             </div>
-            <div id="weatherInfo" class="weather-info">
-                <h2 id="cityName"></h2>
-                <img id="weatherIcon" class="weather-icon" src="" alt="Weather icon">
-                <div class="temperature"><span id="temp"></span>°F</div>
-                <div class="description" id="description"></div>
-                <div class="humidity">Humidity: <span id="humidity"></span>%</div>
-            </div>
-            <div id="errorMessage" class="alert alert-danger mt-3" style="display: none;"></div>
         </div>
+        <div id="weatherInfo" class="weather-info">
+            <h2 id="cityName"></h2>
+            <img id="weatherIcon" class="weather-icon" src="" alt="Weather icon">
+            <div class="temperature"><span id="temp"></span>°F</div>
+            <div class="description" id="description"></div>
+            <div class="humidity">Humidity: <span id="humidity"></span>%</div>
+        </div>
+        <div id="errorMessage" class="alert alert-danger mt-3" style="display: none;"></div>
     </div>
+</div>
 
-    <script>
-        function lookupWeather() {
-            const city = document.getElementById('cityInput').value;
-            if (!city) return;
+<script>
+    function lookupWeather() {
+        const city = document.getElementById('cityInput').value;
+        if (!city) return;
 
-            fetch('/weather/lookup', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ city })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.error) {
-                    showError(data.error);
-                } else {
-                    showWeather(data);
-                }
-            })
-            .catch(error => showError('Failed to fetch weather data'));
-        }
-
-        function showWeather(data) {
-            document.getElementById('errorMessage').style.display = 'none';
-            document.getElementById('weatherInfo').style.display = 'block';
-            document.getElementById('cityName').textContent = data.city;
-            document.getElementById('temp').textContent = data.temperature;
-            document.getElementById('description').textContent = data.description;
-            document.getElementById('humidity').textContent = data.humidity;
-            document.getElementById('weatherIcon').src = 
-                `http://openweathermap.org/img/wn/${data.icon}@2x.png`;
-        }
-
-        function showError(message) {
-            const errorDiv = document.getElementById('errorMessage');
-            errorDiv.textContent = message;
-            errorDiv.style.display = 'block';
-            document.getElementById('weatherInfo').style.display = 'none';
-        }
-
-        // Allow Enter key to trigger search
-        document.getElementById('cityInput').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                lookupWeather();
+        fetch('/weather/lookup', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ city })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                showError(data.error);
+            } else {
+                showWeather(data);
             }
-        });
+        })
+        .catch(error => showError('Failed to fetch weather data'));
+    }
 
-        // Load Minneapolis weather on page load
-        document.addEventListener('DOMContentLoaded', function() {
-            lookupWeather();  // This will use the default value
-        });
-    </script>
-</body>
-</html> 
+    function showWeather(data) {
+        document.getElementById('errorMessage').style.display = 'none';
+        document.getElementById('weatherInfo').style.display = 'block';
+        document.getElementById('cityName').textContent = data.city;
+        document.getElementById('temp').textContent = data.temperature;
+        document.getElementById('description').textContent = data.description;
+        document.getElementById('humidity').textContent = data.humidity;
+        document.getElementById('weatherIcon').src = 
+            `http://openweathermap.org/img/wn/${data.icon}@2x.png`;
+    }
+
+    function showError(message) {
+        const errorDiv = document.getElementById('errorMessage');
+        errorDiv.textContent = message;
+        errorDiv.style.display = 'block';
+        document.getElementById('weatherInfo').style.display = 'none';
+    }
+
+    // Allow Enter key to trigger search
+    document.getElementById('cityInput').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            lookupWeather();
+        }
+    });
+
+    // Load Minneapolis weather on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        lookupWeather();  // This will use the default value
+    });
+</script>
+{% endblock %} 

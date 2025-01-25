@@ -1,5 +1,5 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash
-from flask_login import login_required
+from flask import Blueprint, render_template, request, redirect, url_for, flash, current_app, g
+from flask_login import login_required, current_user
 from ..models.user import User
 
 # Create blueprint
@@ -14,7 +14,12 @@ blueprint = Blueprint(
 def people_home():
     """People module home page with user management"""
     users = User.query.all()
-    return render_template("people.html", users=users)
+    return render_template("people.html", 
+                         users=users,
+                         module_name="People",
+                         module_icon="fa-solid fa-users",
+                         module_home='people_bp.people_home',
+                         installed_modules=g.installed_modules)
 
 @blueprint.route("/add", methods=['POST'])
 @login_required

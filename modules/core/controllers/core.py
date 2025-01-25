@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, jsonify, current_app, request, redirect, url_for, flash
+from flask import Blueprint, render_template, jsonify, current_app, request, redirect, url_for, flash, g
 from flask_login import login_user, logout_user, login_required, current_user
 from ..models.core import Core
 from modules.people.models.user import User
@@ -10,12 +10,20 @@ blueprint = Blueprint(
     template_folder='../views/templates'
 )
 
+@blueprint.before_app_request
+def before_request():
+    """Make installed modules available to all templates"""
+    g.installed_modules = current_app.config.get('INSTALLED_MODULES', [])
+
 @blueprint.route("/")
 @login_required
 def home():
     """Render the apps dashboard as the home page"""
-    installed = current_app.config.get('INSTALLED_MODULES', [])
-    return render_template("apps.html", installed_modules=installed)
+    return render_template("apps.html", 
+                         module_name="Core",
+                         module_icon="fa-solid fa-home",
+                         module_home='core_bp.home',
+                         installed_modules=g.installed_modules)
 
 @blueprint.route("/core")
 @login_required
@@ -64,7 +72,7 @@ def icon_class_filter(mod):
 def login():
     # Redirect if user is already logged in
     if current_user.is_authenticated:
-        return redirect(url_for('core_bp.home'))
+        return redirect(url_for('people_bp.people_home'))
 
     if request.method == 'POST':
         email = request.form.get('email')
@@ -75,9 +83,9 @@ def login():
         if user and user.check_password(password):
             login_user(user, remember=remember)
             next_page = request.args.get('next')
-            # Ensure the next page is safe
+            # Ensure the next page is safe and default to people app
             if not next_page or not next_page.startswith('/'):
-                next_page = url_for('core_bp.home')
+                next_page = url_for('people_bp.people_home')
             return redirect(next_page)
         
         flash('Invalid email or password', 'error')

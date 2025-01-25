@@ -1,5 +1,6 @@
-from flask import Blueprint, render_template
-import datetime
+from flask import Blueprint, render_template, current_app, g
+from flask_login import login_required
+from datetime import datetime
 
 # Create blueprint
 blueprint = Blueprint(
@@ -9,11 +10,12 @@ blueprint = Blueprint(
 )
 
 @blueprint.route("/")
+@login_required
 def clock_home():
-    """Display the digital clock"""
-    now = datetime.datetime.now()
-    return render_template(
-        "clock.html",
-        time=now.strftime("%H:%M:%S"),
-        date=now.strftime("%Y-%m-%d")
-    )
+    """Clock page"""
+    return render_template("clock.html",
+                         module_name="Clock",
+                         module_icon="fa-regular fa-clock",
+                         module_home='clock_bp.clock_home',
+                         installed_modules=g.installed_modules,
+                         time=datetime.now().strftime('%H:%M:%S'))
