@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, current_app, render_template, request, redirect, url_for
-from modules.module_manager import hookimpl
+from system.module.module_manager import hookimpl
 from .models import Model
 from . import __manifest__
 

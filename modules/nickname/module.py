@@ -1,5 +1,5 @@
 from flask import Blueprint
-from modules.module_manager import hookimpl
+from system.module.module_manager import hookimpl
 from .models import NicknameModel
 from . import __manifest__
 

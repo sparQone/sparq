@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify
 import datetime
-from modules.module_manager import hookimpl
+from system.module.module_manager import hookimpl
 
 class ClockModule:
     def __init__(self):

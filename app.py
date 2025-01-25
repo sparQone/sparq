@@ -1,5 +1,9 @@
+import warnings
+warnings.filterwarnings('ignore', message='urllib3 v2 only supports OpenSSL 1.1.1+')
+
+
 from flask import Flask, request, jsonify, redirect, url_for
-from modules.module_loader import ModuleLoader
+from system.module.module_loader import ModuleLoader
 
 def create_app():
     app = Flask(__name__)
