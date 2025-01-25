@@ -1,7 +1,6 @@
 from flask import Blueprint
 from system.module.module_manager import hookimpl
 from .models import NicknameModel
-from . import __manifest__
 
 class NicknameModule:
     def __init__(self):
@@ -16,10 +15,6 @@ class NicknameModule:
     @hookimpl
     def get_routes(self):
         return [(self.blueprint, "/nickname")]
-
-    @hookimpl
-    def get_manifest(self):
-        return __manifest__.manifest
 
     @hookimpl
     def modify_view(self):

@@ -76,11 +76,6 @@ class CoreModule:
         return [(self.blueprint, "/")]
 
     @hookimpl
-    def get_manifest(self):
-        """Return module manifest"""
-        return __manifest__.manifest
-
-    @hookimpl
     def modify_view(self):
         """Allow other modules to inject fields"""
         return []

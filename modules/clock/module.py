@@ -1,7 +1,6 @@
 from flask import Blueprint, jsonify
 import datetime
 from system.module.module_manager import hookimpl
-from . import __manifest__
 
 class ClockModule:
     def __init__(self):
@@ -9,9 +8,8 @@ class ClockModule:
         self.setup_routes()
 
     def setup_routes(self):
-        @self.blueprint.route("/")  # Add root route
+        @self.blueprint.route("/")
         def clock_home():
-            """Clock module home page"""
             return jsonify({"message": "Welcome to Clock Module"})
 
         @self.blueprint.route("/time")
@@ -21,14 +19,8 @@ class ClockModule:
 
     @hookimpl
     def get_routes(self):
-        return [(self.blueprint, "/clock")]  # This maps /clock/* to the blueprint
-
-    @hookimpl
-    def get_manifest(self):
-        """Return module manifest"""
-        return __manifest__.manifest
+        return [(self.blueprint, "/clock")]
 
     @hookimpl
     def modify_view(self):
-        # Add clock widget to dashboard if needed
         return [] 
