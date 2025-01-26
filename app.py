@@ -49,6 +49,16 @@ def create_app():
     app.module_loader = module_loader
     module_loader.load_modules()
     
+    # Check for required modules
+    required_modules = ['CoreModule', 'PeopleModule']
+    loaded_modules = [m.__class__.__name__ for m in module_loader.modules]
+    missing_modules = [m for m in required_modules if m not in loaded_modules]
+    
+    if missing_modules:
+        print(f"ERROR: Required modules not found: {', '.join(missing_modules)}")
+        print("Application cannot start without core and people modules.")
+        os._exit(1)
+    
     # Store manifests in app config
     app.config['INSTALLED_MODULES'] = module_loader.manifests
     

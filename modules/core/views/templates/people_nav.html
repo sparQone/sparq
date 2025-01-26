@@ -19,6 +19,12 @@
             </a>
         </li>
         <li class="nav-item">
+            <a href="{{ url_for('people_bp.onboarding') }}" class="nav-link {% if active_page == 'onboarding' %}active{% endif %}">
+                <i class="fas fa-handshake"></i>
+                <span>Onboarding</span>
+            </a>
+        </li>
+        <li class="nav-item">
             <a href="{{ url_for('people_bp.employees') }}" class="nav-link {% if active_page == 'employees' %}active{% endif %}">
                 <i class="fas fa-users"></i>
                 <span>Employees</span>

@@ -77,6 +77,18 @@ def hiring():
                          module_home='people_bp.people_home',
                          installed_modules=g.installed_modules)
 
+@blueprint.route("/onboarding")
+@login_required
+def onboarding():
+    """Onboarding page (coming soon)"""
+    return render_template("coming_soon.html",
+                         active_page='onboarding',
+                         title="Onboarding",
+                         module_name="People",
+                         module_icon="fa-solid fa-users",
+                         module_home='people_bp.people_home',
+                         installed_modules=g.installed_modules)
+
 @blueprint.route("/dashboard")
 @login_required
 def dashboard():

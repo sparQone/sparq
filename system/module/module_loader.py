@@ -16,6 +16,10 @@ class ModuleLoader:
             print(f"Modules folder '{modules_dir}' does not exist!")
             return
             
+        print("\nLoading modules:")
+        
+        # First collect all modules and their manifests
+        module_data = []
         for module_name in os.listdir(modules_dir):
             module_path = os.path.join(modules_dir, module_name)
             
@@ -24,15 +28,29 @@ class ModuleLoader:
                     # Import the module and its manifest
                     module = importlib.import_module(f"modules.{module_name}")
                     manifest = importlib.import_module(f"modules.{module_name}.__manifest__").manifest
-                    
                     if hasattr(module, 'module_instance'):
-                        instance = module.module_instance
-                        self.pm.register(instance)
-                        self.manifests.append(manifest)
-                        self.modules.append(instance)
-                        print(f"Successfully loaded module: {module_name}")
+                        module_data.append((module, manifest))
                 except Exception as e:
                     print(f"Failed to load module {module_name}: {str(e)}")
+        
+        # Define loading order
+        type_order = ['System', 'App', 'Extension']
+        
+        # Sort modules by type
+        module_data.sort(key=lambda x: type_order.index(x[1].get('type', 'Unknown')) if x[1].get('type') in type_order else len(type_order))
+        
+        # Load modules in sorted order
+        for module, manifest in module_data:
+            try:
+                instance = module.module_instance
+                self.pm.register(instance)
+                self.manifests.append(manifest)
+                self.modules.append(instance)
+                print(f"- {manifest['name']} ({manifest.get('type', 'Unknown')})")
+            except Exception as e:
+                print(f"Failed to load module {manifest['name']}: {str(e)}")
+        
+        print()  # Empty line after module list
 
     def register_routes(self, app):
         """Register routes from all modules"""
