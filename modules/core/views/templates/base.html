@@ -18,16 +18,12 @@
                         <img src="{{ url_for('core_bp.static', filename='images/sparqone-logo.png') }}" alt="SparqOne" class="app-logo">
                     </a>
                     <div class="app-title-divider"></div>
-                    <a href="{{ url_for(module_home) }}" class="app-name">
+                    <a href="{{ url_for(module_home) }}" class="app-name" data-app="{{ module_name }}">
                         <i class="{{ module_icon }}"></i>
                         <span>{{ module_name }}</span>
                     </a>
                 </div>
                 <div class="user-nav">
-                    <div class="user-info">
-                        <div class="user-name">{{ current_user.first_name }} {{ current_user.last_name }}</div>
-                        <div class="user-role">{% if current_user.is_admin %}Admin{% else %}User{% endif %}</div>
-                    </div>
                     <div class="dropdown">
                         <button class="apps-menu-btn" data-bs-toggle="dropdown">
                             <i class="fas fa-th"></i>
@@ -36,8 +32,8 @@
                             <div class="apps-grid">
                                 {% for mod in installed_modules|sort(attribute='name') %}
                                     {% if mod.type == 'App' %}
-                                        <a href="{{ mod.main_route }}" class="app-item">
-                                            <i class="{{ mod.icon_class }}"></i>
+                                        <a href="{{ mod.main_route }}" class="app-item" data-app="{{ mod.name }}">
+                                            <i class="{{ mod.icon_class }} app-icon-{{ mod.name|lower }}"></i>
                                             <span>{{ mod.name }}</span>
                                         </a>
                                     {% endif %}
@@ -45,9 +41,24 @@
                             </div>
                         </div>
                     </div>
-                    <a href="{{ url_for('core_bp.logout') }}" class="btn btn-outline-secondary btn-sm">
-                        <i class="fas fa-sign-out-alt"></i> Logout
-                    </a>
+
+                    <div class="dropdown">
+                        <button class="user-avatar-btn" data-bs-toggle="dropdown">
+                            <div class="user-initials">
+                                {{ current_user.first_name[0] }}{{ current_user.last_name[0] }}
+                            </div>
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-end user-dropdown">
+                            <div class="user-info px-3 py-2">
+                                <div class="user-name">{{ current_user.first_name }} {{ current_user.last_name }}</div>
+                                <div class="user-role">{% if current_user.is_admin %}Admin{% else %}User{% endif %}</div>
+                            </div>
+                            <div class="dropdown-divider"></div>
+                            <a href="{{ url_for('core_bp.logout') }}" class="dropdown-item">
+                                <i class="fas fa-sign-out-alt"></i> Logout
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
