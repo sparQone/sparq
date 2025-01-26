@@ -228,12 +228,14 @@ body {
 }
 
 .app-icon-books,
-[data-app="Books"] i {
+[data-app="Books"] i,
+.app-icon-books {
     color: #6f42c1 !important;  /* Bootstrap purple */
 }
 
 .app-icon-appointments,
-[data-app="Appointments"] i {
+[data-app="Appointments"] i,
+.app-icon-appointments {
     color: #fd7e14 !important;  /* Bootstrap orange */
 }
 
