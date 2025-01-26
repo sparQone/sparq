@@ -12,9 +12,11 @@ blueprint = Blueprint(
 @blueprint.route("/")
 @login_required
 def people_home():
-    """People module dashboard page"""
-    return render_template("dashboard.html",
-                         active_page='dashboard',
+    """People module home page"""
+    users = User.query.all()
+    return render_template("people.html",
+                         active_page='people',
+                         users=users,
                          module_name="People",
                          module_icon="fa-solid fa-users",
                          module_home='people_bp.people_home',
@@ -23,9 +25,9 @@ def people_home():
 @blueprint.route("/employees")
 @login_required
 def employees():
-    """Employees management page"""
+    """Employees page"""
     users = User.query.all()
-    return render_template("people.html", 
+    return render_template("people.html",
                          active_page='employees',
                          users=users,
                          module_name="People",

@@ -11,7 +11,9 @@ import os
 
 def create_app():
     app = Flask(__name__, 
-                template_folder='modules/core/views/templates')
+                template_folder='modules/core/views/templates',
+                static_folder='modules/core/views/assets',
+                static_url_path='/assets')
     
     # Configure SQLAlchemy
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(os.path.dirname(os.path.abspath(__file__)), 'app.db')
