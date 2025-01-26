@@ -213,38 +213,47 @@ body {
 
 /* App Icon Colors */
 .app-icon-weather,
-[data-app="Weather"] i {
+[data-app="Weather"] i,
+.coming-soon i.app-icon-weather {
     color: #198754 !important;  /* Bootstrap success green */
 }
 
 .app-icon-clock,
-[data-app="Clock"] i {
+[data-app="Clock"] i,
+.coming-soon i.app-icon-clock {
     color: #dc3545 !important;  /* Bootstrap danger red */
 }
 
 .app-icon-people,
-[data-app="People"] i {
+[data-app="People"] i,
+.coming-soon i.app-icon-people {
     color: #0d6efd !important;  /* Bootstrap primary blue */
 }
 
+/* Books - Purple */
 .app-icon-books,
 [data-app="Books"] i,
-.app-icon-books {
+i.app-icon-books,
+i.fa-book-open {
     color: #6f42c1 !important;  /* Bootstrap purple */
 }
 
+/* Appointments - Orange */
 .app-icon-appointments,
 [data-app="Appointments"] i,
-.app-icon-appointments {
+i.app-icon-appointments,
+i.fa-calendar-check {
     color: #fd7e14 !important;  /* Bootstrap orange */
 }
 
 .app-icon-expense,
-[data-app="Expense"] i {
+[data-app="Expense"] i,
+.coming-soon i.app-icon-expense {
     color: #20c997 !important;  /* Bootstrap teal */
 }
 
 .app-icon-esign,
-[data-app="E-Sign"] i {
+[data-app="E-Sign"] i,
+.coming-soon i.app-icon-esign {
     color: #0dcaf0 !important;  /* Bootstrap cyan */
 } 

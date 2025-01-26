@@ -456,7 +456,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: calc(100vh - 60px);  /* Adjust based on your header height */
+    min-height: calc(100vh - 60px);
 }
 
 .coming-soon {
@@ -467,7 +467,6 @@
 .coming-soon i {
     font-size: 4rem;
     margin-bottom: 1rem;
-    color: #0d6efd;
 }
 
 .coming-soon h2 {
