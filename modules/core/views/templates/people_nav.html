@@ -1,0 +1,64 @@
+<nav class="side-nav">
+    <ul class="nav-menu">
+        <li class="nav-item">
+            <a href="{{ url_for('people_bp.people_home') }}" class="nav-link {% if active_page == 'dashboard' %}active{% endif %}">
+                <i class="fas fa-chart-line"></i>
+                <span>Dashboard</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="{{ url_for('people_bp.updates') }}" class="nav-link {% if active_page == 'updates' %}active{% endif %}">
+                <i class="fas fa-bell"></i>
+                <span>Updates</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="{{ url_for('people_bp.hiring') }}" class="nav-link {% if active_page == 'hiring' %}active{% endif %}">
+                <i class="fas fa-user-plus"></i>
+                <span>Hiring</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="{{ url_for('people_bp.employees') }}" class="nav-link {% if active_page == 'employees' %}active{% endif %}">
+                <i class="fas fa-users"></i>
+                <span>Employees</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="{{ url_for('people_bp.time_tracking') }}" class="nav-link {% if active_page == 'time_tracking' %}active{% endif %}">
+                <i class="fas fa-clock"></i>
+                <span>Time Tracking</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="{{ url_for('people_bp.scheduling') }}" class="nav-link {% if active_page == 'scheduling' %}active{% endif %}">
+                <i class="fas fa-calendar-alt"></i>
+                <span>Shift Scheduling</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="{{ url_for('people_bp.forms') }}" class="nav-link {% if active_page == 'forms' %}active{% endif %}">
+                <i class="fas fa-file-alt"></i>
+                <span>Forms</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="{{ url_for('people_bp.reimbursement') }}" class="nav-link {% if active_page == 'reimbursement' %}active{% endif %}">
+                <i class="fas fa-receipt"></i>
+                <span>Reimbursement</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="{{ url_for('people_bp.docs') }}" class="nav-link {% if active_page == 'docs' %}active{% endif %}">
+                <i class="fas fa-folder"></i>
+                <span>Documents</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="{{ url_for('people_bp.knowledge') }}" class="nav-link {% if active_page == 'knowledge' %}active{% endif %}">
+                <i class="fas fa-book"></i>
+                <span>Knowledge Base</span>
+            </a>
+        </li>
+    </ul>
+</nav> 

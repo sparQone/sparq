@@ -10,10 +10,11 @@ from modules.people.models.user import User
 import os
 
 def create_app():
-    app = Flask(__name__)
+    app = Flask(__name__, 
+                template_folder='modules/core/views/templates')
     
     # Configure SQLAlchemy
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///app.db'
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(os.path.dirname(os.path.abspath(__file__)), 'app.db')
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'dev')
     

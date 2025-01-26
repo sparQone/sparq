@@ -19,12 +19,8 @@ def before_request():
 @blueprint.route("/")
 @login_required
 def home():
-    """Render the apps dashboard as the home page"""
-    return render_template("apps.html", 
-                         module_name="Core",
-                         module_icon="fa-solid fa-home",
-                         module_home='core_bp.home',
-                         installed_modules=g.installed_modules)
+    """Redirect root to people dashboard"""
+    return redirect(url_for('people_bp.people_home'))
 
 @blueprint.route("/core")
 @login_required
@@ -84,7 +80,7 @@ def login():
         if user and user.check_password(password):
             login_user(user, remember=remember)
             next_page = request.args.get('next')
-            # Ensure the next page is safe and default to people app
+            # Ensure the next page is safe and default to people dashboard
             if not next_page or not next_page.startswith('/'):
                 next_page = url_for('people_bp.people_home')
             return redirect(next_page)

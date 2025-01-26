@@ -1,7 +1,23 @@
+/* Auth Header */
+.auth-header {
+    padding: 1rem 0;
+    margin-bottom: 2rem;
+}
+
+.auth-logo-link {
+    display: flex;
+    align-items: center;
+}
+
+.auth-logo {
+    height: 40px;
+    width: auto;
+}
+
 /* Login and Register Pages */
 .login-container, .register-container {
     max-width: 400px;
-    margin: 100px auto;
+    margin: 0 auto;  /* Removed top margin since logo is now above */
     padding: 20px;
     box-shadow: 0 0 20px rgba(0,0,0,0.1);
     border-radius: 8px;
@@ -13,10 +29,17 @@
     margin-bottom: 30px;
 }
 
+.login-logo {
+    height: 60px;
+    width: auto;
+    margin-bottom: 1.5rem;
+}
+
 .login-header h2, .register-header h2 {
     color: #343a40;
 }
 
 .login-header p, .register-header p {
     color: #6c757d;
+    margin-bottom: 0.5rem;
 } 

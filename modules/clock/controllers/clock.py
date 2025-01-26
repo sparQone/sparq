@@ -17,5 +17,4 @@ def clock_home():
                          module_name="Clock",
                          module_icon="fa-regular fa-clock",
                          module_home='clock_bp.clock_home',
-                         installed_modules=g.installed_modules,
-                         time=datetime.now().strftime('%H:%M:%S'))
+                         installed_modules=g.installed_modules)

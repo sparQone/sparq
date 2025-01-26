@@ -27,6 +27,11 @@ class User(UserMixin, db.Model):
 
     @classmethod
     def create(cls, email, password, first_name=None, last_name=None, is_admin=False):
+        """Create new user"""
+        # Check if trying to create another admin@admin user
+        if email == 'admin' and User.get_by_email('admin'):
+            raise ValueError("Cannot create duplicate admin user")
+        
         user = cls(
             email=email,
             first_name=first_name,
@@ -45,5 +50,8 @@ class User(UserMixin, db.Model):
         db.session.commit()
 
     def delete(self):
+        """Delete user if not admin"""
+        if self.email == 'admin':
+            raise ValueError("Cannot delete admin user")
         db.session.delete(self)
         db.session.commit() 

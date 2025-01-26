@@ -32,20 +32,30 @@ body {
     display: flex;
     align-items: center;
     gap: 1rem;
-    font-size: 1.5rem;
-    color: #333;
-    text-decoration: none;
 }
 
-.app-title:hover {
-    color: #555;
-    text-decoration: none;
+.app-logo-link {
+    display: flex;
+    align-items: center;
 }
 
 .app-logo {
     height: 40px;
     width: auto;
-    margin-right: 0.5rem;
+}
+
+.app-name {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1.5rem;
+    color: #333;
+    text-decoration: none;
+}
+
+.app-name:hover {
+    color: #555;
+    text-decoration: none;
 }
 
 .app-title-divider {
@@ -53,16 +63,6 @@ body {
     height: 30px;
     background-color: #dee2e6;
     margin: 0 0.5rem;
-}
-
-.app-name {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.app-name i {
-    font-size: 1.8rem;
 }
 
 .header-content {

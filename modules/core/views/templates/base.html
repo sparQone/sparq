@@ -13,14 +13,16 @@
     <header class="app-header">
         <div class="container">
             <div class="header-content">
-                <a href="{{ url_for(module_home) }}" class="app-title">
-                    <img src="{{ url_for('core_bp.static', filename='images/sparqone-logo.png') }}" alt="SparqOne" class="app-logo">
+                <div class="app-title">
+                    <a href="{{ url_for('people_bp.people_home') }}" class="app-logo-link">
+                        <img src="{{ url_for('core_bp.static', filename='images/sparqone-logo.png') }}" alt="SparqOne" class="app-logo">
+                    </a>
                     <div class="app-title-divider"></div>
-                    <div class="app-name">
+                    <a href="{{ url_for(module_home) }}" class="app-name">
                         <i class="{{ module_icon }}"></i>
                         <span>{{ module_name }}</span>
-                    </div>
-                </a>
+                    </a>
+                </div>
                 <div class="user-nav">
                     <div class="user-info">
                         <div class="user-name">{{ current_user.first_name }} {{ current_user.last_name }}</div>
