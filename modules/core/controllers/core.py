@@ -130,7 +130,12 @@ def apps():
     for m in all_modules:
         print(f"Name: {m.get('name')}, Type: {m.get('type')}, Route: {m.get('main_route')}, Icon: {m.get('icon_class')}")
     
-    installed_modules = [m for m in all_modules if m.get('type') == 'App']
+    # Filter for App type and sort alphabetically by name
+    installed_modules = sorted(
+        [m for m in all_modules if m.get('type') == 'App'],
+        key=lambda x: x.get('name', '')
+    )
+    
     print("\nFiltered App modules:")
     for m in installed_modules:
         print(f"Name: {m.get('name')}, Type: {m.get('type')}, Route: {m.get('main_route')}, Icon: {m.get('icon_class')}")

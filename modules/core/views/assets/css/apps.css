@@ -449,4 +449,34 @@
 .apps-dropdown .app-item span {
     font-size: 0.875rem;
     text-align: center;
+}
+
+/* Coming Soon Pages */
+.coming-soon-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: calc(100vh - 60px);  /* Adjust based on your header height */
+}
+
+.coming-soon {
+    text-align: center;
+    padding: 2rem;
+}
+
+.coming-soon i {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+    color: #0d6efd;
+}
+
+.coming-soon h2 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    color: #212529;
+}
+
+.coming-soon p {
+    color: #6c757d;
+    font-size: 1.1rem;
 } 

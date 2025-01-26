@@ -34,7 +34,7 @@
                         </button>
                         <div class="dropdown-menu dropdown-menu-end apps-dropdown">
                             <div class="apps-grid">
-                                {% for mod in installed_modules %}
+                                {% for mod in installed_modules|sort(attribute='name') %}
                                     {% if mod.type == 'App' %}
                                         <a href="{{ mod.main_route }}" class="app-item">
                                             <i class="{{ mod.icon_class }}"></i>
