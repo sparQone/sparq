@@ -182,4 +182,16 @@ def knowledge():
                          module_name="People",
                          module_icon="fa-solid fa-users",
                          module_home='people_bp.people_home',
+                         installed_modules=g.installed_modules)
+
+@blueprint.route("/settings")
+@login_required
+def settings():
+    """Settings page (coming soon)"""
+    return render_template("coming_soon.html",
+                         active_page='settings',
+                         title="Settings",
+                         module_name="People",
+                         module_icon="fa-solid fa-users",
+                         module_home='people_bp.people_home',
                          installed_modules=g.installed_modules) 

@@ -1,27 +1,37 @@
 <nav class="side-nav">
     <ul class="nav-menu">
         <li class="nav-item">
-            <a href="{{ url_for('people_bp.people_home') }}" class="nav-link {% if active_page == 'dashboard' %}active{% endif %}">
+            <a href="{{ url_for('people_bp.dashboard') }}" 
+               class="nav-link {% if active_page == 'dashboard' %}active{% endif %}">
                 <i class="fas fa-chart-line"></i>
-                <span>Dashboard</span>
+                Dashboard
             </a>
         </li>
         <li class="nav-item">
-            <a href="{{ url_for('people_bp.updates') }}" class="nav-link {% if active_page == 'updates' %}active{% endif %}">
+            <a href="{{ url_for('people_bp.people_home') }}" 
+               class="nav-link {% if active_page == 'people' %}active{% endif %}">
+                <i class="fas fa-users"></i>
+                People
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="{{ url_for('people_bp.onboarding') }}" 
+               class="nav-link {% if active_page == 'onboarding' %}active{% endif %}">
+                <i class="fas fa-user-plus"></i>
+                Onboarding
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="{{ url_for('people_bp.updates') }}" 
+               class="nav-link {% if active_page == 'updates' %}active{% endif %}">
                 <i class="fas fa-bell"></i>
-                <span>Updates</span>
+                Updates
             </a>
         </li>
         <li class="nav-item">
             <a href="{{ url_for('people_bp.hiring') }}" class="nav-link {% if active_page == 'hiring' %}active{% endif %}">
                 <i class="fas fa-user-plus"></i>
                 <span>Hiring</span>
-            </a>
-        </li>
-        <li class="nav-item">
-            <a href="{{ url_for('people_bp.onboarding') }}" class="nav-link {% if active_page == 'onboarding' %}active{% endif %}">
-                <i class="fas fa-handshake"></i>
-                <span>Onboarding</span>
             </a>
         </li>
         <li class="nav-item">
@@ -61,9 +71,17 @@
             </a>
         </li>
         <li class="nav-item">
-            <a href="{{ url_for('people_bp.knowledge') }}" class="nav-link {% if active_page == 'knowledge' %}active{% endif %}">
+            <a href="{{ url_for('people_bp.knowledge') }}" 
+               class="nav-link {% if active_page == 'knowledge' %}active{% endif %}">
                 <i class="fas fa-book"></i>
                 <span>Knowledge Base</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="{{ url_for('people_bp.settings') }}" 
+               class="nav-link {% if active_page == 'settings' %}active{% endif %}">
+                <i class="fas fa-cog"></i>
+                Settings
             </a>
         </li>
     </ul>
