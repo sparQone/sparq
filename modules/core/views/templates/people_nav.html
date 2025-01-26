@@ -15,13 +15,6 @@
             </a>
         </li>
         <li class="nav-item">
-            <a href="{{ url_for('people_bp.onboarding') }}" 
-               class="nav-link {% if active_page == 'onboarding' %}active{% endif %}">
-                <i class="fas fa-user-plus"></i>
-                Onboarding
-            </a>
-        </li>
-        <li class="nav-item">
             <a href="{{ url_for('people_bp.updates') }}" 
                class="nav-link {% if active_page == 'updates' %}active{% endif %}">
                 <i class="fas fa-bell"></i>
@@ -32,6 +25,13 @@
             <a href="{{ url_for('people_bp.hiring') }}" class="nav-link {% if active_page == 'hiring' %}active{% endif %}">
                 <i class="fas fa-user-plus"></i>
                 <span>Hiring</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="{{ url_for('people_bp.onboarding') }}" 
+               class="nav-link {% if active_page == 'onboarding' %}active{% endif %}">
+                <i class="fas fa-handshake"></i>
+                Onboarding
             </a>
         </li>
         <li class="nav-item">
