@@ -32,7 +32,11 @@
                             <div class="apps-grid">
                                 {% for mod in installed_modules|sort(attribute='name') %}
                                     {% if mod.type == 'App' %}
-                                        <a href="{{ mod.main_route }}" class="app-item" data-app="{{ mod.name }}">
+                                        <a href="{{ mod.main_route }}" 
+                                           class="app-item" 
+                                           data-app="{{ mod.name }}"
+                                           target="_blank"
+                                           rel="noopener noreferrer">
                                             <i class="{{ mod.icon_class }} app-icon-{{ mod.name|lower }}"></i>
                                             <span>{{ mod.name }}</span>
                                         </a>
