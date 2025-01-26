@@ -4,39 +4,6 @@
 
 {% block app_class %}people-app{% endblock %}
 
-{% block additional_styles %}
-.user-container {
-    max-width: 1000px;
-    margin: 20px auto;
-    padding: 20px;
-}
-.action-buttons {
-    white-space: nowrap;
-}
-.table td {
-    vertical-align: middle;
-}
-.user-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-}
-.status-active {
-    color: #198754;
-}
-.status-inactive {
-    color: #dc3545;
-}
-.admin-badge {
-    background-color: #ffc107;
-    color: #000;
-    padding: 2px 8px;
-    border-radius: 12px;
-    font-size: 0.8em;
-}
-{% endblock %}
-
 {% block content %}
 <div class="container user-container">
     <div class="user-header">

@@ -1,0 +1,87 @@
+/* Module-specific styles */
+
+/* People Module */
+.user-container {
+    max-width: 1000px;
+    margin: 20px auto;
+    padding: 20px;
+}
+
+.action-buttons {
+    white-space: nowrap;
+}
+
+.table td {
+    vertical-align: middle;
+}
+
+.user-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.status-active {
+    color: #198754;
+}
+
+.status-inactive {
+    color: #dc3545;
+}
+
+.admin-badge {
+    background-color: #ffc107;
+    color: #000;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.8em;
+}
+
+/* Weather Module */
+.weather-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: calc(100vh - 200px);
+    background-color: #f8f9fa;
+    flex-direction: column;
+}
+
+.weather-card {
+    background: white;
+    padding: 2rem;
+    border-radius: 1rem;
+    box-shadow: 0 0 20px rgba(0,0,0,0.1);
+    min-width: 300px;
+    text-align: center;
+}
+
+/* Clock Module */
+.clock-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: calc(100vh - 200px);
+}
+
+.clock-card {
+    background: white;
+    padding: 3rem;
+    border-radius: 1rem;
+    box-shadow: 0 0 20px rgba(0,0,0,0.1);
+    text-align: center;
+}
+
+.time {
+    font-size: 4rem;
+    font-weight: bold;
+    color: #dc3545;
+    font-family: monospace;
+}
+
+.date {
+    font-size: 1.2rem;
+    color: #6c757d;
+    margin-top: 1rem;
+} 

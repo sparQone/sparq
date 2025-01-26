@@ -4,42 +4,6 @@
 
 {% block app_class %}weather-app{% endblock %}
 
-{% block additional_styles %}
-.weather-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: calc(100vh - 200px);
-    background-color: #f8f9fa;
-    flex-direction: column;
-}
-.weather-card {
-    background: white;
-    padding: 2rem;
-    border-radius: 1rem;
-    box-shadow: 0 0 20px rgba(0,0,0,0.1);
-    min-width: 300px;
-    text-align: center;
-}
-.search-container {
-    margin-bottom: 2rem;
-    width: 100%;
-    max-width: 300px;
-}
-.weather-info {
-    display: none;
-    margin-top: 1rem;
-}
-.temperature {
-    font-size: 3rem;
-    font-weight: bold;
-    color: #343a40;
-}
-.description {
-    color: #6c757d;
-}
-{% endblock %}
-
 {% block content %}
 <div class="weather-container">
     <div class="weather-card">

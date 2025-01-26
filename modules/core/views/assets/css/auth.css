@@ -1,0 +1,22 @@
+/* Login and Register Pages */
+.login-container, .register-container {
+    max-width: 400px;
+    margin: 100px auto;
+    padding: 20px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.1);
+    border-radius: 8px;
+    background: white;
+}
+
+.login-header, .register-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.login-header h2, .register-header h2 {
+    color: #343a40;
+}
+
+.login-header p, .register-header p {
+    color: #6c757d;
+} 

@@ -4,33 +4,6 @@
 
 {% block app_class %}clock-app{% endblock %}
 
-{% block additional_styles %}
-.clock-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: calc(100vh - 200px);
-}
-.clock-card {
-    background: white;
-    padding: 3rem;
-    border-radius: 1rem;
-    box-shadow: 0 0 20px rgba(0,0,0,0.1);
-    text-align: center;
-}
-.time {
-    font-size: 4rem;
-    font-weight: bold;
-    color: #dc3545;
-    font-family: monospace;
-}
-.date {
-    font-size: 1.2rem;
-    color: #6c757d;
-    margin-top: 1rem;
-}
-{% endblock %}
-
 {% block content %}
 <div class="clock-container">
     <div class="clock-card">

@@ -7,7 +7,8 @@ from modules.people.models.user import User
 blueprint = Blueprint(
     'core_bp', 
     __name__,
-    template_folder='../views/templates'
+    template_folder='../views/templates',
+    static_folder='../views/assets'
 )
 
 @blueprint.before_app_request
