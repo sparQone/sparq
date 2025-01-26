@@ -374,4 +374,79 @@
 
 .activity-item small {
     color: #6c757d;
+}
+
+.apps-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1.5rem;
+    padding: 1.5rem;
+}
+
+.app-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem;
+    background: white;
+    border-radius: 0.5rem;
+    box-shadow: 0 0 20px rgba(0,0,0,0.05);
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.app-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 30px rgba(0,0,0,0.1);
+}
+
+.app-icon {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+.app-name {
+    font-size: 1.1rem;
+    font-weight: 500;
+}
+
+/* Apps Dropdown Menu */
+.apps-dropdown {
+    padding: 1rem;
+    min-width: 300px;  /* Ensure enough width for 3 columns */
+}
+
+.apps-dropdown .apps-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);  /* 3 columns */
+    gap: 0.75rem;
+    padding: 0;
+    margin: 0;
+}
+
+.apps-dropdown .app-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0.75rem;
+    text-decoration: none;
+    color: #495057;
+    border-radius: 0.5rem;
+    transition: background-color 0.2s ease;
+}
+
+.apps-dropdown .app-item:hover {
+    background-color: #f8f9fa;
+    color: #0d6efd;
+}
+
+.apps-dropdown .app-item i {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.apps-dropdown .app-item span {
+    font-size: 0.875rem;
+    text-align: center;
 } 

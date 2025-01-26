@@ -119,4 +119,24 @@ def register():
         except Exception as e:
             flash('Registration failed', 'error')
             
-    return render_template('register.html') 
+    return render_template('register.html')
+
+@blueprint.route("/apps")
+@login_required
+def apps():
+    """Render the apps grid page"""
+    all_modules = g.installed_modules
+    print("\nAll installed modules:")
+    for m in all_modules:
+        print(f"Name: {m.get('name')}, Type: {m.get('type')}, Route: {m.get('main_route')}, Icon: {m.get('icon_class')}")
+    
+    installed_modules = [m for m in all_modules if m.get('type') == 'App']
+    print("\nFiltered App modules:")
+    for m in installed_modules:
+        print(f"Name: {m.get('name')}, Type: {m.get('type')}, Route: {m.get('main_route')}, Icon: {m.get('icon_class')}")
+    
+    return render_template("apps.html", 
+                         module_name="Core",
+                         module_icon="fa-solid fa-home",
+                         module_home='core_bp.home',
+                         installed_modules=installed_modules) 

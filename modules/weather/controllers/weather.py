@@ -6,7 +6,8 @@ from flask_login import login_required
 blueprint = Blueprint(
     'weather_bp', 
     __name__, 
-    template_folder='../views/templates'
+    template_folder='../views/templates',
+    static_folder='../views/assets'
 )
 
 # Initialize weather
@@ -15,7 +16,7 @@ weather = Weather()
 @blueprint.route("/")
 @login_required
 def weather_home():
-    """Weather lookup page"""
+    """Weather module home page"""
     return render_template("weather.html",
                          module_name="Weather",
                          module_icon="fa-solid fa-cloud-sun-rain",

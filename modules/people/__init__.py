@@ -1,7 +1,9 @@
-from .controllers.people import blueprint
+from flask import Blueprint
+from .controllers.people import blueprint as people_blueprint
+from .module import PeopleModule
 
-# Create module instance with routes
-module_instance = type('PeopleModule', (), {
-    'blueprint': blueprint,
-    'get_routes': lambda self: [(blueprint, "/people")]
-})() 
+# Create module instance
+module_instance = PeopleModule()
+
+# Register routes
+module_instance.register_blueprint(people_blueprint, url_prefix='/people') 

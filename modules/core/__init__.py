@@ -1,10 +1,11 @@
 # This file can be empty or contain core module initialization logic
 
-from .controllers.core import blueprint, icon_class_filter
+from flask import Blueprint
+from .controllers.core import blueprint as core_blueprint
+from .module import CoreModule
 
-# Create module instance with routes and filter
-module_instance = type('CoreModule', (), {
-    'blueprint': blueprint,
-    'get_routes': lambda self: [(blueprint, "/")],
-    'icon_class_filter': staticmethod(icon_class_filter)
-})()
+# Create module instance
+module_instance = CoreModule()
+
+# Register routes
+module_instance.register_blueprint(core_blueprint, url_prefix='')

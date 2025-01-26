@@ -1,9 +1,11 @@
 # This file can be empty or contain clock module initialization logic
 
-from .controllers.clock import blueprint
+from flask import Blueprint
+from .controllers.clock import blueprint as clock_blueprint
+from .module import ClockModule
 
-# Create module instance with routes
-module_instance = type('ClockModule', (), {
-    'blueprint': blueprint,
-    'get_routes': lambda self: [(blueprint, "/clock")]
-})()
+# Create module instance
+module_instance = ClockModule()
+
+# Register routes
+module_instance.register_blueprint(clock_blueprint, url_prefix='/clock')

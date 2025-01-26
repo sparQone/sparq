@@ -28,27 +28,16 @@ class ModuleLoader:
                     # Import the module and its manifest
                     module = importlib.import_module(f"modules.{module_name}")
                     manifest = importlib.import_module(f"modules.{module_name}.__manifest__").manifest
+                    
+                    # Store both manifest and module instance
                     if hasattr(module, 'module_instance'):
-                        module_data.append((module, manifest))
+                        self.manifests.append(manifest)  # Add manifest first
+                        instance = module.module_instance
+                        self.pm.register(instance)
+                        self.modules.append(instance)
+                        print(f"- {manifest['name']} ({manifest.get('type', 'Unknown')})")
                 except Exception as e:
                     print(f"Failed to load module {module_name}: {str(e)}")
-        
-        # Define loading order
-        type_order = ['System', 'App', 'Extension']
-        
-        # Sort modules by type
-        module_data.sort(key=lambda x: type_order.index(x[1].get('type', 'Unknown')) if x[1].get('type') in type_order else len(type_order))
-        
-        # Load modules in sorted order
-        for module, manifest in module_data:
-            try:
-                instance = module.module_instance
-                self.pm.register(instance)
-                self.manifests.append(manifest)
-                self.modules.append(instance)
-                print(f"- {manifest['name']} ({manifest.get('type', 'Unknown')})")
-            except Exception as e:
-                print(f"Failed to load module {manifest['name']}: {str(e)}")
         
         print()  # Empty line after module list
 
