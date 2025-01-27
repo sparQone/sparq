@@ -119,15 +119,13 @@ def dashboard():
 @blueprint.route("/updates")
 @login_required
 def updates():
-    """Updates page (coming soon)"""
-    return render_template("people-coming-soon.html",
+    """Company updates page"""
+    return render_template("people-updates.html",
                          active_page='updates',
-                         title="Updates",
+                         title="Company Updates",
                          module_name=MODULE_NAME,
                          module_icon=MODULE_ICON,
                          module_home=MODULE_HOME,
-                         page_icon="fa-solid fa-bell",
-                         icon_color="#ffc107",
                          installed_modules=g.installed_modules)
 
 @blueprint.route("/time_tracking")
