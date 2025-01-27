@@ -2,6 +2,8 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
 from datetime import datetime
 from system.db.database import db
+from flask import current_app
+from sqlalchemy.orm import Session
 
 class User(UserMixin, db.Model):
     __tablename__ = 'user'
@@ -21,9 +23,15 @@ class User(UserMixin, db.Model):
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
 
-    @classmethod
-    def get_by_email(cls, email):
-        return cls.query.filter_by(email=email).first()
+    @staticmethod
+    def get_by_id(user_id):
+        """Get user by ID"""
+        return User.query.get(int(user_id))
+
+    @staticmethod
+    def get_by_email(email):
+        """Get user by email"""
+        return User.query.filter_by(email=email).first()
 
     @classmethod
     def create(cls, email, password, first_name=None, last_name=None, is_admin=False):

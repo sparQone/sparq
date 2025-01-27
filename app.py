@@ -30,7 +30,8 @@ def create_app():
     
     @login_manager.user_loader
     def load_user(user_id):
-        return User.query.get(int(user_id))
+        """Load user by ID for Flask-Login"""
+        return User.get_by_id(int(user_id))  # Use new get_by_id method
     
     # Create database tables and seed admin user
     with app.app_context():
