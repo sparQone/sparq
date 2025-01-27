@@ -1,0 +1,44 @@
+/* Clock Module Styles */
+.clock-app {
+    --module-color: #dc3545;
+}
+
+.clock-app .app-header {
+    border-bottom-color: #dc3545;  /* Bootstrap danger red */
+}
+
+/* Clock icon colors */
+.app-icon-clock,
+[data-app="Clock"] i {
+    color: #dc3545 !important;  /* Bootstrap danger red */
+}
+
+/* Clock layout */
+.clock-app .clock-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: calc(100vh - 200px);
+    padding: 2rem;
+}
+
+.clock-app .clock-card {
+    background: white;
+    padding: 2rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 0 20px rgba(0,0,0,0.05);
+    text-align: center;
+    width: 400px;
+}
+
+.clock-app .time {
+    font-size: 4rem;
+    font-weight: bold;
+    color: #dc3545;
+    margin-bottom: 1rem;
+}
+
+.clock-app .date {
+    font-size: 1.5rem;
+    color: #6c757d;
+} 

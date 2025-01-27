@@ -11,9 +11,12 @@ blueprint = Blueprint(
 @blueprint.route("/")
 @login_required
 def esign_home():
+    """E-Sign home page"""
     return render_template("coming_soon.html",
                          title="E-Sign",
                          module_name="E-Sign",
                          module_icon="fa-solid fa-file-signature",
+                         page_icon="fa-solid fa-file-signature",
+                         icon_color="#0dcaf0",
                          module_home='esign_bp.esign_home',
                          installed_modules=g.installed_modules) 

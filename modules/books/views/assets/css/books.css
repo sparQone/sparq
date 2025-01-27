@@ -1,0 +1,13 @@
+/* Books Module Styles */
+.books-app {
+    --module-color: #6f42c1;
+}
+
+.books-app .app-header {
+    border-bottom-color: #6f42c1;
+}
+
+.app-icon-books,
+[data-app="Books"] i {
+    color: #6f42c1 !important;
+} 

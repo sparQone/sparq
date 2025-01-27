@@ -1,250 +1,7 @@
-/* Module-specific styles */
-
-/* People Module */
-.user-container {
-    max-width: 1000px;
-    margin: 0 auto;
-}
-
-.action-buttons {
-    white-space: nowrap;
-}
-
-.table td {
-    vertical-align: middle;
-}
-
-.user-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-    margin-top: -0.5rem;
-}
-
-.user-header h2 {
-    margin: 0;
-    line-height: 1.2;
-}
-
-.status-active {
-    color: #198754;
-}
-
-.status-inactive {
-    color: #dc3545;
-}
-
-.admin-badge {
-    background-color: #ffc107;
-    color: #000;
-    padding: 2px 8px;
-    border-radius: 0.25rem;
-    font-size: 0.8em;
-}
-
-/* Weather Module */
-.weather-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: calc(100vh - 200px);
-    background-color: #f8f9fa;
-    flex-direction: column;
-}
-
-.weather-card {
-    background: white;
-    padding: 2rem;
-    border-radius: 0.5rem;
-    box-shadow: 0 0 20px rgba(0,0,0,0.1);
-    min-width: 300px;
-    text-align: center;
-}
-
-/* Clock Module */
-.clock-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: calc(100vh - 200px);
-}
-
-.clock-card {
-    background: white;
-    padding: 3rem;
-    border-radius: 0.5rem;
-    box-shadow: 0 0 20px rgba(0,0,0,0.1);
-    text-align: center;
-}
-
-.time {
-    font-size: 4rem;
-    font-weight: bold;
-    color: #dc3545;
-    font-family: monospace;
-}
-
-.date {
-    font-size: 1.2rem;
-    color: #6c757d;
-    margin-top: 1rem;
-}
-
-/* People Module - Left Navigation */
-.people-layout {
-    display: flex;
-    gap: 1.5rem;
-    padding: 0 20px;
-    margin: 0 auto;
-    min-width: 1000px;
-    max-width: 100%;
-}
-
-.side-nav {
-    width: 240px;
-    min-width: 240px;
-    flex: 0 0 240px;
-    padding: 1.5rem;
-    background: white;
-    border-radius: 0.5rem;
-    box-shadow: 0 0 20px rgba(0,0,0,0.05);
-    height: fit-content;
-}
-
-.nav-menu {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-.nav-item {
-    margin-bottom: 0.5rem;
-}
-
-.nav-item:last-child {
-    margin-bottom: 0;
-}
-
-.nav-link {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    padding: 0.75rem 1rem;
-    color: #495057;
-    text-decoration: none;
-    border-radius: 0.25rem;
-    transition: all 0.2s ease;
-    white-space: nowrap;
-}
-
-.nav-link:hover {
-    background-color: #f8f9fa;
-    color: #0d6efd;
-    transform: translateX(5px);
-}
-
-.nav-link.active {
-    background-color: #e9ecef;
-    color: #0d6efd;
-    font-weight: 500;
-}
-
-.nav-link i {
-    font-size: 1.1rem;
-    width: 1.5rem;
-    text-align: center;
-}
-
-/* Navigation Icon Colors */
-.nav-link i.fa-chart-line {
-    color: #0d6efd;  /* Bootstrap primary blue */
-}
-
-.nav-link i.fa-bell {
-    color: #ffc107;  /* Bootstrap warning yellow */
-}
-
-.nav-link i.fa-user-plus {
-    color: #198754;  /* Bootstrap success green */
-}
-
-.nav-link i.fa-users {
-    color: #6f42c1;  /* Bootstrap purple */
-}
-
-.nav-link i.fa-clock {
-    color: #dc3545;  /* Bootstrap danger red */
-}
-
-.nav-link i.fa-calendar-alt {
-    color: #0dcaf0;  /* Bootstrap info cyan */
-}
-
-.nav-link i.fa-file-alt {
-    color: #fd7e14;  /* Bootstrap orange */
-}
-
-.nav-link i.fa-receipt {
-    color: #20c997;  /* Bootstrap teal */
-}
-
-.nav-link i.fa-folder {
-    color: #6c757d;  /* Bootstrap secondary gray */
-}
-
-.nav-link i.fa-book {
-    color: #d63384;  /* Bootstrap pink */
-}
-
-.nav-link i.fa-graduation-cap {
-    color: #6610f2;  /* Bootstrap indigo */
-}
-
-.nav-link i.fa-stairs {
-    color: #6610f2;  /* Bootstrap indigo */
-}
-
-.nav-link i.fa-handshake {
-    color: #6610f2;  /* Bootstrap indigo */
-}
-
-/* Keep icon color on hover and active states */
-.nav-link:hover i,
-.nav-link.active i {
-    color: inherit;  /* Remove this line if you want to keep colors in hover/active states */
-}
-
 /* Main content area */
 .main-content {
     flex: 1 1 auto;
     min-width: 0;
-}
-
-/* Coming Soon Page */
-.coming-soon {
-    padding: 1.5rem;
-    background: white;
-    border-radius: 0.5rem;
-    box-shadow: 0 0 20px rgba(0,0,0,0.05);
-    text-align: center;
-}
-
-.coming-soon i {
-    font-size: 4rem;
-    color: #0d6efd;
-    margin-bottom: 1.5rem;
-}
-
-.coming-soon h2 {
-    font-size: 2rem;
-    color: #343a40;
-    margin-bottom: 1rem;
-}
-
-.coming-soon p {
-    color: #6c757d;
-    font-size: 1.1rem;
 }
 
 /* Content Cards */
@@ -264,123 +21,28 @@
     margin-bottom: 0;
 }
 
-/* Dashboard Styles */
-.dashboard-grid {
+/* Apps Page Layout */
+.apps-container {
     display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 2rem;
+    margin: 0 auto;
+    max-width: 1200px;
 }
 
-.stats-row {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 1rem;
-}
-
-.stat-card {
+.apps-content-card {
     background: white;
-    padding: 1.5rem;
+    padding: 2rem;
     border-radius: 0.5rem;
     box-shadow: 0 0 20px rgba(0,0,0,0.05);
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-}
-
-.stat-icon {
-    width: 48px;
-    height: 48px;
-    border-radius: 0.375rem;
-    background: #e9ecef;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.5rem;
-    color: #0d6efd;
-}
-
-.stat-content {
-    flex: 1;
-}
-
-.stat-value {
-    font-size: 1.5rem;
-    font-weight: 600;
-    color: #343a40;
-    line-height: 1;
-    margin-bottom: 0.25rem;
-}
-
-.stat-label {
-    font-size: 0.875rem;
-    color: #6c757d;
-}
-
-.charts-row {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1.5rem;
-}
-
-.chart-card {
-    height: 300px;
-}
-
-.chart-card h3 {
-    margin: 0 0 1rem 0;
-    font-size: 1.1rem;
-    color: #343a40;
-}
-
-.chart-placeholder {
-    height: calc(100% - 2rem);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    background: #f8f9fa;
-    border-radius: 0.25rem;
-    color: #6c757d;
-}
-
-.chart-placeholder i {
-    font-size: 3rem;
-    margin-bottom: 1rem;
-    opacity: 0.5;
-}
-
-.activity-list {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-}
-
-.activity-item {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    padding: 0.75rem;
-    background: #f8f9fa;
-    border-radius: 0.25rem;
-}
-
-.activity-item i {
-    font-size: 1rem;
-}
-
-.activity-item span {
-    flex: 1;
-}
-
-.activity-item small {
-    color: #6c757d;
+    width: 100%;
 }
 
 .apps-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 1.5rem;
-    padding: 1.5rem;
 }
 
 .app-card {
@@ -401,9 +63,10 @@
     box-shadow: 0 5px 30px rgba(0,0,0,0.1);
 }
 
-.app-icon {
+.app-card i {
     font-size: 2.5rem;
     margin-bottom: 1rem;
+    color: var(--module-color, #6c757d);
 }
 
 .app-name {
@@ -414,12 +77,12 @@
 /* Apps Dropdown Menu */
 .apps-dropdown {
     padding: 1rem;
-    min-width: 300px;  /* Ensure enough width for 3 columns */
+    min-width: 300px;
 }
 
 .apps-dropdown .apps-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);  /* 3 columns */
+    grid-template-columns: repeat(3, 1fr);
     gap: 0.75rem;
     padding: 0;
     margin: 0;
@@ -437,13 +100,13 @@
 }
 
 .apps-dropdown .app-item:hover {
-    background-color: #f8f9fa;
-    color: #0d6efd;
+    background-color: rgba(0,0,0,0.05);
 }
 
 .apps-dropdown .app-item i {
     font-size: 1.5rem;
     margin-bottom: 0.5rem;
+    color: var(--module-color, #6c757d);
 }
 
 .apps-dropdown .app-item span {
@@ -451,31 +114,32 @@
     text-align: center;
 }
 
-/* Coming Soon Pages */
-.coming-soon-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: calc(100vh - 60px);
+/* App card and dropdown icons */
+.app-card i,
+.app-item i {
+    color: var(--module-color, #6c757d);
 }
 
-.coming-soon {
-    text-align: center;
-    padding: 2rem;
+/* Remove the old color overrides */
+.apps-grid .app-item i,
+.apps-dropdown .app-item i {
+    color: var(--module-color, #6c757d);
 }
 
-.coming-soon i {
-    font-size: 4rem;
+.apps-dropdown .app-item:hover {
+    background-color: rgba(0,0,0,0.05);
+}
+
+/* App card icons */
+.app-card i {
+    font-size: 2.5rem;
     margin-bottom: 1rem;
+    color: var(--module-color, #6c757d);
 }
 
-.coming-soon h2 {
-    font-size: 2rem;
-    margin-bottom: 1rem;
-    color: #212529;
-}
-
-.coming-soon p {
-    color: #6c757d;
-    font-size: 1.1rem;
+/* Apps dropdown icons */
+.app-item i {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+    color: var(--module-color, #6c757d);
 } 

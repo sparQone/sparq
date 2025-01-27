@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block app_class %}people-app{% endblock %}
+
+{% block additional_styles %}
+<link rel="stylesheet" href="{{ url_for('people_bp.static', filename='css/people.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="people-layout">
+    {% include 'people_nav.html' with context %}
+    <main class="main-content">
+        {% block people_content %}{% endblock %}
+    </main>
+</div>
+{% endblock %} 

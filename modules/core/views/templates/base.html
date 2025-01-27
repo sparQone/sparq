@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="{{ url_for('core_bp.static', filename='css/apps.css') }}">
     {% block additional_styles %}{% endblock %}
 </head>
-<body class="{% block app_class %}{% endblock %}">
+<body class="{% block app_class %}{% endblock %}" style="--module-color: {{ g.current_module.color|default('#6c757d') }}">
     <header class="app-header">
         <div class="container">
             <div class="header-content">
@@ -18,7 +18,7 @@
                         <img src="{{ url_for('core_bp.static', filename='images/sparq-logo.png') }}" alt="SparqOne" class="app-logo">
                     </a>
                     <div class="app-title-divider"></div>
-                    <a href="{{ url_for(module_home) }}" class="app-name" data-app="{{ module_name }}">
+                    <a href="{{ url_for(module_home) }}" class="app-name" data-app="{{ module_name }}" style="--module-color: {{ g.current_module.color|default('#6c757d') }}">
                         <i class="{{ module_icon }}"></i>
                         <span>{{ module_name }}</span>
                     </a>
@@ -33,11 +33,10 @@
                                 {% for mod in installed_modules|sort(attribute='name') %}
                                     {% if mod.type == 'App' %}
                                         <a href="{{ mod.main_route }}" 
-                                           class="app-item" 
+                                           class="app-item {{ mod.name|lower }}-app" 
                                            data-app="{{ mod.name }}"
-                                           target="_blank"
-                                           rel="noopener noreferrer">
-                                            <i class="{{ mod.icon_class }} app-icon-{{ mod.name|lower }}"></i>
+                                           style="--module-color: {{ mod.color|default('#6c757d') }}">
+                                            <i class="{{ mod.icon_class }}"></i>
                                             <span>{{ mod.name }}</span>
                                         </a>
                                     {% endif %}

@@ -4,5 +4,6 @@ manifest = {
     'main_route': '/weather',
     'icon_class': 'fa-solid fa-cloud-sun-rain',
     'type': 'App',
+    'color': '#198754',  # Green color
     'depends': ['core']
 }

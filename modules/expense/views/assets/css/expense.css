@@ -1,0 +1,13 @@
+/* Expense Module Styles */
+.expense-app {
+    --module-color: #20c997;
+}
+
+.expense-app .app-header {
+    border-bottom-color: #20c997;
+}
+
+.app-icon-expense,
+[data-app="Expense"] i {
+    color: #20c997 !important;
+} 

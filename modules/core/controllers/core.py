@@ -11,10 +11,62 @@ blueprint = Blueprint(
     static_folder='../views/assets'
 )
 
+def enrich_module_data(modules):
+    """Add additional module data like colors"""
+    enriched = []
+    for module in modules:
+        # Get the manifest data and the module data
+        manifest = module.get('manifest', {})
+        
+        # Create enriched module using both manifest and module data
+        enriched_module = {
+            'name': manifest.get('name') or module.get('name'),
+            'type': manifest.get('type') or module.get('type'),
+            'main_route': manifest.get('main_route') or module.get('main_route'),
+            'icon_class': manifest.get('icon_class') or module.get('icon_class'),
+            'color': manifest.get('color') or module.get('color', '#6c757d'),
+            'manifest': manifest
+        }
+        
+        # Only add if we have at least a name and type
+        if enriched_module['name'] and enriched_module['type']:
+            enriched.append(enriched_module)
+            
+    return enriched
+
 @blueprint.before_app_request
 def before_request():
-    """Make installed modules available to all templates"""
+    """Make installed modules available to all templates and set current module"""
     g.installed_modules = current_app.config.get('INSTALLED_MODULES', [])
+    if hasattr(g, 'installed_modules'):
+        g.installed_modules = enrich_module_data(g.installed_modules)
+        
+        # Default core module data
+        default_core = {
+            'name': 'Core',
+            'type': 'App',
+            'main_route': '/core',
+            'icon_class': 'fa-solid fa-home',
+            'color': '#6c757d'
+        }
+        
+        # Get current module from request path
+        path = request.path.split('/')[1] or 'core'  # Default to core if root path
+        
+        # First try to find the current module
+        current_module = next(
+            (m for m in g.installed_modules if m.get('name', '').lower() == path.lower()),
+            None
+        )
+        
+        # If not found, try to find core module
+        if not current_module:
+            current_module = next(
+                (m for m in g.installed_modules if m.get('name', '').lower() == 'core'),
+                default_core  # Fall back to default core data
+            )
+        
+        g.current_module = current_module
 
 @blueprint.route("/")
 @login_required
@@ -125,23 +177,15 @@ def register():
 @login_required
 def apps():
     """Render the apps grid page"""
-    all_modules = g.installed_modules
-    print("\nAll installed modules:")
-    for m in all_modules:
-        print(f"Name: {m.get('name')}, Type: {m.get('type')}, Route: {m.get('main_route')}, Icon: {m.get('icon_class')}")
-    
-    # Filter for App type and sort alphabetically by name
+    # Filter for App type only (exclude System modules) and sort alphabetically
     installed_modules = sorted(
-        [m for m in all_modules if m.get('type') == 'App'],
+        [m for m in g.installed_modules if m.get('type') == 'App'],
         key=lambda x: x.get('name', '')
     )
     
-    print("\nFiltered App modules:")
-    for m in installed_modules:
-        print(f"Name: {m.get('name')}, Type: {m.get('type')}, Route: {m.get('main_route')}, Icon: {m.get('icon_class')}")
-    
     return render_template("apps.html", 
-                         module_name="Core",
-                         module_icon="fa-solid fa-home",
-                         module_home='core_bp.home',
-                         installed_modules=installed_modules) 
+                         module=g.current_module,
+                         module_name="Apps",
+                         module_icon="fa-solid fa-th",
+                         module_home='core_bp.apps',
+                         installed_modules=installed_modules)

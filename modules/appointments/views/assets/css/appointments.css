@@ -1,0 +1,13 @@
+/* Appointments Module Styles */
+.appointments-app {
+    --module-color: #fd7e14;  /* Orange color */
+}
+
+.appointments-app .app-header {
+    border-bottom-color: #fd7e14;
+}
+
+.app-icon-appointments,
+[data-app="Appointments"] i {
+    color: #fd7e14 !important;
+} 

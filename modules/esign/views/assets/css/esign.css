@@ -1,0 +1,13 @@
+/* E-Sign Module Styles */
+.esign-app {
+    --module-color: #0dcaf0;
+}
+
+.esign-app .app-header {
+    border-bottom-color: #0dcaf0;
+}
+
+.app-icon-esign,
+[data-app="E-Sign"] i {
+    color: #0dcaf0 !important;
+} 

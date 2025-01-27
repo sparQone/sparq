@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, current_app, g
+from flask import Blueprint, render_template, g
 from flask_login import login_required
 from datetime import datetime
 
@@ -6,7 +6,8 @@ from datetime import datetime
 blueprint = Blueprint(
     'clock_bp', 
     __name__, 
-    template_folder='../views/templates'
+    template_folder='../views/templates',
+    static_folder='../views/assets'
 )
 
 @blueprint.route("/")

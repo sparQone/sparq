@@ -4,6 +4,10 @@
 
 {% block app_class %}clock-app{% endblock %}
 
+{% block additional_styles %}
+<link rel="stylesheet" href="{{ url_for('clock_bp.static', filename='css/clock.css') }}">
+{% endblock %}
+
 {% block content %}
 <div class="clock-container">
     <div class="clock-card">

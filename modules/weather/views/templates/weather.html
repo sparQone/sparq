@@ -4,10 +4,15 @@
 
 {% block app_class %}weather-app{% endblock %}
 
+{% block additional_styles %}
+<link rel="stylesheet" href="{{ url_for('weather_bp.static', filename='css/weather.css') }}">
+{% endblock %}
+
 {% block content %}
 <div class="weather-container">
-    <div class="weather-card">
-        <div class="search-container">
+    <div class="weather-content-card">
+        <h2>Weather</h2>
+        <div class="weather-search">
             <div class="input-group">
                 <input type="text" 
                        class="form-control" 

@@ -11,9 +11,12 @@ blueprint = Blueprint(
 @blueprint.route("/")
 @login_required
 def books_home():
+    """Books home page"""
     return render_template("coming_soon.html",
                          title="Books",
                          module_name="Books",
-                         module_icon="fa-solid fa-book-open",
+                         module_icon="fa-solid fa-book",
+                         page_icon="fa-solid fa-book",
+                         icon_color="#6f42c1",
                          module_home='books_bp.books_home',
                          installed_modules=g.installed_modules) 

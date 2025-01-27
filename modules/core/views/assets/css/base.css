@@ -9,23 +9,15 @@ body {
     border-bottom: 3px solid;
     padding: 1rem 0;
     margin-bottom: 2rem;
+    border-bottom-color: var(--module-color, #6c757d);
 }
 
-.people-app .app-header {
-    border-bottom-color: #0d6efd;  /* Bootstrap primary blue */
-}
-
-.weather-app .app-header {
-    border-bottom-color: #198754;  /* Bootstrap success green */
-}
-
-.clock-app .app-header {
-    border-bottom-color: #dc3545;  /* Bootstrap danger red */
-}
-
+/* Core app specific */
 .core-app .app-header {
     border-bottom-color: #6c757d;  /* Bootstrap secondary gray */
 }
+
+/* Remove all other app-specific styles */
 
 /* App Title and Navigation */
 .app-title {
@@ -210,49 +202,38 @@ body {
     background: #f8f9fa;
 }
 
-/* App Icon Colors */
-.app-icon-weather,
-[data-app="Weather"] i,
-.coming-soon i.app-icon-weather {
-    color: #198754 !important;  /* Bootstrap success green */
+/* Remove all module-specific colors */
+[data-app] i {
+    color: var(--module-color);
 }
 
-.app-icon-clock,
-[data-app="Clock"] i,
-.coming-soon i.app-icon-clock {
-    color: #dc3545 !important;  /* Bootstrap danger red */
+/* Coming Soon Page */
+.coming-soon-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: calc(100vh - 200px);
 }
 
-.app-icon-people,
-[data-app="People"] i,
-.coming-soon i.app-icon-people {
-    color: #0d6efd !important;  /* Bootstrap primary blue */
+.coming-soon {
+    text-align: center;
+    padding: 2rem;
+    max-width: 600px;
 }
 
-/* Books - Purple */
-.app-icon-books,
-[data-app="Books"] i,
-i.app-icon-books,
-i.fa-book-open {
-    color: #6f42c1 !important;  /* Bootstrap purple */
+.coming-soon i {
+    font-size: 4rem;
+    margin-bottom: 1.5rem;
 }
 
-/* Appointments - Orange */
-.app-icon-appointments,
-[data-app="Appointments"] i,
-i.app-icon-appointments,
-i.fa-calendar-check {
-    color: #fd7e14 !important;  /* Bootstrap orange */
+.coming-soon h2 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    color: #212529;
 }
 
-.app-icon-expense,
-[data-app="Expense"] i,
-.coming-soon i.app-icon-expense {
-    color: #20c997 !important;  /* Bootstrap teal */
-}
-
-.app-icon-esign,
-[data-app="E-Sign"] i,
-.coming-soon i.app-icon-esign {
-    color: #0dcaf0 !important;  /* Bootstrap cyan */
+.coming-soon p {
+    color: #6c757d;
+    font-size: 1.1rem;
+    line-height: 1.5;
 } 

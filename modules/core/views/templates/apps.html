@@ -44,15 +44,23 @@
 {% endblock %}
 
 {% block content %}
-<div class="apps-grid">
-    {% for module in installed_modules %}
-        <a href="{{ url_for(module.name.lower() + '_bp.' + module.name.lower() + '_home') }}" class="app-card">
-            <div class="app-icon">
-                <i class="{{ module.icon_class }}"></i>
-            </div>
-            <div class="app-name">{{ module.name }}</div>
-        </a>
-    {% endfor %}
+<div class="apps-container">
+    <div class="apps-content-card">
+        <h2>Applications</h2>
+        <div class="apps-grid">
+            {% for mod in installed_modules %}
+                {% if mod.type == 'App' %}
+                    <a href="{{ mod.main_route }}" 
+                       class="app-card {{ mod.name|lower }}-app" 
+                       data-app="{{ mod.name }}"
+                       style="--module-color: {{ mod.color|default('#6c757d') }}">
+                        <i class="{{ mod.icon_class }}"></i>
+                        <span class="app-name">{{ mod.name }}</span>
+                    </a>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
 </div>
 
 <!-- Debug output to see what's being passed to template -->
