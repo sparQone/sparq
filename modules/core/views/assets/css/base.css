@@ -32,6 +32,7 @@ body {
     display: flex;
     align-items: center;
     gap: 1rem;
+    margin-left: 0;     /* Ensure no margin on left */
 }
 
 .app-logo-link {
@@ -66,17 +67,16 @@ body {
 }
 
 .container {
-    max-width: 100%;  /* Allow container to be full width */
-    padding: 0;       /* Remove all container padding */
+    max-width: 100%;
+    padding: 0;
 }
 
 .header-content {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding-left: 1.5rem;  /* Add left padding for logo */
-    margin: 0 auto;        /* Center the content */
-    max-width: 1320px;     /* Match Bootstrap's default container width */
+    padding: 0 1.5rem;  /* Changed from padding-left to padding on both sides */
+    width: 100%;        /* Ensure full width */
 }
 
 /* User Navigation */
@@ -84,8 +84,7 @@ body {
     display: flex;
     align-items: center;
     gap: 1rem;
-    margin-right: 0;    /* Remove any margin */
-    padding-right: 0;   /* Remove any padding */
+    margin-right: 0;    /* Ensure no margin on right */
 }
 
 .user-info {

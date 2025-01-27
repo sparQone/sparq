@@ -7,13 +7,7 @@
                 Dashboard
             </a>
         </li>
-        <li class="nav-item">
-            <a href="{{ url_for('people_bp.people_home') }}" 
-               class="nav-link {% if active_page == 'people' %}active{% endif %}">
-                <i class="fas fa-users"></i>
-                People
-            </a>
-        </li>
+
         <li class="nav-item">
             <a href="{{ url_for('people_bp.updates') }}" 
                class="nav-link {% if active_page == 'updates' %}active{% endif %}">
