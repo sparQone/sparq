@@ -1,4 +1,5 @@
 from system.db.database import db
+from flask import current_app
 
 class Task(db.Model):
     __tablename__ = 'task'
@@ -7,9 +8,18 @@ class Task(db.Model):
     name = db.Column(db.String(255), nullable=False)
     created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
     updated_at = db.Column(db.DateTime, default=db.func.current_timestamp(), onupdate=db.func.current_timestamp())
-
+    
     def __init__(self, name):
         self.name = name
+
+    @classmethod
+    def create_sample_data(cls):
+        """Initialize sample tasks if table is empty"""
+        if not cls.query.first():  # Only create if table is empty
+            cls.create("Review project requirements")
+            cls.create("Schedule team meeting")
+            cls.create("Update documentation")
+            print("Sample tasks created")
 
     @staticmethod
     def create(name):

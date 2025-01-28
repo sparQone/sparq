@@ -6,5 +6,5 @@ from .module import TasksModule
 # Create module instance
 module_instance = TasksModule()
 
-# Register routes
-module_instance.register_blueprint(tasks_blueprint, url_prefix='/tasks')
+# Export only the module instance
+__all__ = ['module_instance']

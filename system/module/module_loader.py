@@ -32,7 +32,7 @@ class ModuleLoader:
                     if hasattr(module, 'module_instance'):
                         self.manifests.append(manifest)  # Add manifest first
                         instance = module.module_instance
-                        self.pm.register(instance)
+                        self.pm.register(instance)  # Register with plugin manager
                         self.modules.append(instance)
                         
                         # Allow module to register its specs if it has the method

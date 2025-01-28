@@ -6,11 +6,9 @@ hookimpl = pluggy.HookimplMarker("sparqone")
 
 class ModuleSpecs:
     @hookspec
-    def get_model(self, base_model):
-        """Get module's model that extends the base model.
-        Args:
-            base_model: The base model instance to extend
-        Returns:
-            list: List containing the module model instance
+    def init_database(self):
+        """Initialize database tables and sample data for the module.
+        This hook is called after all modules are loaded and the database
+        connection is established.
         """
         pass 

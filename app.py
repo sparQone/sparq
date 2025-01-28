@@ -58,7 +58,10 @@ def create_app():
     
     # Create/update database tables AFTER loading all modules
     with app.app_context():
-        db.create_all()  # Now this will create all tables including task
+        db.create_all()
+        
+        # Call init_database hooks for all modules
+        module_loader.pm.hook.init_database()
         
         # Then check for admin user
         if not User.get_by_email('admin'):

@@ -1,4 +1,5 @@
 from system.db.database import db
+from flask import current_app
 from system.module.module_manager import hookimpl
 
 class TasksModule:
@@ -14,11 +15,16 @@ class TasksModule:
 
     def get_routes(self):
         """Get module routes"""
-        return [(self._blueprint, self._url_prefix)]
+        from .controllers.routes import blueprint as tasks_blueprint
+        return [(tasks_blueprint, '/tasks')]
 
     @hookimpl
     def init_database(self):
-        """Initialize database tables"""
+        """Initialize database tables and sample data"""
         from .models.task import Task
-        db.create_all()  # This will create only tables that haven't been created yet
+        db.create_all()
+        try:
+            Task.create_sample_data()
+        except Exception as e:
+            print(f"Error creating sample tasks: {e}")
 

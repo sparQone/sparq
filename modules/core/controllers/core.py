@@ -74,35 +74,6 @@ def home():
     """Redirect root to people dashboard"""
     return redirect(url_for('people_bp.people_home'))
 
-# @blueprint.route("/core")
-# @login_required
-# def core_home():
-#     """Core module home page with form"""
-#     # Get plugin HTML specifically for core form
-#     plugin_html = current_app.module_loader.pm.hook.modify_core_form()
-#     if not plugin_html:
-#         plugin_html = []
-    
-#     # Flatten the list of lists into a single list of strings
-#     flattened_html = [item for sublist in plugin_html for item in (sublist if isinstance(sublist, list) else [sublist])]
-    
-#     # Join all plugin HTML fragments with newlines for better formatting
-#     combined_plugin_html = "\n".join(filter(None, flattened_html))
-    
-#     return render_template("form.html", plugin_html=combined_plugin_html)
-
-# @blueprint.route("/save", methods=['POST'])
-# def save():
-#     """Handle form submission"""
-#     # Get plugin models
-#     plugin_models = current_app.module_loader.pm.hook.get_model(base_model=Core())
-    
-#     # Use the last plugin model if available, otherwise use base model
-#     model = plugin_models[-1][0] if plugin_models else Core()
-    
-#     # Save the data
-#     model.save(request.form)
-#     return redirect(url_for('core_bp.core_home'))
 
 @blueprint.route("/login", methods=['GET', 'POST'])
 def login():
