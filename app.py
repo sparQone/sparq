@@ -68,15 +68,6 @@ def create_app():
     # Register routes
     module_loader.register_routes(app)
     
-    # Register Jinja filters
-    core_module = next(
-        (m for m in module_loader.modules 
-         if m.__class__.__name__ == 'CoreModule'), 
-        None
-    )
-    if core_module:
-        app.jinja_env.filters['icon_class'] = core_module.icon_class_filter
-    
     return app
 
 app = create_app()

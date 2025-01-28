@@ -104,19 +104,6 @@ def save():
     model.save(request.form)
     return redirect(url_for('core_bp.core_home'))
 
-def icon_class_filter(mod):
-    """Returns a Font Awesome class string based on module name"""
-    name = mod.get("name", "").lower()
-    if "core" in name:
-        return "fa-solid fa-home"
-    elif "clock" in name:
-        return "fa-regular fa-clock"
-    elif "weather" in name:
-        return "fa-solid fa-cloud-sun-rain"
-    elif "nickname" in name:
-        return "fa-solid fa-user-tag"
-    return "fa-solid fa-puzzle-piece"
-
 @blueprint.route("/login", methods=['GET', 'POST'])
 def login():
     # Redirect if user is already logged in
