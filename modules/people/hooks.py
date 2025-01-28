@@ -10,9 +10,10 @@ class PeopleHookSpecs:
         pass
 
     @hookspec
-    def process_new_employee(self, form_data):
+    def process_new_employee(self, form_data, employee):
         """Process additional employee data from form submission.
         Args:
             form_data: The submitted form data
+            employee: The newly created employee instance
         """
         pass 

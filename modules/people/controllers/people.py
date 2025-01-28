@@ -83,7 +83,7 @@ def add_employee():
             )
             
             # Let plugins process the new employee data
-            current_app.module_loader.pm.hook.process_new_employee(form_data=request.form)
+            current_app.module_loader.pm.hook.process_new_employee(form_data=request.form, employee=employee)
             
             flash('Employee added successfully!', 'success')
             return redirect(url_for('people_bp.employees'))
@@ -97,14 +97,27 @@ def add_employee():
 @blueprint.route("/delete/<int:user_id>", methods=['POST'])
 @login_required
 def delete_user(user_id):
-    """Delete a user"""
+    """Delete a user and associated employee data"""
     try:
         user = User.query.get_or_404(user_id)
-        user.delete()
-        flash('User deleted successfully', 'success')
-    except ValueError as e:
-        flash(str(e), 'error')
+        
+        # First delete employee profile if it exists
+        if hasattr(user, 'employee_profile') and user.employee_profile:
+            # Delete nickname data if it exists
+            if hasattr(user.employee_profile, 'nickname_data') and user.employee_profile.nickname_data:
+                db.session.delete(user.employee_profile.nickname_data)
+            
+            # Delete employee record
+            db.session.delete(user.employee_profile)
+        
+        # Then delete user
+        db.session.delete(user)
+        db.session.commit()
+        
+        flash('User and associated data deleted successfully', 'success')
+        
     except Exception as e:
+        db.session.rollback()
         flash(f'Error deleting user: {str(e)}', 'error')
     
     return redirect(url_for('people_bp.employees'))
