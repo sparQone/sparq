@@ -1,0 +1,62 @@
+/* Tasks Module Styles */
+.tasks-app {
+    --module-color: #dc3545;
+    --flash-duration: 3000ms;  /* Configure flash message duration */
+}
+
+.tasks-app .app-header {
+    border-bottom-color: var(--module-color);
+}
+
+.app-icon-tasks,
+[data-app="Tasks"] i {
+    color: var(--module-color) !important;
+}
+
+/* Tasks layout */
+.tasks-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.tasks-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.tasks-header h2 {
+    margin: 0;
+}
+
+/* Table styles */
+.table td {
+    vertical-align: middle;
+}
+
+.btn-group {
+    display: flex;
+    gap: 0.5rem;
+}
+
+/* Modal styles */
+.modal-header {
+    background-color: var(--module-color);
+    color: white;
+}
+
+.modal-header .btn-close {
+    filter: brightness(0) invert(1);
+}
+
+/* Add animation for flash messages */
+.alert {
+    animation: fadeOut 500ms ease-in-out var(--flash-duration) forwards;
+}
+
+@keyframes fadeOut {
+    from { opacity: 1; }
+    to { opacity: 0; }
+} 

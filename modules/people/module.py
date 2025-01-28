@@ -1,6 +1,7 @@
 from flask import Blueprint
 from system.module.module_manager import hookimpl
 from .hooks import PeopleHookSpecs
+from system.db.database import db
 
 class PeopleModule:
     def __init__(self):
@@ -17,7 +18,11 @@ class PeopleModule:
         self._blueprint = blueprint
         self._url_prefix = url_prefix
 
-    @hookimpl
     def get_routes(self):
-        """Get module routes"""
-        return [(self._blueprint, self._url_prefix)] 
+        return [(self._blueprint, self._url_prefix)]
+
+    @hookimpl
+    def init_database(self):
+        """Initialize database tables"""
+        from .models.employee import Employee
+        db.create_all()  # This will create only tables that haven't been created yet 

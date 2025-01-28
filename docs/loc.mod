@@ -1,1 +1,0 @@
- find . \( -name "*.html" -o -name "*.css" -o -name "*.js" \) -not -path "./venv/*" | xargs wc -l

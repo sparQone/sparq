@@ -13,27 +13,18 @@ blueprint = Blueprint(
     static_folder='../views/assets'
 )
 
-# Add these constants at the top of the file
-MODULE_NAME = "People"
-MODULE_ICON = "fa-solid fa-users"
-MODULE_HOME = 'people_bp.dashboard'
-
 @blueprint.route("/")
 @login_required
 def people_home():
     """People dashboard page"""
-    module = {
-        'name': 'People',
-        'icon_class': 'fa-solid fa-users',
-        'color': '#0d6efd',
-        'type': 'App'
-    }
     return render_template("people-dashboard.html",
-                         module=module,
-                         module_name="People",
-                         module_icon="fa-solid fa-users",
-                         module_home='people_bp.people_home',
-                         installed_modules=g.installed_modules)
+                        title=g.current_module['name'],
+                        module_name=g.current_module['name'],
+                        module_icon=g.current_module['icon_class'],
+                        page_icon=g.current_module['icon_class'],
+                        icon_color=g.current_module['color'],
+                        module_home='people_bp.people_home',
+                        installed_modules=g.installed_modules)
 
 @blueprint.route("/employees")
 @login_required

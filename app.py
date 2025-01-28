@@ -8,7 +8,6 @@ from flask_login import LoginManager
 from system.db.database import db
 from modules.core.models.user import User
 import os
-from migrations.migrate_users_and_create_employees import migrate_database
 
 def create_app():
     app = Flask(__name__, 
@@ -32,24 +31,9 @@ def create_app():
     @login_manager.user_loader
     def load_user(user_id):
         """Load user by ID for Flask-Login"""
-        return User.get_by_id(int(user_id))  # Use new get_by_id method
+        return User.get_by_id(int(user_id))
     
-    # Create/update database tables and run migrations
-    with app.app_context():
-        migrate_database()  # Run the migration
-        
-        # Create admin user if not exists
-        if not User.get_by_email('admin'):
-            User.create(
-                email='admin',
-                password='admin',
-                first_name='Admin',
-                last_name='User',
-                is_admin=True
-            )
-            print("Created default admin user")
-    
-    # Initialize module loader
+    # Initialize module loader first
     module_loader = ModuleLoader()
     app.module_loader = module_loader
     
@@ -72,9 +56,23 @@ def create_app():
     # Register routes
     module_loader.register_routes(app)
     
+    # Create/update database tables AFTER loading all modules
+    with app.app_context():
+        db.create_all()  # Now this will create all tables including task
+        
+        # Then check for admin user
+        if not User.get_by_email('admin'):
+            User.create(
+                email='admin',
+                password='admin',
+                first_name='Admin',
+                last_name='User',
+                is_admin=True
+            )
+            print("Created default admin user")
+    
     return app
 
-app = create_app()
-
-if __name__ == "__main__":
+if __name__ == '__main__':
+    app = create_app()
     app.run(debug=True, host="0.0.0.0", port=8080)
