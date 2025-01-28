@@ -6,8 +6,9 @@ from flask import Flask, request, jsonify, redirect, url_for
 from system.module.module_loader import ModuleLoader
 from flask_login import LoginManager
 from system.db.database import db
-from modules.people.models.user import User
+from modules.core.models.user import User
 import os
+from migrations.migrate_users_and_create_employees import migrate_database
 
 def create_app():
     app = Flask(__name__, 
@@ -33,10 +34,11 @@ def create_app():
         """Load user by ID for Flask-Login"""
         return User.get_by_id(int(user_id))  # Use new get_by_id method
     
-    # Create database tables and seed admin user
+    # Create/update database tables and run migrations
     with app.app_context():
-        db.create_all()
-        # Seed admin user if not exists
+        migrate_database()  # Run the migration
+        
+        # Create admin user if not exists
         if not User.get_by_email('admin'):
             User.create(
                 email='admin',
@@ -50,7 +52,9 @@ def create_app():
     # Initialize module loader
     module_loader = ModuleLoader()
     app.module_loader = module_loader
-    module_loader.load_modules()
+    
+    # Load modules from the modules directory
+    module_loader.load_modules("modules")
     
     # Check for required modules
     required_modules = ['CoreModule', 'PeopleModule']

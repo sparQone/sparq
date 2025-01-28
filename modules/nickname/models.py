@@ -1,10 +1,13 @@
-from modules.core.models.core import Core
+from modules.people.models.employee import Employee
+from system.db.database import db
 
-class NicknameModel(Core):
+class NicknameModel:
+    def __init__(self):
+        # Add nickname column to Employee model
+        if not hasattr(Employee, 'nickname'):
+            Employee.nickname = db.Column(db.String(50))
+
     def save(self, data):
-        # Let parent handle core fields
-        super().save(data)
-        
-        # Handle nickname field
+        """Save nickname data"""
         if 'nickname' in data:
             print(f"Nickname module saving nickname: {data['nickname']}") 

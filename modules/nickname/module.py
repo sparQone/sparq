@@ -17,8 +17,44 @@ class NicknameModule:
         return [(self.blueprint, "/nickname")]
 
     @hookimpl
-    def modify_view(self):
-        """Add nickname field to the core form"""
+    def modify_new_employee_form(self):
+        """Add nickname field to new employee form"""
+        js = """
+        <script>
+            function addField(fieldHtml) {
+                // Find the last name field's parent div
+                const lastNameField = document.querySelector('#last_name').closest('.mb-3');
+                // Create new div for nickname field
+                const div = document.createElement('div');
+                div.className = 'mb-3';
+                div.innerHTML = fieldHtml.trim();
+                // Insert after the last name field
+                lastNameField.insertAdjacentElement('afterend', div);
+            }
+
+            document.addEventListener('DOMContentLoaded', function() {
+                addField(`
+                    <label for="nickname" class="form-label">Nickname</label>
+                    <input type="text" 
+                           class="form-control" 
+                           id="nickname" 
+                           name="nickname" 
+                           placeholder="Enter nickname">
+                `);
+            });
+        </script>
+        """
+        return [js]
+
+    @hookimpl
+    def process_new_employee(self, form_data):
+        """Process nickname when new employee is created"""
+        if 'nickname' in form_data:
+            print(f"Nickname plugin: Processing nickname '{form_data['nickname']}'")
+
+    @hookimpl
+    def modify_core_form(self):
+        """Add nickname field specifically to the core form"""
         js = """
         <script>
             function addField(fieldHtml) {

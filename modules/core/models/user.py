@@ -1,11 +1,9 @@
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
-from datetime import datetime
 from system.db.database import db
-from flask import current_app
-from sqlalchemy.orm import Session
 
-class User(UserMixin, db.Model):
+class User(db.Model, UserMixin):
+    """Core user model for authentication and basic user info"""
     __tablename__ = 'user'
     
     id = db.Column(db.Integer, primary_key=True)
@@ -13,11 +11,16 @@ class User(UserMixin, db.Model):
     password_hash = db.Column(db.String(200), nullable=False)
     first_name = db.Column(db.String(50))
     last_name = db.Column(db.String(50))
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=db.func.now())
     is_active = db.Column(db.Boolean, default=True)
     is_admin = db.Column(db.Boolean, default=False)
 
-    def set_password(self, password):
+    @property
+    def password(self):
+        raise AttributeError('password is not a readable attribute')
+
+    @password.setter
+    def password(self, password):
         self.password_hash = generate_password_hash(password)
 
     def check_password(self, password):
@@ -36,7 +39,6 @@ class User(UserMixin, db.Model):
     @classmethod
     def create(cls, email, password, first_name=None, last_name=None, is_admin=False):
         """Create new user"""
-        # Check if trying to create another admin@admin user
         if email == 'admin' and User.get_by_email('admin'):
             raise ValueError("Cannot create duplicate admin user")
         
@@ -46,20 +48,7 @@ class User(UserMixin, db.Model):
             last_name=last_name,
             is_admin=is_admin
         )
-        user.set_password(password)
+        user.password = password
         db.session.add(user)
         db.session.commit()
-        return user
-
-    def update(self, **kwargs):
-        for key, value in kwargs.items():
-            if hasattr(self, key):
-                setattr(self, key, value)
-        db.session.commit()
-
-    def delete(self):
-        """Delete user if not admin"""
-        if self.email == 'admin':
-            raise ValueError("Cannot delete admin user")
-        db.session.delete(self)
-        db.session.commit() 
+        return user 

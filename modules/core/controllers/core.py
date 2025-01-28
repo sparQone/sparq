@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, jsonify, current_app, request, redirect, url_for, flash, g
 from flask_login import login_user, logout_user, login_required, current_user
-from ..models.core import Core
-from modules.people.models.user import User
+from ..models.user import User
+from system.db.database import db
 
 # Create blueprint
 blueprint = Blueprint(
@@ -74,35 +74,35 @@ def home():
     """Redirect root to people dashboard"""
     return redirect(url_for('people_bp.people_home'))
 
-@blueprint.route("/core")
-@login_required
-def core_home():
-    """Core module home page with form"""
-    # Get plugin HTML and ensure it's a list of strings
-    plugin_html = current_app.module_loader.pm.hook.modify_view()
-    if not plugin_html:
-        plugin_html = []
+# @blueprint.route("/core")
+# @login_required
+# def core_home():
+#     """Core module home page with form"""
+#     # Get plugin HTML specifically for core form
+#     plugin_html = current_app.module_loader.pm.hook.modify_core_form()
+#     if not plugin_html:
+#         plugin_html = []
     
-    # Flatten the list of lists into a single list of strings
-    flattened_html = [item for sublist in plugin_html for item in (sublist if isinstance(sublist, list) else [sublist])]
+#     # Flatten the list of lists into a single list of strings
+#     flattened_html = [item for sublist in plugin_html for item in (sublist if isinstance(sublist, list) else [sublist])]
     
-    # Join all plugin HTML fragments with newlines for better formatting
-    combined_plugin_html = "\n".join(filter(None, flattened_html))
+#     # Join all plugin HTML fragments with newlines for better formatting
+#     combined_plugin_html = "\n".join(filter(None, flattened_html))
     
-    return render_template("form.html", plugin_html=combined_plugin_html)
+#     return render_template("form.html", plugin_html=combined_plugin_html)
 
-@blueprint.route("/save", methods=['POST'])
-def save():
-    """Handle form submission"""
-    # Get plugin models
-    plugin_models = current_app.module_loader.pm.hook.get_model(base_model=Core())
+# @blueprint.route("/save", methods=['POST'])
+# def save():
+#     """Handle form submission"""
+#     # Get plugin models
+#     plugin_models = current_app.module_loader.pm.hook.get_model(base_model=Core())
     
-    # Use the last plugin model if available, otherwise use base model
-    model = plugin_models[-1][0] if plugin_models else Core()
+#     # Use the last plugin model if available, otherwise use base model
+#     model = plugin_models[-1][0] if plugin_models else Core()
     
-    # Save the data
-    model.save(request.form)
-    return redirect(url_for('core_bp.core_home'))
+#     # Save the data
+#     model.save(request.form)
+#     return redirect(url_for('core_bp.core_home'))
 
 @blueprint.route("/login", methods=['GET', 'POST'])
 def login():

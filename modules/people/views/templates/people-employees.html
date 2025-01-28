@@ -79,7 +79,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <form id="addUserForm" method="POST" action="{{ url_for('people_bp.add_user') }}">
+                <form id="addUserForm" method="POST" action="{{ url_for('people_bp.add_employee') }}">
                     <div class="mb-3">
                         <label for="email" class="form-label">Email</label>
                         <input type="email" class="form-control" id="email" name="email" required>
@@ -100,6 +100,8 @@
                         <input type="checkbox" class="form-check-input" id="is_admin" name="is_admin">
                         <label class="form-check-label" for="is_admin">Admin</label>
                     </div>
+
+                    {{ plugin_html|safe }}
                 </form>
             </div>
             <div class="modal-footer">

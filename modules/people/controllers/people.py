@@ -1,6 +1,9 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, current_app, g
 from flask_login import login_required, current_user
-from ..models.user import User
+from modules.core.models.user import User
+from ..models.employee import Employee, EmployeeType, EmployeeStatus
+from system.db.database import db
+from datetime import datetime
 
 # Create blueprint
 blueprint = Blueprint(
@@ -37,31 +40,59 @@ def people_home():
 def employees():
     """Employees page"""
     users = User.query.all()
+    
+    # Get plugin HTML for the form
+    plugin_html = current_app.module_loader.pm.hook.modify_new_employee_form()
+    if not plugin_html:
+        plugin_html = []
+    
+    # Flatten and combine plugin HTML
+    flattened_html = [item for sublist in plugin_html for item in (sublist if isinstance(sublist, list) else [sublist])]
+    combined_plugin_html = "\n".join(filter(None, flattened_html))
+    
     return render_template("people-employees.html",
                          active_page='employees',
                          users=users,
                          module_name=MODULE_NAME,
                          module_icon=MODULE_ICON,
                          module_home=MODULE_HOME,
+                         plugin_html=combined_plugin_html,
                          installed_modules=g.installed_modules)
 
-@blueprint.route("/add", methods=['POST'])
+@blueprint.route("/add", methods=['GET', 'POST'])
 @login_required
-def add_user():
-    """Add a new user"""
-    try:
-        User.create(
-            email=request.form.get('email'),
-            password=request.form.get('password'),
-            first_name=request.form.get('first_name'),
-            last_name=request.form.get('last_name'),
-            is_admin=bool(request.form.get('is_admin'))
-        )
-        flash('User added successfully', 'success')
-    except Exception as e:
-        flash(f'Error adding user: {str(e)}', 'error')
-    
-    return redirect(url_for('people_bp.employees'))
+def add_employee():
+    if request.method == 'POST':
+        try:
+            # First create the user
+            user = User.create(
+                email=request.form.get('email'),
+                password=request.form.get('password'),
+                first_name=request.form.get('first_name'),
+                last_name=request.form.get('last_name'),
+                is_admin=request.form.get('is_admin') == 'on'
+            )
+            
+            # Then create the employee profile
+            employee = Employee.create(
+                user=user,
+                department=request.form.get('department'),
+                position=request.form.get('position'),
+                start_date=datetime.now().date(),
+                type=EmployeeType[request.form.get('type', 'FULL_TIME').upper()]
+            )
+            
+            # Let plugins process the new employee data
+            current_app.module_loader.pm.hook.process_new_employee(form_data=request.form)
+            
+            flash('Employee added successfully!', 'success')
+            return redirect(url_for('people_bp.employees'))
+            
+        except Exception as e:
+            db.session.rollback()
+            flash('Error adding employee', 'error')
+            print(f"Error: {str(e)}")
+            return redirect(url_for('people_bp.employees'))
 
 @blueprint.route("/delete/<int:user_id>", methods=['POST'])
 @login_required

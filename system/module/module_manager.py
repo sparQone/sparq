@@ -6,14 +6,6 @@ hookimpl = pluggy.HookimplMarker("sparqone")
 
 class ModuleSpecs:
     @hookspec
-    def modify_view(self):
-        """Add custom elements to module views.
-        Returns:
-            list: List of HTML strings to be inserted into the view
-        """
-        pass
-
-    @hookspec
     def get_model(self, base_model):
         """Get module's model that extends the base model.
         Args:

@@ -19,7 +19,6 @@ class ModuleLoader:
         print("\nLoading modules:")
         
         # First collect all modules and their manifests
-        module_data = []
         for module_name in os.listdir(modules_dir):
             module_path = os.path.join(modules_dir, module_name)
             
@@ -35,6 +34,11 @@ class ModuleLoader:
                         instance = module.module_instance
                         self.pm.register(instance)
                         self.modules.append(instance)
+                        
+                        # Allow module to register its specs if it has the method
+                        if hasattr(instance, 'register_specs'):
+                            instance.register_specs(self.pm)
+                            
                         print(f"- {manifest['name']} ({manifest.get('type', 'Unknown')})")
                 except Exception as e:
                     print(f"Failed to load module {module_name}: {str(e)}")
