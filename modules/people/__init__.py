@@ -1,5 +1,5 @@
 from flask import Blueprint
-from .controllers.people import blueprint as people_blueprint
+from .controllers.routes import blueprint as people_blueprint
 from .module import PeopleModule
 
 # Create module instance

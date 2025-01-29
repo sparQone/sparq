@@ -16,7 +16,7 @@ class PeopleModule:
 
     def get_routes(self):
         """Get routes for the module"""
-        from .controllers.people import blueprint
+        from .controllers.routes import blueprint
         return [(blueprint, '/people')]
 
     @hookimpl

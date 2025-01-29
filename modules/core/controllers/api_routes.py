@@ -2,7 +2,7 @@ import os
 import signal
 from flask import jsonify
 from flask_login import login_required
-from modules.core.controllers.core import blueprint  # Import the existing core blueprint
+from modules.core.controllers.routes import blueprint  # Import the existing core blueprint
 
 @blueprint.route('/api/restart', methods=['GET'])
 @login_required

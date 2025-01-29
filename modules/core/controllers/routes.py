@@ -83,12 +83,12 @@ def before_request():
         
         g.current_module = current_module
 
-@blueprint.route("/")
+@blueprint.route('/')
 @login_required
-def home():
+def index():
     """Redirect root to people dashboard"""
     return redirect(url_for('people_bp.people_home'))
-
+    
 
 @blueprint.route("/login", methods=['GET', 'POST'])
 def login():
@@ -146,14 +146,19 @@ def register():
             
     return render_template('register.html')
 
-@blueprint.route("/settings")
+@blueprint.route('/settings')
 @login_required
-@admin_required
 def settings():
-    """Core settings page"""
-    return render_template("settings/index.html",
+    """Settings page"""
+    if not current_user.is_admin:
+        return redirect(url_for('core_bp.index'))
+        
+    return render_template("settings.html",
+                         title="Settings",
                          module_name="Settings",
-                         module_icon="fa-solid fa-cog",
+                         module_icon="fa-solid fa-gear",
+                         page_icon="fa-solid fa-gear",
+                         icon_color="#6c757d",
                          module_home='core_bp.settings',
                          installed_modules=g.installed_modules)
 
@@ -222,29 +227,11 @@ def toggle_module():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-@blueprint.route('/api/restart', methods=['GET'])
+@blueprint.route('/restart')
 @login_required
-def restart():
-    """Restart the Flask application"""
-    try:
-        if current_app.debug:
-            # Get the main application file path
-            main_app_file = os.path.abspath(sys.modules['__main__'].__file__)
-            print(f"Debug mode: Triggering reload by touching {main_app_file}")
-            os.utime(main_app_file, None)
-        else:
-            print("Production mode: Manual restart required")
-            return jsonify({
-                "status": "warning",
-                "message": "Application is in production mode. Please restart the server manually."
-            }), 200
-
-        return jsonify({
-            "status": "success",
-            "message": "Restart signal sent"
-        }), 200
-    except Exception as e:
-        return jsonify({
-            "status": "error",
-            "message": str(e)
-        }), 500
+def system_restart():
+    """Restart the application"""
+    if current_user.is_admin:
+        python = sys.executable
+        os.execl(python, python, *sys.argv)
+    return redirect(url_for('core_bp.index'))

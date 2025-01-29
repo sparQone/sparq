@@ -1,5 +1,5 @@
 from flask import Blueprint
-from .controllers.books import blueprint as books_blueprint
+from .controllers.routes import blueprint as books_blueprint
 from .module import BooksModule
 
 # Create module instance

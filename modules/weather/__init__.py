@@ -1,7 +1,7 @@
 # This file can be empty or contain weather module initialization logic
 
 from flask import Blueprint
-from .controllers.weather import blueprint as weather_blueprint
+from .controllers.routes import blueprint as weather_blueprint
 from .module import WeatherModule
 
 # Create module instance

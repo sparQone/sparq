@@ -1,5 +1,5 @@
 from flask import Blueprint
-from .controllers.expense import blueprint as expense_blueprint
+from .controllers.routes import blueprint as expense_blueprint
 from .module import ExpenseModule
 
 # Create module instance

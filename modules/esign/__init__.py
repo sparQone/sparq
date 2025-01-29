@@ -1,5 +1,5 @@
 from flask import Blueprint
-from .controllers.esign import blueprint as esign_blueprint
+from .controllers.routes import blueprint as esign_blueprint
 from .module import ESignModule
 
 # Create module instance

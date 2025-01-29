@@ -8,7 +8,7 @@ class CoreModule:
     @hookimpl
     def get_routes(self):
         """Get module routes"""
-        from .controllers.core import blueprint
+        from .controllers.routes import blueprint
         return [(blueprint, '')]
 
     def register_blueprint(self, blueprint, url_prefix):
