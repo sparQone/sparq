@@ -4,55 +4,53 @@ import pluggy
 from .module_manager import ModuleSpecs
 
 class ModuleLoader:
-    def __init__(self):
+    def __init__(self, app=None):
+        self.app = app
+        self.modules = []
         self.pm = pluggy.PluginManager("sparqone")
         self.pm.add_hookspecs(ModuleSpecs)
         self.manifests = []
-        self.modules = []
         
-    def is_module_enabled(self, module_path):
-        """Check if module is enabled by looking for __DISABLED__ file"""
-        return not os.path.exists(os.path.join(module_path, '__DISABLED__'))
+    def load_modules(self):
+        """Load all modules from the modules directory"""
+        modules_dir = "modules"
         
-    def load_modules(self, modules_dir="modules"):
-        """Load modules dynamically from the modules folder"""
-        if not os.path.exists(modules_dir):
-            print(f"Modules folder '{modules_dir}' does not exist!")
-            return
-            
         print("\nLoading modules:")
+        print("---------------")
         
-        # First collect all modules and their manifests
         for module_name in os.listdir(modules_dir):
             module_path = os.path.join(modules_dir, module_name)
             
             if os.path.isdir(module_path) and not module_name.startswith('__'):
-                # Skip disabled modules
-                if not self.is_module_enabled(module_path):
-                    print(f"- {module_name} (Disabled)")
-                    continue
-                    
                 try:
-                    # Import the module and its manifest
-                    module = importlib.import_module(f"modules.{module_name}")
+                    # Load manifest
                     manifest = importlib.import_module(f"modules.{module_name}.__manifest__").manifest
                     
-                    # Store both manifest and module instance
-                    if hasattr(module, 'module_instance'):
-                        self.manifests.append(manifest)
-                        instance = module.module_instance
-                        self.pm.register(instance)  # Register with plugin manager
-                        self.modules.append(instance)
+                    # Check if module is disabled
+                    disabled_file = os.path.join(module_path, '__DISABLED__')
+                    is_enabled = not os.path.exists(disabled_file)
+                    manifest['enabled'] = is_enabled
+                    
+                    # Get module type and status
+                    module_type = manifest.get('type', 'Unknown')
+                    status = "Enabled" if is_enabled else "Disabled"
+                    
+                    # Print module info with consistent formatting
+                    print(f"- {manifest['name']} ({module_type}): {status}")
+                    
+                    if is_enabled:
+                        # Load the module only if enabled
+                        module = importlib.import_module(f"modules.{module_name}")
+                        if hasattr(module, 'module_instance'):
+                            self.manifests.append(manifest)
+                            instance = module.module_instance
+                            self.pm.register(instance)  # Register with plugin manager
+                            self.modules.append(instance)
                         
-                        # Allow module to register its specs if it has the method
-                        if hasattr(instance, 'register_specs'):
-                            instance.register_specs(self.pm)
-                            
-                        print(f"- {manifest['name']} ({manifest.get('type', 'Unknown')})")
                 except Exception as e:
-                    print(f"Failed to load module {module_name}: {str(e)}")
+                    print(f"- {module_name}: Failed to load ({str(e)})")
         
-        print()  # Empty line after module list
+        print("---------------\n")
 
     def register_routes(self, app):
         """Register routes from all modules"""

@@ -4,6 +4,8 @@ manifest = {
     'main_route': '/clock',
     'icon_class': 'fa-regular fa-clock',
     'type': 'App',
-    'color': '#dc3545',  # Red color
-    'depends': ['core']
+    'color': '#6f42c1',  # Purple
+    'depends': ['core'],
+    'description': 'Digital clock demonstration app',
+    'long_description': 'A simple digital clock application demonstrating real-time updates and basic module functionality. Includes time zone support and various display formats.'
 }

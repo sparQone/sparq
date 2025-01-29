@@ -236,4 +236,22 @@ body {
     color: #6c757d;
     font-size: 1.1rem;
     line-height: 1.5;
+}
+
+/* Content Card Layout - for settings pages */
+.content-card {
+    padding: 2rem 4rem;
+    margin: 0 2rem;
+    max-width: 1800px;
+    background: white;
+    border-radius: 0.5rem;
+    box-shadow: 0 0 20px rgba(0,0,0,0.05);
+}
+
+/* Responsive padding */
+@media (max-width: 768px) {
+    .content-card {
+        padding: 1rem;
+        margin: 0 1rem;
+    }
 } 

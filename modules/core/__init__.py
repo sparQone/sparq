@@ -1,8 +1,8 @@
 # This file can be empty or contain core module initialization logic
 
 from flask import Blueprint
-from .controllers.core import blueprint as core_blueprint
 from .module import CoreModule
+from .controllers.core import blueprint as core_blueprint
 
 # Create module instance
 module_instance = CoreModule()

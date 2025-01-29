@@ -4,7 +4,9 @@ from functools import wraps
 from ..models.user import User
 from system.db.database import db
 import os
+import signal
 import importlib
+import sys
 
 # Create blueprint
 blueprint = Blueprint(
@@ -168,8 +170,13 @@ def manage_apps():
         
         if os.path.isdir(module_path) and not module_name.startswith('__'):
             try:
+                # Load the manifest
                 manifest = importlib.import_module(f"modules.{module_name}.__manifest__").manifest
-                manifest['enabled'] = not os.path.exists(os.path.join(module_path, '__DISABLED__'))
+                
+                # Check if module is disabled
+                disabled_file = os.path.join(module_path, '__DISABLED__')
+                manifest['enabled'] = not os.path.exists(disabled_file)
+                
                 modules.append(manifest)
             except Exception as e:
                 print(f"Error loading manifest for {module_name}: {e}")
@@ -201,6 +208,43 @@ def toggle_module():
             os.remove(disabled_file)
         elif not enabled and not os.path.exists(disabled_file):
             open(disabled_file, 'a').close()
-        return jsonify({'success': True})
+            
+        # After toggling, trigger a restart
+        if current_app.debug:
+            main_app_file = os.path.abspath(sys.modules['__main__'].__file__)
+            print(f"Debug mode: Triggering reload by touching {main_app_file}")
+            os.utime(main_app_file, None)
+            
+        return jsonify({
+            'success': True,
+            'message': f"Module {module_name} {'enabled' if enabled else 'disabled'}. Restarting application..."
+        })
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
+@blueprint.route('/api/restart', methods=['GET'])
+@login_required
+def restart():
+    """Restart the Flask application"""
+    try:
+        if current_app.debug:
+            # Get the main application file path
+            main_app_file = os.path.abspath(sys.modules['__main__'].__file__)
+            print(f"Debug mode: Triggering reload by touching {main_app_file}")
+            os.utime(main_app_file, None)
+        else:
+            print("Production mode: Manual restart required")
+            return jsonify({
+                "status": "warning",
+                "message": "Application is in production mode. Please restart the server manually."
+            }), 200
+
+        return jsonify({
+            "status": "success",
+            "message": "Restart signal sent"
+        }), 200
+    except Exception as e:
+        return jsonify({
+            "status": "error",
+            "message": str(e)
+        }), 500

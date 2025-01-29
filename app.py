@@ -33,12 +33,14 @@ def create_app():
         """Load user by ID for Flask-Login"""
         return User.get_by_id(int(user_id))
     
-    # Initialize module loader first
+    # Create module loader
     module_loader = ModuleLoader()
-    app.module_loader = module_loader
     
-    # Load modules from the modules directory
-    module_loader.load_modules("modules")
+    # Initialize module loader with app
+    module_loader.app = app
+    
+    # Load modules
+    module_loader.load_modules()
     
     # Check for required modules
     required_modules = ['CoreModule', 'PeopleModule']
