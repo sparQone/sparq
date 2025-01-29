@@ -36,8 +36,9 @@ def create_app():
     # Create module loader
     module_loader = ModuleLoader()
     
-    # Initialize module loader with app
+    # Initialize module loader with app and store it
     module_loader.app = app
+    app.module_loader = module_loader  # Store module_loader in app
     
     # Load modules
     module_loader.load_modules()
