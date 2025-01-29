@@ -14,7 +14,7 @@
         <div class="container">
             <div class="header-content">
                 <div class="app-title">
-                    <a href="{{ url_for('core_bp.apps') }}" class="app-logo-link">
+                    <a href="{{ url_for('core_bp.home') }}" class="app-logo-link">
                         <img src="{{ url_for('core_bp.static', filename='images/sparq-logo.png') }}" alt="SparqOne" class="app-logo">
                     </a>
                     <div class="app-title-divider"></div>
@@ -31,11 +31,11 @@
                         <div class="dropdown-menu dropdown-menu-end apps-dropdown">
                             <div class="apps-grid">
                                 {% for mod in installed_modules|sort(attribute='name') %}
-                                    {% if mod.type == 'App' %}
+                                    {% if mod.type == 'App' and mod.enabled %}
                                         <a href="{{ mod.main_route }}" 
                                            class="app-item {{ mod.name|lower }}-app" 
                                            data-app="{{ mod.name }}"
-                                           style="--module-color: {{ mod.color|default('#6c757d') }}">
+                                           style="--app-color: {{ mod.color|default('#6c757d') }}">
                                             <i class="{{ mod.icon_class }}"></i>
                                             <span>{{ mod.name }}</span>
                                         </a>
@@ -57,6 +57,12 @@
                                 <div class="user-role">{% if current_user.is_admin %}Admin{% else %}User{% endif %}</div>
                             </div>
                             <div class="dropdown-divider"></div>
+                            {% if current_user.is_admin %}
+                                <a href="{{ url_for('core_bp.settings') }}" class="dropdown-item">
+                                    <i class="fas fa-cog"></i> Settings
+                                </a>
+                                <div class="dropdown-divider"></div>
+                            {% endif %}
                             <a href="{{ url_for('core_bp.logout') }}" class="dropdown-item">
                                 <i class="fas fa-sign-out-alt"></i> Logout
                             </a>

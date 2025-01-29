@@ -1,7 +1,10 @@
 from flask import Blueprint, render_template, jsonify, current_app, request, redirect, url_for, flash, g
 from flask_login import login_user, logout_user, login_required, current_user
+from functools import wraps
 from ..models.user import User
 from system.db.database import db
+import os
+import importlib
 
 # Create blueprint
 blueprint = Blueprint(
@@ -11,21 +14,31 @@ blueprint = Blueprint(
     static_folder='../views/assets'
 )
 
+def admin_required(f):
+    """Decorator to require admin access for a route"""
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not current_user.is_authenticated or not current_user.is_admin:
+            flash('Admin access required', 'error')
+            return redirect(url_for('core_bp.login'))
+        return f(*args, **kwargs)
+    return decorated_function
+
 def enrich_module_data(modules):
     """Add additional module data like colors"""
     enriched = []
     for module in modules:
-        # Get the manifest data and the module data
-        manifest = module.get('manifest', {})
+        # Get the manifest data
+        manifest = module if isinstance(module, dict) else module.get('manifest', {})
         
-        # Create enriched module using both manifest and module data
+        # Create enriched module using manifest data
         enriched_module = {
-            'name': manifest.get('name') or module.get('name'),
-            'type': manifest.get('type') or module.get('type'),
-            'main_route': manifest.get('main_route') or module.get('main_route'),
-            'icon_class': manifest.get('icon_class') or module.get('icon_class'),
-            'color': manifest.get('color') or module.get('color', '#6c757d'),
-            'manifest': manifest
+            'name': manifest.get('name'),
+            'type': manifest.get('type'),
+            'main_route': manifest.get('main_route'),
+            'icon_class': manifest.get('icon_class'),
+            'color': manifest.get('color', '#6c757d'),
+            'enabled': manifest.get('enabled', True)
         }
         
         # Only add if we have at least a name and type
@@ -131,19 +144,63 @@ def register():
             
     return render_template('register.html')
 
-@blueprint.route("/apps")
+@blueprint.route("/settings")
 @login_required
-def apps():
-    """Render the apps grid page"""
-    # Filter for App type only (exclude System modules) and sort alphabetically
-    installed_modules = sorted(
-        [m for m in g.installed_modules if m.get('type') == 'App'],
-        key=lambda x: x.get('name', '')
-    )
+@admin_required
+def settings():
+    """Core settings page"""
+    return render_template("settings/index.html",
+                         module_name="Settings",
+                         module_icon="fa-solid fa-cog",
+                         module_home='core_bp.settings',
+                         installed_modules=g.installed_modules)
+
+@blueprint.route("/settings/apps")
+@login_required
+@admin_required
+def manage_apps():
+    """Apps management page"""
+    modules_dir = "modules"
+    modules = []
     
-    return render_template("apps.html", 
-                         module=g.current_module,
-                         module_name="Apps",
-                         module_icon="fa-solid fa-th",
-                         module_home='core_bp.apps',
-                         installed_modules=installed_modules)
+    for module_name in os.listdir(modules_dir):
+        module_path = os.path.join(modules_dir, module_name)
+        
+        if os.path.isdir(module_path) and not module_name.startswith('__'):
+            try:
+                manifest = importlib.import_module(f"modules.{module_name}.__manifest__").manifest
+                manifest['enabled'] = not os.path.exists(os.path.join(module_path, '__DISABLED__'))
+                modules.append(manifest)
+            except Exception as e:
+                print(f"Error loading manifest for {module_name}: {e}")
+    
+    return render_template("settings/apps.html", 
+                         modules=sorted(modules, key=lambda x: x['name']),
+                         module_name="Settings",
+                         module_icon="fa-solid fa-cog",
+                         module_home='core_bp.settings',
+                         installed_modules=g.installed_modules)
+
+@blueprint.route("/api/modules/toggle", methods=['POST'])
+@login_required
+@admin_required
+def toggle_module():
+    """Toggle module enabled/disabled state"""
+    data = request.get_json()
+    module_name = data.get('module')
+    enabled = data.get('enabled')
+    
+    if not module_name:
+        return jsonify({'error': 'Module name required'}), 400
+        
+    module_path = os.path.join('modules', module_name)
+    disabled_file = os.path.join(module_path, '__DISABLED__')
+    
+    try:
+        if enabled and os.path.exists(disabled_file):
+            os.remove(disabled_file)
+        elif not enabled and not os.path.exists(disabled_file):
+            open(disabled_file, 'a').close()
+        return jsonify({'success': True})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500

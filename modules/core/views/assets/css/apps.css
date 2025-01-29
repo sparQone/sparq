@@ -142,4 +142,36 @@
     font-size: 1.5rem;
     margin-bottom: 0.5rem;
     color: var(--module-color, #6c757d);
+}
+
+/* App Grid Items */
+.app-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1rem;
+    color: inherit;
+    text-decoration: none;
+    border-radius: 0.5rem;
+    transition: background-color 0.2s;
+}
+
+.app-item:hover {
+    background-color: #f8f9fa;
+    color: inherit;
+}
+
+.app-item i {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+    color: var(--app-color);
+}
+
+/* For consistency, update these as well */
+[data-app] i {
+    color: var(--app-color) !important;
+}
+
+.app-name[data-app] {
+    --app-color: var(--module-color);
 } 

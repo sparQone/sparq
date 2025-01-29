@@ -10,6 +10,10 @@ class ModuleLoader:
         self.manifests = []
         self.modules = []
         
+    def is_module_enabled(self, module_path):
+        """Check if module is enabled by looking for __DISABLED__ file"""
+        return not os.path.exists(os.path.join(module_path, '__DISABLED__'))
+        
     def load_modules(self, modules_dir="modules"):
         """Load modules dynamically from the modules folder"""
         if not os.path.exists(modules_dir):
@@ -23,6 +27,11 @@ class ModuleLoader:
             module_path = os.path.join(modules_dir, module_name)
             
             if os.path.isdir(module_path) and not module_name.startswith('__'):
+                # Skip disabled modules
+                if not self.is_module_enabled(module_path):
+                    print(f"- {module_name} (Disabled)")
+                    continue
+                    
                 try:
                     # Import the module and its manifest
                     module = importlib.import_module(f"modules.{module_name}")
@@ -30,7 +39,7 @@ class ModuleLoader:
                     
                     # Store both manifest and module instance
                     if hasattr(module, 'module_instance'):
-                        self.manifests.append(manifest)  # Add manifest first
+                        self.manifests.append(manifest)
                         instance = module.module_instance
                         self.pm.register(instance)  # Register with plugin manager
                         self.modules.append(instance)

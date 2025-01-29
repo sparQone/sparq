@@ -5,6 +5,11 @@ from ..models.employee import Employee, EmployeeType, EmployeeStatus
 from system.db.database import db
 from datetime import datetime
 
+# Module constants
+MODULE_NAME = "People"
+MODULE_ICON = "fa-solid fa-users"
+MODULE_HOME = "people_bp.people_home"
+
 # Create blueprint
 blueprint = Blueprint(
     'people_bp', 
