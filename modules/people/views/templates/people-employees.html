@@ -45,9 +45,9 @@
                         </td>
                         <td>{{ user.created_at.strftime('%Y-%m-%d') }}</td>
                         <td class="action-buttons">
-                            <button class="btn btn-sm btn-outline-primary" title="Edit">
+                            <a href="{{ url_for('people_bp.edit_employee', user_id=user.id) }}" class="btn btn-sm btn-outline-primary" title="Edit">
                                 <i class="fas fa-edit"></i>
-                            </button>
+                            </a>
                             {% if user.email != 'admin' %}
                                 <form method="POST" action="{{ url_for('people_bp.delete_user', user_id=user.id) }}" 
                                       style="display: inline;"

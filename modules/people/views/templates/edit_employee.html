@@ -1,0 +1,82 @@
+{% extends "people-base.html" %}
+
+{% block title %}Edit Employee{% endblock %}
+
+{% block people_content %}
+<div class="content-card">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="{{ url_for('people_bp.people_home') }}">
+                    <i class="{{ module_icon }}"></i> {{ module_name }}
+                </a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="{{ url_for('people_bp.employees') }}">
+                    <i class="fas fa-users"></i> Employees
+                </a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">
+                <i class="fas fa-edit"></i> Edit {{ user.first_name }} {{ user.last_name }}
+            </li>
+        </ol>
+    </nav>
+
+    <div class="settings-header">
+        <h2><i class="fas fa-edit"></i> Edit Employee</h2>
+        <p class="text-muted">Update employee information</p>
+    </div>
+    
+    <form method="POST" class="mt-4">
+        <div class="mb-3">
+            <label for="email" class="form-label">Email</label>
+            <input type="email" class="form-control" id="email" name="email" value="{{ user.email }}" required>
+        </div>
+        <div class="mb-3">
+            <label for="password" class="form-label">New Password (leave blank to keep current)</label>
+            <input type="password" class="form-control" id="password" name="password">
+        </div>
+        <div class="mb-3">
+            <label for="first_name" class="form-label">First Name</label>
+            <input type="text" class="form-control" id="first_name" name="first_name" value="{{ user.first_name }}" required>
+        </div>
+        <div class="mb-3">
+            <label for="last_name" class="form-label">Last Name</label>
+            <input type="text" class="form-control" id="last_name" name="last_name" value="{{ user.last_name }}" required>
+        </div>
+        
+        <div class="mb-3 form-check">
+            <input type="checkbox" class="form-check-input" id="is_admin" name="is_admin" {% if user.is_admin %}checked{% endif %}>
+            <label class="form-check-label" for="is_admin">Admin</label>
+        </div>
+        
+        {% if user.employee_profile %}
+        <div class="mb-3">
+            <label for="department" class="form-label">Department</label>
+            <input type="text" class="form-control" id="department" name="department" value="{{ user.employee_profile.department }}">
+        </div>
+        <div class="mb-3">
+            <label for="position" class="form-label">Position</label>
+            <input type="text" class="form-control" id="position" name="position" value="{{ user.employee_profile.position }}">
+        </div>
+        <div class="mb-3">
+            <label for="type" class="form-label">Employment Type</label>
+            <select class="form-select" id="type" name="type">
+                {% for type in ['FULL_TIME', 'PART_TIME', 'CONTRACT', 'INTERN'] %}
+                <option value="{{ type }}" {% if user.employee_profile.type.name == type %}selected{% endif %}>
+                    {{ type.replace('_', ' ').title() }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        {% endif %}
+        
+        {{ plugin_html|safe }}
+        
+        <div class="mt-4">
+            <button type="submit" class="btn btn-primary">Save Changes</button>
+            <a href="{{ url_for('people_bp.employees') }}" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %} 

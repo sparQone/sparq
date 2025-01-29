@@ -16,4 +16,23 @@ class PeopleHookSpecs:
             form_data: The submitted form data
             employee: The newly created employee instance
         """
+        pass
+
+    @hookspec
+    def modify_edit_employee_form(self, employee):
+        """Add additional fields to employee edit form.
+        Args:
+            employee: The employee being edited
+        Returns:
+            list: List of HTML strings to be inserted into the edit form
+        """
+        pass
+
+    @hookspec
+    def process_employee_update(self, form_data, employee):
+        """Process additional form data when employee is updated.
+        Args:
+            form_data: The submitted form data
+            employee: The employee being updated
+        """
         pass 
