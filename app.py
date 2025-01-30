@@ -67,15 +67,20 @@ def create_app():
         module_loader.pm.hook.init_database()
         
         # Then check for admin user
-        if not User.get_by_email('admin'):
+        if not User.get_by_email('sarah@allaboutpies.shop'):
             User.create(
-                email='admin',
+                email='sarah@allaboutpies.shop',
                 password='admin',
-                first_name='Admin',
-                last_name='User',
-                is_admin=True
+                first_name='Sarah',
+                last_name='Johnson',
+                is_admin=True,
+                is_sample=False
             )
             print("Created default admin user")
+        
+        # Create sample users
+        User.create_sample_users()
+        print("Created sample users")
     
     return app
 

@@ -14,6 +14,7 @@ class User(db.Model, UserMixin):
     created_at = db.Column(db.DateTime, default=db.func.now())
     is_active = db.Column(db.Boolean, default=True)
     is_admin = db.Column(db.Boolean, default=False)
+    is_sample = db.Column(db.Boolean, default=False)
 
     @property
     def password(self):
@@ -37,7 +38,7 @@ class User(db.Model, UserMixin):
         return User.query.filter_by(email=email).first()
 
     @classmethod
-    def create(cls, email, password, first_name=None, last_name=None, is_admin=False):
+    def create(cls, email, password, first_name=None, last_name=None, is_admin=False, is_sample=False):
         """Create new user"""
         if email == 'admin' and User.get_by_email('admin'):
             raise ValueError("Cannot create duplicate admin user")
@@ -52,3 +53,30 @@ class User(db.Model, UserMixin):
         db.session.add(user)
         db.session.commit()
         return user 
+    
+    @classmethod
+    def create_sample_users(cls):
+        """Create sample users for testing/demo purposes"""
+        sample_users = [            
+            {
+                'email': 'michael.chen@allaboutpies.shop', 
+                'password': 'password123',
+                'first_name': 'Michael',
+                'last_name': 'Chen',
+                'is_admin': False,
+                'is_sample': True
+            },
+            {
+                'email': 'david.smith@allaboutpies.shop',
+                'password': 'password123', 
+                'first_name': 'David',
+                'last_name': 'Smith',
+                'is_admin': False,
+                'is_sample': True
+            }
+        ]
+
+        for user_data in sample_users:
+            if not cls.get_by_email(user_data['email']):
+                cls.create(**user_data)
+    
