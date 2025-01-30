@@ -1,97 +1,120 @@
-/* Auth Header */
-.auth-header {
-    padding: 1rem 0;
-    margin-bottom: 2rem;
+/* Base variables */
+:root {
+    --auth-card-width: 400px;
+    --auth-card-padding: 2rem;
+    --auth-form-spacing: 1.5rem;
+    
+    /* Mobile-specific spacing */
+    --mobile-padding: 1rem;
+    --mobile-logo-height: 35px;
+    --mobile-form-spacing: 0.75rem;
 }
 
-.auth-logo-link {
+/* Mobile-first base styles */
+.auth-page {
+    min-height: 100vh;
+    min-height: 100svh; /* Use small viewport height for mobile browsers */
     display: flex;
     align-items: center;
-}
-
-.auth-logo {
-    height: 40px;
-    width: auto;
-}
-
-/* Login and Register Pages */
-.login-container, .register-container {
-    max-width: 400px;
-    margin: 0 auto;  /* Removed top margin since logo is now above */
-    padding: 20px;
-    box-shadow: 0 0 20px rgba(0,0,0,0.1);
-    border-radius: 8px;
-    background: white;
-}
-
-.login-header, .register-header {
-    text-align: center;
-    margin-bottom: 30px;
-}
-
-.login-logo {
-    height: 60px;
-    width: auto;
-    margin-bottom: 1.5rem;
-}
-
-.login-header h2, .register-header h2 {
-    color: #343a40;
-}
-
-.login-header p, .register-header p {
-    color: #6c757d;
-    margin-bottom: 0.5rem;
+    justify-content: center;
+    padding: var(--mobile-padding);
+    background-color: #f8f9fa;
 }
 
 .auth-container {
-    min-height: 100vh;
+    width: 100%;
+    max-width: var(--auth-card-width);
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 2rem;
-    background: #f8f9fa;
+    gap: var(--mobile-form-spacing);
 }
 
 .auth-logo {
-    margin-bottom: 2rem;  /* Space between logo and login box */
+    text-align: center;
+    margin-bottom: var(--mobile-form-spacing);
 }
 
 .auth-logo img {
-    height: 50px;  /* Adjust size as needed */
+    height: var(--mobile-logo-height);
     width: auto;
 }
 
 .auth-box {
     background: white;
-    padding: 2rem;
+    padding: 1.25rem;
     border-radius: 0.5rem;
     box-shadow: 0 0 20px rgba(0,0,0,0.05);
     width: 100%;
-    max-width: 400px;
 }
 
 .auth-box h2 {
-    margin-bottom: 1rem;  /* Reduced from 1.5rem */
+    margin-bottom: 0.75rem;
     text-align: center;
     color: #212529;
+    font-size: 1.5rem;
 }
 
+.auth-box .text-muted {
+    font-size: 0.875rem;
+    margin-bottom: 1rem;
+}
+
+.form-label {
+    font-size: 0.875rem;
+    margin-bottom: 0.25rem;
+}
+
+.form-check {
+    margin-top: 0.5rem;
+    margin-bottom: 0.75rem;
+}
+
+/* Desktop styles */
+@media (min-width: 768px) {
+    :root {
+        --mobile-padding: 2rem;
+        --mobile-logo-height: 50px;
+        --mobile-form-spacing: 1.5rem;
+    }
+
+    .auth-box {
+        padding: var(--auth-card-padding);
+    }
+
+    .auth-box h2 {
+        font-size: 1.75rem;
+        margin-bottom: 1rem;
+    }
+
+    .form-label {
+        font-size: 1rem;
+        margin-bottom: 0.5rem;
+    }
+}
+
+/* Flash messages - keep them compact on mobile */
 .flash-messages {
     position: fixed;
-    top: 1rem;
-    right: 1rem;
+    top: 0.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    width: calc(100% - 1rem);
+    max-width: var(--auth-card-width);
     z-index: 1000;
-    max-width: 400px;
 }
 
 .alert {
     margin-bottom: 0.5rem;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    text-align: center;
 }
 
-.auth-page {
-    background: #f8f9fa;
-    min-height: 100vh;
+/* Remove any old conflicting styles */
+.login-container,
+.register-container,
+.login-header,
+.register-header,
+.login-logo {
+    display: none;
 } 
