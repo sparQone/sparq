@@ -25,6 +25,7 @@
 .main-content {
     flex: 1 1 auto;
     min-width: 0;
+    display: flex;
 }
 
 /* Side Navigation */
@@ -102,17 +103,44 @@
     opacity: 0.9;
 }
 
+/* Common Content Header */
+.updates-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.updates-header h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    color: #212529;
+    font-weight: 500;
+}
+
 /* Content Card */
 .content-card {
     background: white;
     padding: 1.5rem;
     border-radius: 0.5rem;
     box-shadow: 0 0 20px rgba(0,0,0,0.05);
+    flex: 1;
+}
+
+/* Dashboard specific */
+.dashboard-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.dashboard-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
 }
 
 /* Employee List Styles */
 .user-container {
-    max-width: 1000px;
     margin: 0 auto;
 }
 
@@ -121,12 +149,6 @@
     justify-content: space-between;
     align-items: center;
     margin-bottom: 20px;
-    margin-top: -0.5rem;
-}
-
-.user-header h2 {
-    margin: 0;
-    line-height: 1.2;
 }
 
 .table td {
@@ -177,12 +199,6 @@
 }
 
 /* Dashboard Styles */
-.dashboard-grid {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-}
-
 .stats-row {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
