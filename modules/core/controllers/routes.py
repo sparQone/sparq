@@ -153,7 +153,7 @@ def settings():
     if not current_user.is_admin:
         return redirect(url_for('core_bp.index'))
         
-    return render_template("settings.html",
+    return render_template("settings/index.html",
                          title="Settings",
                          module_name="Settings",
                          module_icon="fa-solid fa-gear",
