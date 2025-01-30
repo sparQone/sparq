@@ -42,4 +42,56 @@
 .login-header p, .register-header p {
     color: #6c757d;
     margin-bottom: 0.5rem;
+}
+
+.auth-container {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    background: #f8f9fa;
+}
+
+.auth-logo {
+    margin-bottom: 2rem;  /* Space between logo and login box */
+}
+
+.auth-logo img {
+    height: 50px;  /* Adjust size as needed */
+    width: auto;
+}
+
+.auth-box {
+    background: white;
+    padding: 2rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 0 20px rgba(0,0,0,0.05);
+    width: 100%;
+    max-width: 400px;
+}
+
+.auth-box h2 {
+    margin-bottom: 1rem;  /* Reduced from 1.5rem */
+    text-align: center;
+    color: #212529;
+}
+
+.flash-messages {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    z-index: 1000;
+    max-width: 400px;
+}
+
+.alert {
+    margin-bottom: 0.5rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.auth-page {
+    background: #f8f9fa;
+    min-height: 100vh;
 } 
