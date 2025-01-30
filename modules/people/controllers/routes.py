@@ -90,34 +90,6 @@ def add_employee():
             print(f"Error: {str(e)}")
             return redirect(url_for('people_bp.employees'))
 
-@blueprint.route("/delete/<int:user_id>", methods=['POST'])
-@login_required
-def delete_user(user_id):
-    """Delete a user and associated employee data"""
-    try:
-        user = User.query.get_or_404(user_id)
-        
-        # First delete employee profile if it exists
-        if hasattr(user, 'employee_profile') and user.employee_profile:
-            # Delete nickname data if it exists
-            if hasattr(user.employee_profile, 'nickname_data') and user.employee_profile.nickname_data:
-                db.session.delete(user.employee_profile.nickname_data)
-            
-            # Delete employee record
-            db.session.delete(user.employee_profile)
-        
-        # Then delete user
-        db.session.delete(user)
-        db.session.commit()
-        
-        flash('User and associated data deleted successfully', 'success')
-        
-    except Exception as e:
-        db.session.rollback()
-        flash(f'Error deleting user: {str(e)}', 'error')
-    
-    return redirect(url_for('people_bp.employees'))
-
 @blueprint.route("/hiring")
 @login_required
 def hiring():
@@ -316,4 +288,127 @@ def edit_employee(user_id):
                          plugin_html=combined_plugin_html,
                          module_name=MODULE_NAME,
                          module_icon=MODULE_ICON,
-                         module_home=MODULE_HOME) 
+                         module_home=MODULE_HOME)
+
+@blueprint.route('/employees/add/modal')
+@login_required
+def employee_add_modal():
+    """Return the add employee modal template"""
+    # Get plugin HTML for the form
+    plugin_html = current_app.module_loader.pm.hook.modify_new_employee_form()
+    if not plugin_html:
+        plugin_html = []
+    
+    # Flatten and combine plugin HTML
+    flattened_html = [item for sublist in plugin_html for item in (sublist if isinstance(sublist, list) else [sublist])]
+    combined_plugin_html = "\n".join(filter(None, flattened_html))
+    
+    return render_template('employee-add-modal.html', plugin_html=combined_plugin_html)
+
+@blueprint.route('/employees/table')
+@login_required 
+def employees_table():
+    """Return the employees table partial template"""
+    users = User.query.all()
+    return render_template('employee-table-partial.html', users=users)
+
+@blueprint.route('/employees/add', methods=['POST'])
+@login_required
+def add_employee_htmx():
+    """Add a new employee via HTMX request"""
+    try:
+        user = User.create(
+            email=request.form.get('email'),
+            password=request.form.get('password'),
+            first_name=request.form.get('first_name'),
+            last_name=request.form.get('last_name'),
+            is_admin=bool(request.form.get('is_admin'))
+        )
+        
+        # Create employee profile if additional fields are provided
+        if hasattr(user, 'employee_profile'):
+            employee = Employee(
+                user_id=user.id,
+                department=request.form.get('department'),
+                position=request.form.get('position'),
+                type=EmployeeType[request.form.get('type', 'FULL_TIME')],
+                status=EmployeeStatus.ACTIVE
+            )
+            db.session.add(employee)
+            
+        db.session.commit()
+        users = User.query.all()
+        return render_template('employee-table-partial.html', users=users)
+    except Exception as e:
+        return str(e), 400
+
+@blueprint.route('/employees/<int:user_id>/edit/modal')
+@login_required
+def employee_edit_modal(user_id):
+    """Return the edit employee modal template"""
+    user = User.query.get_or_404(user_id)
+    
+    # Get plugin HTML for the form - using the same hook as add form
+    plugin_html = current_app.module_loader.pm.hook.modify_new_employee_form()
+    if not plugin_html:
+        plugin_html = []
+    
+    # Flatten and combine plugin HTML
+    flattened_html = [item for sublist in plugin_html for item in (sublist if isinstance(sublist, list) else [sublist])]
+    combined_plugin_html = "\n".join(filter(None, flattened_html))
+    
+    return render_template('employee-edit-modal.html', 
+                         user=user, 
+                         plugin_html=combined_plugin_html)
+
+@blueprint.route('/employees/<int:user_id>', methods=['PUT'])
+@login_required
+def edit_employee_htmx(user_id):
+    """Edit an employee via HTMX request"""
+    try:
+        user = User.query.get_or_404(user_id)
+        user.email = request.form.get('email')
+        user.first_name = request.form.get('first_name')
+        user.last_name = request.form.get('last_name')
+        user.is_admin = bool(request.form.get('is_admin'))
+        
+        # Update password only if provided
+        password = request.form.get('password')
+        if password:
+            user.set_password(password)
+        
+        # Update employee profile if it exists
+        if hasattr(user, 'employee_profile') and user.employee_profile:
+            user.employee_profile.department = request.form.get('department')
+            user.employee_profile.position = request.form.get('position')
+            if request.form.get('type'):
+                user.employee_profile.type = EmployeeType[request.form.get('type')]
+            
+        db.session.commit()
+        users = User.query.all()
+        return render_template('employee-table-partial.html', users=users)
+    except Exception as e:
+        return str(e), 400
+
+@blueprint.route('/employees/<int:user_id>', methods=['DELETE'])
+@login_required
+def delete_user(user_id):
+    """Delete a user via HTMX request"""
+    try:
+        user = User.query.get_or_404(user_id)
+        if user.email == 'admin':
+            return "Cannot delete admin user", 400
+            
+        # First delete employee profile if it exists
+        if hasattr(user, 'employee_profile') and user.employee_profile:
+            if hasattr(user.employee_profile, 'nickname_data') and user.employee_profile.nickname_data:
+                db.session.delete(user.employee_profile.nickname_data)
+            db.session.delete(user.employee_profile)
+            
+        db.session.delete(user)
+        db.session.commit()
+        
+        users = User.query.all()
+        return render_template('employee-table-partial.html', users=users)
+    except Exception as e:
+        return str(e), 400 

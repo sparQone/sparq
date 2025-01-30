@@ -4,26 +4,116 @@
 }
 
 .people-app .app-header {
-    border-bottom-color: #0d6efd;
+    border-bottom-color: var(--module-color);
 }
 
 .app-icon-people,
 [data-app="People"] i {
-    color: #0d6efd !important;
+    color: var(--module-color) !important;
 }
 
-/* People layout */
-.user-container {
-    max-width: 1000px;
+/* Layout */
+.people-layout {
+    display: flex;
+    gap: 1.5rem;
+    padding: 0 20px;
     margin: 0 auto;
+    min-width: 1000px;
+    max-width: 100%;
 }
 
-.action-buttons {
+.main-content {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+/* Side Navigation */
+.side-nav {
+    width: 240px;
+    min-width: 240px;
+    flex: 0 0 240px;
+    padding: 1.5rem;
+    background: white;
+    border-radius: 0.5rem;
+    box-shadow: 0 0 20px rgba(0,0,0,0.05);
+    height: fit-content;
+}
+
+.nav-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.nav-item {
+    margin-bottom: 0.5rem;
+}
+
+.nav-item:last-child {
+    margin-bottom: 0;
+}
+
+.nav-link {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    color: #495057;
+    text-decoration: none;
+    border-radius: 0.25rem;
+    transition: all 0.2s ease;
     white-space: nowrap;
 }
 
-.table td {
-    vertical-align: middle;
+.nav-link:hover {
+    background-color: #f8f9fa;
+    color: var(--module-color);
+    transform: translateX(5px);
+}
+
+.nav-link.active {
+    background: rgba(13, 110, 253, 0.1);
+    color: var(--module-color);
+    font-weight: 500;
+}
+
+.nav-link i {
+    font-size: 1.1rem;
+    width: 1.5rem;
+    text-align: center;
+}
+
+/* Specific icon colors */
+.nav-link i.fa-users { color: var(--module-color) !important; }
+.nav-link i.fa-user-plus { color: #198754 !important; }
+.nav-link i.fa-handshake { color: #6610f2 !important; }
+.nav-link i.fa-clock { color: #dc3545 !important; }
+.nav-link i.fa-calendar-alt { color: #0dcaf0 !important; }
+.nav-link i.fa-file-alt { color: #20c997 !important; }
+.nav-link i.fa-receipt { color: #20c997 !important; }
+.nav-link i.fa-folder { color: #6c757d !important; }
+.nav-link i.fa-book { color: #d63384 !important; }
+.nav-link i.fa-cog { color: #6c757d !important; }
+.nav-link i.fa-bullhorn { color: #fd7e14 !important; }
+
+/* Keep icon colors on hover/active */
+.nav-link:hover i,
+.nav-link.active i {
+    opacity: 0.9;
+}
+
+/* Content Card */
+.content-card {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 0 20px rgba(0,0,0,0.05);
+}
+
+/* Employee List Styles */
+.user-container {
+    max-width: 1000px;
+    margin: 0 auto;
 }
 
 .user-header {
@@ -37,6 +127,14 @@
 .user-header h2 {
     margin: 0;
     line-height: 1.2;
+}
+
+.table td {
+    vertical-align: middle;
+}
+
+.action-buttons {
+    white-space: nowrap;
 }
 
 .status-active {
@@ -55,6 +153,29 @@
     font-size: 0.8em;
 }
 
+/* Coming Soon Page */
+.people-coming-soon {
+    text-align: center;
+    padding: 2rem;
+}
+
+.people-coming-soon i {
+    font-size: 4rem;
+    margin-bottom: 1.5rem;
+}
+
+.people-coming-soon h2 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    color: #212529;
+}
+
+.people-coming-soon p {
+    color: #6c757d;
+    font-size: 1.1rem;
+    line-height: 1.5;
+}
+
 /* Dashboard Styles */
 .dashboard-grid {
     display: flex;
@@ -69,13 +190,13 @@
 }
 
 .stat-card {
-    background: white;
     padding: 1.5rem;
     border-radius: 0.5rem;
     box-shadow: 0 0 20px rgba(0,0,0,0.05);
     display: flex;
     align-items: center;
     gap: 1rem;
+    background: white;
 }
 
 .stat-icon {
@@ -87,7 +208,7 @@
     align-items: center;
     justify-content: center;
     font-size: 1.5rem;
-    color: #0d6efd;
+    color: var(--module-color);
 }
 
 .stat-content {
@@ -115,6 +236,10 @@
 
 .chart-card {
     height: 300px;
+    background: white;
+    padding: 1.5rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 0 20px rgba(0,0,0,0.05);
 }
 
 .chart-card h3 {
@@ -167,107 +292,6 @@
     color: #6c757d;
 }
 
-/* People Module - Left Navigation */
-.people-layout {
-    display: flex;
-    gap: 1.5rem;
-    padding: 0 20px;
-    margin: 0 auto;
-    min-width: 1000px;
-    max-width: 100%;
-}
-
-.side-nav {
-    width: 240px;
-    min-width: 240px;
-    flex: 0 0 240px;
-    padding: 1.5rem;
-    background: white;
-    border-radius: 0.5rem;
-    box-shadow: 0 0 20px rgba(0,0,0,0.05);
-    height: fit-content;
-}
-
-/* Navigation styles */
-.nav-menu {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-.nav-item {
-    margin-bottom: 0.5rem;
-}
-
-.nav-item:last-child {
-    margin-bottom: 0;
-}
-
-.nav-link {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    padding: 0.75rem 1rem;
-    color: #495057;
-    text-decoration: none;
-    border-radius: 0.25rem;
-    transition: all 0.2s ease;
-    white-space: nowrap;
-}
-
-.nav-link:hover {
-    background-color: #f8f9fa;
-    color: #0d6efd;
-    transform: translateX(5px);
-}
-
-.nav-link.active {
-    background: rgba(13, 110, 253, 0.1);
-    color: #0d6efd;
-    font-weight: 500;
-}
-
-.nav-link i {
-    font-size: 1.1rem;
-    width: 1.5rem;
-    text-align: center;
-}
-
-/* Keep original icon colors even when nav link is active/hovered */
-.nav-link:hover i,
-.nav-link.active i {
-    color: inherit !important;
-}
-
-/* Original icon colors */
-.nav-link i.fa-chart-line { color: #0d6efd !important; }
-.nav-link i.fa-bell { color: #ffc107 !important; }
-.nav-link i.fa-user-plus { color: #198754 !important; }
-.nav-link i.fa-handshake { color: #6610f2 !important; }
-.nav-link i.fa-users { color: #6f42c1 !important; }
-.nav-link i.fa-clock { color: #dc3545 !important; }
-.nav-link i.fa-calendar-alt { color: #0dcaf0 !important; }
-.nav-link i.fa-file-alt { color: #fd7e14 !important; }
-.nav-link i.fa-receipt { color: #20c997 !important; }
-.nav-link i.fa-folder { color: #6c757d !important; }
-.nav-link i.fa-book { color: #d63384 !important; }
-.nav-link i.fa-cog { color: #6c757d !important; }
-
-/* Main content area */
-.main-content {
-    flex: 1 1 auto;
-    min-width: 0;
-}
-
-/* Content Cards */
-.content-card {
-    background: white;
-    padding: 1.5rem;
-    border-radius: 0.5rem;
-    box-shadow: 0 0 20px rgba(0,0,0,0.05);
-    margin: 1.5rem;
-}
-
 /* Update table styles for better fit in card */
 .table-responsive {
     margin-top: 1rem;
@@ -305,31 +329,58 @@
     max-width: 500px;
 }
 
-/* People Coming Soon Page */
-.people-coming-soon {
-    text-align: center;
-    padding: 4rem 2rem;
-}
-
-.people-coming-soon i {
-    font-size: 4rem;
-    margin-bottom: 1.5rem;
-}
-
-.people-coming-soon h2 {
-    font-size: 2rem;
-    margin-bottom: 1rem;
-    color: #212529;
-}
-
-.people-coming-soon p {
-    color: #6c757d;
-    font-size: 1.1rem;
-    line-height: 1.5;
-    max-width: 600px;
-    margin: 0 auto;
-}
-
 :root {
     --people-color: #0d6efd;
+}
+
+/* Modal Styles */
+.modal.fade.show {
+    background: rgba(0, 0, 0, 0.5);
+    display: block;
+}
+
+.modal-header {
+    border-bottom: 2px solid var(--module-color);
+}
+
+.modal-title {
+    color: var(--module-color);
+    font-weight: 500;
+}
+
+.modal-footer {
+    border-top: 1px solid #dee2e6;
+}
+
+/* Form Styles */
+.form-label {
+    font-weight: 500;
+    color: #495057;
+}
+
+.form-control:focus {
+    border-color: var(--module-color);
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+.form-check-input:checked {
+    background-color: var(--module-color);
+    border-color: var(--module-color);
+}
+
+/* Status Indicators */
+.status-active {
+    color: #198754;
+}
+
+.status-inactive {
+    color: #dc3545;
+}
+
+.admin-badge {
+    background-color: #ffc107;
+    color: #000;
+    padding: 2px 8px;
+    border-radius: 0.25rem;
+    font-size: 0.8em;
 } 

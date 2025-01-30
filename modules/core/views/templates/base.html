@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="{{ url_for('core_bp.static', filename='css/auth.css') }}">
     <link rel="stylesheet" href="{{ url_for('core_bp.static', filename='css/apps.css') }}">
     {% block additional_styles %}{% endblock %}
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
 </head>
 <body class="{% block app_class %}{% endblock %}" style="--module-color: {{ g.current_module.color|default('#6c757d') }}">
     <header class="app-header">
