@@ -15,8 +15,8 @@
 /* Layout */
 .people-layout {
     display: flex;
-    gap: 1.5rem;
-    padding: 0 20px;
+    gap: 0.1rem;
+    padding: 0 1rem;
     margin: 0 auto;
     min-width: 1000px;
     max-width: 100%;
@@ -33,7 +33,7 @@
     width: 240px;
     min-width: 240px;
     flex: 0 0 240px;
-    padding: 1.5rem;
+    padding: 1rem;
     background: white;
     border-radius: 0.5rem;
     box-shadow: 0 0 20px rgba(0,0,0,0.05);
@@ -121,7 +121,7 @@
 /* Content Card */
 .content-card {
     background: white;
-    padding: 1.5rem;
+    padding: 1.25rem;
     border-radius: 0.5rem;
     box-shadow: 0 0 20px rgba(0,0,0,0.05);
     flex: 1;
