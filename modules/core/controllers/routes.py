@@ -5,7 +5,7 @@
 #     Core module route handlers and view logic. Implements authentication,
 #     user management, and system settings functionality.
 #
-# Copyright (c) 2025 RemarQable LLC
+# Copyright (c) 2025 remarQable LLC
 #
 # This software is released under an open-source license.
 # See the LICENSE file for details.

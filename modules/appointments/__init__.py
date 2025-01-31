@@ -6,7 +6,7 @@
 #     scheduling and calendar management functionality including booking
 #     and availability management.
 #
-# Copyright (c) 2025 RemarQable LLC
+# Copyright (c) 2025 remarQable LLC
 #
 # This software is released under an open-source license.
 # See the LICENSE file for details.

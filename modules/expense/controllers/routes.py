@@ -5,7 +5,7 @@
 #     Expense module routes and controllers for the expense functionality.
 #     Handles the main route and rendering of the expense home page.
 #
-# Copyright (c) 2025 RemarQable LLC
+# Copyright (c) 2025 remarQable LLC
 #
 # This software is released under an open-source license.
 # See the LICENSE file for details.

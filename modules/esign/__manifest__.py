@@ -5,7 +5,7 @@
 #     E-Sign module manifest defining module metadata, dependencies, and
 #     configuration. Specifies e-signing and document management features.
 #
-# Copyright (c) 2025 RemarQable LLC
+# Copyright (c) 2025 remarQable LLC
 #
 # This software is released under an open-source license.
 # See the LICENSE file for details.

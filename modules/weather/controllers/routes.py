@@ -5,7 +5,7 @@
 #     Weather module route handlers for displaying weather information and
 #     handling weather data lookups via external API integration.
 #
-# Copyright (c) 2025 RemarQable LLC
+# Copyright (c) 2025 remarQable LLC
 #
 # This software is released under an open-source license.
 # See the LICENSE file for details.

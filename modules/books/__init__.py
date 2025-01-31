@@ -5,7 +5,7 @@
 #     Books module initialization and route registration. Sets up books
 #     functionality including bookkeeping and accounting.
 #
-# Copyright (c) 2025 RemarQable LLC
+# Copyright (c) 2025 remarQable LLC
 #
 # This software is released under an open-source license.
 # See the LICENSE file for details.

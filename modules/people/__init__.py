@@ -5,7 +5,7 @@
 #     People module initialization and route registration. Sets up HR and
 #     employee management functionality including profiles and scheduling.
 #
-# Copyright (c) 2025 RemarQable LLC
+# Copyright (c) 2025 remarQable LLC
 #
 # This software is released under an open-source license.
 # See the LICENSE file for details.

@@ -6,7 +6,7 @@
 #     route registration for the core functionality. Provides essential
 #     application features and module management.
 #
-# Copyright (c) 2025 RemarQable LLC
+# Copyright (c) 2025 remarQable LLC
 #
 # This software is released under an open-source license.
 # See the LICENSE file for details.

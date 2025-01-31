@@ -5,7 +5,7 @@
 #     E-Sign module class that implements e-signing and document management.
 #     Handles route registration and blueprint registration.
 #
-# Copyright (c) 2025 RemarQable LLC
+# Copyright (c) 2025 remarQable LLC
 #
 # This software is released under an open-source license.
 # See the LICENSE file for details.

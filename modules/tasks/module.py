@@ -5,7 +5,7 @@
 #     Tasks module class that implements task management functionality.
 #     Handles module registration and blueprint registration.
 #
-# Copyright (c) 2025 RemarQable LLC
+# Copyright (c) 2025 remarQable LLC
 
 from system.db.database import db
 from flask import current_app

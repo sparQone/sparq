@@ -4,7 +4,7 @@
 # Description:
 #     API routes for the core module. Handles the restart functionality.
 #
-# Copyright (c) 2025 RemarQable LLC
+# Copyright (c) 2025 remarQable LLC
 #
 import os
 import signal

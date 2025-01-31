@@ -6,7 +6,7 @@
 #     and configuration. Specifies scheduling features and calendar
 #     integration requirements.
 #
-# Copyright (c) 2025 RemarQable LLC
+# Copyright (c) 2025 remarQable LLC
 #
 # This software is released under an open-source license.
 # See the LICENSE file for details.

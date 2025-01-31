@@ -6,7 +6,7 @@
 #     provides base user functionality for the entire application. Implements
 #     Flask-Login integration and password hashing.
 #
-# Copyright (c) 2025 RemarQable LLC
+# Copyright (c) 2025 remarQable LLC
 #
 # This software is released under an open-source license.
 # See the LICENSE file for details.

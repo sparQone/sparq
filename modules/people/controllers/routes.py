@@ -5,7 +5,7 @@
 #     People module route handlers for employee management functionality.
 #     Implements CRUD operations and view logic for employee data.
 #
-# Copyright (c) 2025 RemarQable LLC
+# Copyright (c) 2025 remarQable LLC
 #
 # This software is released under an open-source license.
 # See the LICENSE file for details.

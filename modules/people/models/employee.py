@@ -5,7 +5,7 @@
 #     Employee model that handles employee data management and relationships.
 #     Provides core employee information storage and retrieval functionality.
 #
-# Copyright (c) 2025 RemarQable LLC
+# Copyright (c) 2025 remarQable LLC
 #
 # This software is released under an open-source license.
 # See the LICENSE file for details.

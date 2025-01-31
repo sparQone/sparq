@@ -5,7 +5,7 @@
 #     Tasks module initialization and route registration. Sets up tasks
 #     functionality including task management.
 #
-# Copyright (c) 2025 RemarQable LLC
+# Copyright (c) 2025 remarQable LLC
 
 from flask import Blueprint
 from .controllers.routes import blueprint as tasks_blueprint

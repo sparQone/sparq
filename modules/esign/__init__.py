@@ -3,7 +3,7 @@
 #     E-Sign module initialization and route registration. Sets up e-sign
 #     functionality including e-signing and document management.
 #
-# Copyright (c) 2025 RemarQable LLC
+# Copyright (c) 2025 remarQable LLC
 #
 # This software is released under an open-source license.
 # See the LICENSE file for details.

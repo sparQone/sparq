@@ -5,7 +5,7 @@
 #     E-Sign module routes and controllers for the e-sign functionality.
 #     Handles the main route and rendering of the e-sign home page.
 #
-# Copyright (c) 2025 RemarQable LLC
+# Copyright (c) 2025 remarQable LLC
 #
 # This software is released under an open-source license.
 # See the LICENSE file for details.

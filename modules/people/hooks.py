@@ -5,7 +5,7 @@
 #     People module hook specifications for plugin system integration.
 #     Defines hooks for employee lifecycle events and data management.
 #
-# Copyright (c) 2025 RemarQable LLC
+# Copyright (c) 2025 remarQable LLC
 #
 # This software is released under an open-source license.
 # See the LICENSE file for details.

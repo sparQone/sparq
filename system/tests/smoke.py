@@ -4,7 +4,7 @@
 # Description:
 #     Smoke test for the application.
 #
-# Copyright (c) 2025 RemarQable LLC
+# Copyright (c) 2025 remarQable LLC
 
 from playwright.sync_api import sync_playwright
 def test_smoke():

@@ -5,7 +5,7 @@
 #     Weather module initialization and configuration. Handles blueprint
 #     registration and database setup for the weather functionality.
 #
-# Copyright (c) 2025 RemarQable LLC
+# Copyright (c) 2025 remarQable LLC
 #
 # This software is released under an open-source license.
 # See the LICENSE file for details.
