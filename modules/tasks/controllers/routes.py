@@ -1,3 +1,16 @@
+# -----------------------------------------------------------------------------
+# sparQ
+#
+# Description:
+#     Tasks module routes and controllers for the tasks functionality.
+#     Handles the main route and rendering of the tasks home page.
+#
+# Copyright (c) 2025 RemarQable LLC
+#
+# This software is released under an open-source license.
+# See the LICENSE file for details.
+# -----------------------------------------------------------------------------
+
 from flask import Blueprint, render_template, request, redirect, url_for, g, flash
 from flask_login import login_required
 from ..models.task import Task

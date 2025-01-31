@@ -1,3 +1,10 @@
+# -----------------------------------------------------------------------------
+# sparQ
+#
+# Description:
+#     Clock module class that implements clock functionality.
+#     Handles route registration and blueprint registration.
+#
 class ClockModule:
     def register_blueprint(self, blueprint, url_prefix):
         self._blueprint = blueprint

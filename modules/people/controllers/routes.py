@@ -1,3 +1,16 @@
+# -----------------------------------------------------------------------------
+# sparQ
+#
+# Description:
+#     People module route handlers for employee management functionality.
+#     Implements CRUD operations and view logic for employee data.
+#
+# Copyright (c) 2025 RemarQable LLC
+#
+# This software is released under an open-source license.
+# See the LICENSE file for details.
+# -----------------------------------------------------------------------------
+
 from flask import Blueprint, render_template, request, redirect, url_for, flash, current_app, g
 from flask_login import login_required, current_user
 from modules.core.models.user import User

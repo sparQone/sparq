@@ -1,4 +1,15 @@
-# This file can be empty - just marks the directory as a Python package
+# -----------------------------------------------------------------------------
+# sparQ
+#
+# Description:
+#     Tasks module models for task management.
+#     Handles the creation and updating of tasks.
+#
+# Copyright (c) 2025 RemarQable LLC 
+#
+# This software is released under an open-source license.
+# See the LICENSE file for details.
+# -----------------------------------------------------------------------------
 
 from .task import Task
 

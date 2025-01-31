@@ -1,6 +1,20 @@
+# -----------------------------------------------------------------------------
+# sparQ
+#
+# Description:
+#     Employee model that handles employee data management and relationships.
+#     Provides core employee information storage and retrieval functionality.
+#
+# Copyright (c) 2025 RemarQable LLC
+#
+# This software is released under an open-source license.
+# See the LICENSE file for details.
+# -----------------------------------------------------------------------------
+
 from system.db.database import db
 from enum import Enum
 from modules.core.models.user import User
+from datetime import datetime
 
 class EmployeeStatus(Enum):
     ACTIVE = 'active'
@@ -39,6 +53,11 @@ class Employee(db.Model):
     user = db.relationship('User', backref=db.backref('employee_profile', uselist=False))
     manager_id = db.Column(db.Integer, db.ForeignKey('employee.id'))
     reports = db.relationship('Employee', backref=db.backref('manager', remote_side=[id]))
+
+    first_name = db.Column(db.String(50), nullable=False)
+    last_name = db.Column(db.String(50), nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    hire_date = db.Column(db.DateTime, default=datetime.utcnow)
 
     @classmethod
     def create(cls, user, **kwargs):

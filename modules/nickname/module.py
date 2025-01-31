@@ -1,3 +1,16 @@
+# -----------------------------------------------------------------------------
+# sparQ
+#
+# Description:
+#     Nickname module class that implements nickname functionality.
+#     Handles route registration and blueprint registration.
+#
+# Copyright (c) 2025 RemarQable LLC
+#
+# This software is released under an open-source license.
+# See the LICENSE file for details.
+# -----------------------------------------------------------------------------
+
 from flask import Blueprint
 from pluggy import HookimplMarker
 from .models import EmployeeNickname, NicknameModel

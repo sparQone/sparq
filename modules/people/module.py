@@ -1,3 +1,17 @@
+# -----------------------------------------------------------------------------
+# sparQ
+#
+# Description:
+#     People module class that implements HR and employee management features.
+#     Handles route registration and database initialization for the
+#     employee management system.
+#
+# Copyright (c) 2025 RemarQable LLC
+#
+# This software is released under an open-source license.
+# See the LICENSE file for details.
+# -----------------------------------------------------------------------------
+
 from flask import Blueprint, current_app
 from system.module.module_manager import hookimpl
 from .hooks import PeopleHookSpecs

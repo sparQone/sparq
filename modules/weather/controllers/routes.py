@@ -1,3 +1,16 @@
+# -----------------------------------------------------------------------------
+# sparQ
+#
+# Description:
+#     Weather module route handlers for displaying weather information and
+#     handling weather data lookups via external API integration.
+#
+# Copyright (c) 2025 RemarQable LLC
+#
+# This software is released under an open-source license.
+# See the LICENSE file for details.
+# -----------------------------------------------------------------------------
+
 from flask import Blueprint, render_template, jsonify, request, current_app, g
 from ..models.weather import Weather
 from flask_login import login_required

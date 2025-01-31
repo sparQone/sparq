@@ -1,3 +1,16 @@
+# -----------------------------------------------------------------------------
+# sparQ
+#
+# Description:
+#     Core module route handlers and view logic. Implements authentication,
+#     user management, and system settings functionality.
+#
+# Copyright (c) 2025 RemarQable LLC
+#
+# This software is released under an open-source license.
+# See the LICENSE file for details.
+# -----------------------------------------------------------------------------
+
 from flask import Blueprint, render_template, jsonify, current_app, request, redirect, url_for, flash, g
 from flask_login import login_user, logout_user, login_required, current_user
 from functools import wraps

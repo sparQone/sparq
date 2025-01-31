@@ -1,5 +1,12 @@
-from playwright.sync_api import sync_playwright
+# -----------------------------------------------------------------------------
+# sparQ
+#
+# Description:
+#     Smoke test for the application.
+#
+# Copyright (c) 2025 RemarQable LLC
 
+from playwright.sync_api import sync_playwright
 def test_smoke():
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)  # Run in headless mode for speed

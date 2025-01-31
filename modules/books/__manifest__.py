@@ -1,3 +1,17 @@
+# -----------------------------------------------------------------------------
+# sparQ
+#
+# Description:
+#     Books module manifest defining module metadata, dependencies, and
+#     configuration. Specifies bookkeeping and accounting features for
+#     small business management.
+#
+# Copyright (c) 2025 RemarQable LLC
+#
+# This software is released under an open-source license.
+# See the LICENSE file for details.
+# -----------------------------------------------------------------------------
+
 manifest = {
     'name': 'Books',
     'version': '1.0',

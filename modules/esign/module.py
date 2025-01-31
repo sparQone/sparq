@@ -1,3 +1,16 @@
+# -----------------------------------------------------------------------------
+# sparQ
+#
+# Description:
+#     E-Sign module class that implements e-signing and document management.
+#     Handles route registration and blueprint registration.
+#
+# Copyright (c) 2025 RemarQable LLC
+#
+# This software is released under an open-source license.
+# See the LICENSE file for details.
+# -----------------------------------------------------------------------------
+
 class ESignModule:
     def register_blueprint(self, blueprint, url_prefix):
         self._blueprint = blueprint

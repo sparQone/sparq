@@ -1,3 +1,16 @@
+# -----------------------------------------------------------------------------
+# sparQ
+#
+# Description:
+#     Weather module initialization and configuration. Handles blueprint
+#     registration and database setup for the weather functionality.
+#
+# Copyright (c) 2025 RemarQable LLC
+#
+# This software is released under an open-source license.
+# See the LICENSE file for details.
+# -----------------------------------------------------------------------------
+
 from flask import Blueprint
 from system.module.module_manager import hookimpl
 from system.db.database import db

@@ -1,3 +1,17 @@
+# -----------------------------------------------------------------------------
+# sparQ
+#
+# Description:
+#     Module management system that defines hook specifications and implements
+#     the plugin architecture for module extensibility. Provides core hooks
+#     for database initialization and other module lifecycle events.
+#
+# Copyright (c) 2025 RemarQable LLC
+#
+# This software is released under an open-source license.
+# See the LICENSE file for details.
+# -----------------------------------------------------------------------------
+
 import pluggy
 
 # Define hookspecs and hookimpl markers

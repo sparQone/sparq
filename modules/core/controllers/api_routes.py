@@ -1,3 +1,11 @@
+# -----------------------------------------------------------------------------
+# sparQ
+#
+# Description:
+#     API routes for the core module. Handles the restart functionality.
+#
+# Copyright (c) 2025 RemarQable LLC
+#
 import os
 import signal
 from flask import jsonify

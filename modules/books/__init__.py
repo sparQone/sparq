@@ -1,3 +1,16 @@
+# -----------------------------------------------------------------------------
+# sparQ
+#
+# Description:
+#     Books module initialization and route registration. Sets up books
+#     functionality including bookkeeping and accounting.
+#
+# Copyright (c) 2025 RemarQable LLC
+#
+# This software is released under an open-source license.
+# See the LICENSE file for details.
+# -----------------------------------------------------------------------------
+
 from flask import Blueprint
 from .controllers.routes import blueprint as books_blueprint
 from .module import BooksModule

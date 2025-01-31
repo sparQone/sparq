@@ -1,3 +1,17 @@
+# -----------------------------------------------------------------------------
+# sparQ
+#
+# Description:
+#     Weather module manifest defining module metadata, dependencies, and
+#     configuration. Specifies integration with core module and weather
+#     service requirements.
+#
+# Copyright (c) 2025 RemarQable LLC
+#
+# This software is released under an open-source license.
+# See the LICENSE file for details.
+# -----------------------------------------------------------------------------
+
 manifest = {
     'name': 'Weather',
     'version': '1.0',

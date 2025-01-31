@@ -1,4 +1,12 @@
-# This file can be empty or contain tasks module initialization logic
+# -----------------------------------------------------------------------------
+# sparQ
+#
+# Description:
+#     Tasks module initialization and route registration. Sets up tasks
+#     functionality including task management.
+#
+# Copyright (c) 2025 RemarQable LLC
+
 from flask import Blueprint
 from .controllers.routes import blueprint as tasks_blueprint
 from .module import TasksModule

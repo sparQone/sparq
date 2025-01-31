@@ -1,3 +1,16 @@
+# -----------------------------------------------------------------------------
+# sparQ
+#
+# Description:
+#     Tasks module manifest defining module metadata, dependencies, and
+#     configuration. Specifies task and to-do management features.
+#
+# Copyright (c) 2025 RemarQable LLC
+#
+# This software is released under an open-source license.
+# See the LICENSE file for details.
+# -----------------------------------------------------------------------------
+
 manifest = {
     'name': 'Tasks',
     'version': '1.0',

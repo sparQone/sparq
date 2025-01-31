@@ -1,3 +1,16 @@
+# -----------------------------------------------------------------------------
+# sparQ
+#
+# Description:
+#     People module hook specifications for plugin system integration.
+#     Defines hooks for employee lifecycle events and data management.
+#
+# Copyright (c) 2025 RemarQable LLC
+#
+# This software is released under an open-source license.
+# See the LICENSE file for details.
+# -----------------------------------------------------------------------------
+
 from system.module.module_manager import hookspec
 
 class PeopleHookSpecs:
@@ -35,4 +48,14 @@ class PeopleHookSpecs:
             form_data: The submitted form data
             employee: The employee being updated
         """
+        pass
+
+    @hookspec
+    def employee_created(self, employee):
+        """Called after a new employee is created"""
+        pass
+
+    @hookspec
+    def employee_updated(self, employee, changes):
+        """Called after an employee is updated"""
         pass 

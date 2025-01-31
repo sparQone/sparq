@@ -1,3 +1,17 @@
+# -----------------------------------------------------------------------------
+# sparQ
+#
+# Description:
+#     People module manifest defining module metadata, dependencies, and
+#     configuration. Specifies HR and employee management features and
+#     integration requirements.
+#
+# Copyright (c) 2025 RemarQable LLC
+#
+# This software is released under an open-source license.
+# See the LICENSE file for details.
+# -----------------------------------------------------------------------------
+
 manifest = {
     'name': 'People',
     'version': '1.0',

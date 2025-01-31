@@ -1,3 +1,17 @@
+# -----------------------------------------------------------------------------
+# sparQ
+#
+# Description:
+#     Core user model that handles authentication, user management, and 
+#     provides base user functionality for the entire application. Implements
+#     Flask-Login integration and password hashing.
+#
+# Copyright (c) 2025 RemarQable LLC
+#
+# This software is released under an open-source license.
+# See the LICENSE file for details.
+# -----------------------------------------------------------------------------
+
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
 from system.db.database import db

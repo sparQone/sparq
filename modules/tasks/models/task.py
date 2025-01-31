@@ -1,3 +1,17 @@
+# -----------------------------------------------------------------------------
+# sparQ
+#
+# Description:
+#     Task model that provides core task management functionality including
+#     CRUD operations and sample data generation for the task management
+#     module.
+#
+# Copyright (c) 2025 RemarQable LLC
+#
+# This software is released under an open-source license.
+# See the LICENSE file for details.
+# -----------------------------------------------------------------------------
+
 from system.db.database import db
 from flask import current_app
 

@@ -1,3 +1,17 @@
+# -----------------------------------------------------------------------------
+# sparQ
+#
+# Description:
+#     Main application entry point that initializes Flask app, configures 
+#     database, loads modules, and sets up core functionality including 
+#     authentication and module management.
+#
+# Copyright (c) 2025 RemarQable LLC
+#
+# This software is released under an open-source license.
+# See the LICENSE file for details.
+# -----------------------------------------------------------------------------
+
 import warnings
 warnings.filterwarnings('ignore', message='urllib3 v2 only supports OpenSSL 1.1.1+')
 
@@ -67,20 +81,15 @@ def create_app():
         module_loader.pm.hook.init_database()
         
         # Then check for admin user
-        if not User.get_by_email('sarah@allaboutpies.shop'):
+        if not User.get_by_email('admin'):
             User.create(
-                email='sarah@allaboutpies.shop',
+                email='admin',
                 password='admin',
-                first_name='Sarah',
-                last_name='Johnson',
-                is_admin=True,
-                is_sample=False
+                first_name='Admin',
+                last_name='User',
+                is_admin=True
             )
             print("Created default admin user")
-        
-        # Create sample users
-        User.create_sample_users()
-        print("Created sample users")
     
     return app
 

@@ -1,4 +1,16 @@
-# This file can be empty or contain core module initialization logic
+# -----------------------------------------------------------------------------
+# sparQ
+#
+# Description:
+#     Core module initialization and route registration. Sets up the core
+#     functionality including authentication, user management, and system
+#     settings blueprints.
+#
+# Copyright (c) 2025 RemarQable LLC
+#
+# This software is released under an open-source license.
+# See the LICENSE file for details.
+# -----------------------------------------------------------------------------
 
 from flask import Blueprint
 from .controllers.routes import blueprint as core_blueprint

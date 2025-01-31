@@ -1,7 +1,15 @@
+# -----------------------------------------------------------------------------
+# sparQ
+#
+# Description:
+#     Tasks module class that implements task management functionality.
+#     Handles module registration and blueprint registration.
+#
+# Copyright (c) 2025 RemarQable LLC
+
 from system.db.database import db
 from flask import current_app
 from system.module.module_manager import hookimpl
-
 class TasksModule:
     def __init__(self):
         """Initialize module"""

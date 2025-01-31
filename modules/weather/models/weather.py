@@ -1,3 +1,18 @@
+# -----------------------------------------------------------------------------
+# sparQ
+#
+# Description:
+#     Weather model that handles weather data retrieval and caching.
+#     Implements integration with external weather service APIs and
+#     provides weather information formatting.
+#
+# Copyright (c) 2025 RemarQable LLC
+#
+# This software is released under an open-source license.
+# See the LICENSE file for details.
+# -----------------------------------------------------------------------------
+
+from system.db.database import db
 import requests
 
 class Weather:

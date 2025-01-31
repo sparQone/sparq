@@ -1,3 +1,11 @@
+# -----------------------------------------------------------------------------
+# sparQ
+#
+# Description:
+#     Nickname module models for employee nickname management.
+#     Handles the creation and updating of employee nicknames.
+#
+# Copyright (c) 2025 RemarQable LLC
 from modules.people.models.employee import Employee
 from system.db.database import db
 from flask import current_app

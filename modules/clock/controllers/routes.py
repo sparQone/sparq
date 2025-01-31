@@ -1,3 +1,16 @@
+# -----------------------------------------------------------------------------
+# sparQ
+#
+# Description:
+#     Clock module routes and controllers for the clock functionality.
+#     Handles the main route and rendering of the clock home page.
+#
+# Copyright (c) 2025 RemarQable LLC
+#
+# This software is released under an open-source license.
+# See the LICENSE file for details.
+# -----------------------------------------------------------------------------
+
 from flask import Blueprint, render_template, g
 from flask_login import login_required
 from datetime import datetime
