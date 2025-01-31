@@ -12,6 +12,8 @@
 # -----------------------------------------------------------------------------
 
 from flask import Blueprint, render_template, g
+from flask_login import login_required
+
 blueprint = Blueprint(
     'esign_bp',
     __name__,

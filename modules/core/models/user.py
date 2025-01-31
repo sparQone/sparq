@@ -71,9 +71,17 @@ class User(db.Model, UserMixin):
     @classmethod
     def create_sample_users(cls):
         """Create sample users for testing/demo purposes"""
-        sample_users = [            
+        sample_users = [    
             {
-                'email': 'michael.chen@allaboutpies.shop', 
+                'email': 'sarah@allaboutpies.shop',
+                'password': 'password123',
+                'first_name': 'Sarah',
+                'last_name': 'Smith',
+                'is_admin': True,
+                'is_sample': True
+            },
+            {
+                'email': 'michael@allaboutpies.shop', 
                 'password': 'password123',
                 'first_name': 'Michael',
                 'last_name': 'Chen',
@@ -81,7 +89,7 @@ class User(db.Model, UserMixin):
                 'is_sample': True
             },
             {
-                'email': 'david.smith@allaboutpies.shop',
+                'email': 'david@allaboutpies.shop',
                 'password': 'password123', 
                 'first_name': 'David',
                 'last_name': 'Smith',

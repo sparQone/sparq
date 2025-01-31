@@ -1,3 +1,5 @@
+# -----------------------------------------------------------------------------
+# sparQ
 #
 # Description:
 #     E-Sign module initialization and route registration. Sets up e-sign
@@ -10,6 +12,7 @@
 # -----------------------------------------------------------------------------
 from flask import Blueprint
 from .controllers.routes import blueprint as esign_blueprint
+from .module import ESignModule
 
 # Create module instance
 module_instance = ESignModule()

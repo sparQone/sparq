@@ -14,6 +14,11 @@ manifest = {
     'name': 'E-Sign',
     'version': '1.0',
     'depends': ['core'],
+    'main_route': '/esign',
+    'icon_class': 'fa-regular fa-file-signature',
+    'type': 'App',
+    'color': '#007bff',  # Blue color
     'description': 'Electronic document signing',
     'long_description': 'Secure electronic signature solution for your documents. Create, send, and track digital signatures for contracts, agreements, and other important documents.'
 } 
+
