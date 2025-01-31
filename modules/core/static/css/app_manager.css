@@ -1,0 +1,186 @@
+/* Base styles for app manager */
+.settings-header {
+    margin-bottom: 2rem;
+}
+
+.settings-header h2 {
+    font-size: 1.5rem;
+    font-weight: 500;
+    color: #212529;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.settings-header h2 i {
+    font-size: 1.25rem;
+}
+
+.settings-header p {
+    color: #6c757d;
+    margin: 0;
+}
+
+/* Grid Layout - Mobile First */
+.apps-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    padding: 1rem 0;
+    width: 100%;
+}
+
+/* App Cards */
+.app-card {
+    background: white;
+    border: 1px solid #e9ecef;
+    border-radius: 0.5rem;
+    padding: 1.25rem;
+    width: 100%;
+    box-shadow: 0 0 20px rgba(0,0,0,0.05);
+}
+
+.app-card-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+/* App Icon */
+.app-manager-icon {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.app-manager-icon i {
+    font-size: 1.5rem;
+    opacity: 0.9;
+}
+
+/* App Details */
+.app-details {
+    width: 100%;
+    padding: 0;
+}
+
+.app-manager-header h3 {
+    font-size: 1.1rem;
+    font-weight: 500;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.app-version {
+    font-size: 0.75rem;
+    color: #6c757d;
+    font-weight: normal;
+    padding: 0.125rem 0.375rem;
+    background: #f8f9fa;
+    border-radius: 0.25rem;
+}
+
+.short-desc {
+    font-size: 0.875rem;
+    color: #495057;
+    margin: 0.5rem 0;
+}
+
+.long-desc {
+    font-size: 0.8125rem;
+    color: #6c757d;
+    margin: 0;
+    line-height: 1.4;
+}
+
+/* Footer Controls */
+.app-footer {
+    padding-top: 1rem;
+    border-top: 1px solid #e9ecef;
+    margin-top: auto;
+    width: 100%;
+}
+
+.footer-controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 0.5rem;
+}
+
+.form-check.form-switch {
+    margin: 0;
+    padding: 0;
+}
+
+.form-check-input {
+    margin: 0;
+    cursor: pointer;
+}
+
+.btn-icon {
+    background: none;
+    border: none;
+    padding: 0;
+    color: #dc3545;
+    cursor: pointer;
+    opacity: 0.6;
+    transition: opacity 0.2s;
+}
+
+.btn-icon:hover {
+    opacity: 0.9;
+}
+
+.btn-icon i.fa-xs {
+    font-size: 1rem;
+}
+
+/* Desktop Styles */
+@media (min-width: 769px) {
+    .apps-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 2rem;
+        padding: 0.5rem 0;
+    }
+
+    .app-card-content {
+        flex-direction: row;
+        text-align: left;
+        align-items: flex-start;
+    }
+
+    .app-manager-icon {
+        margin: 0;
+    }
+
+    .app-details {
+        padding: 0 0.5rem;
+    }
+
+    .app-manager-header h3 {
+        justify-content: flex-start;
+    }
+
+    .app-version {
+        margin-left: 0.5rem;
+    }
+
+    .footer-controls {
+        justify-content: flex-end;
+        gap: 0.75rem;
+    }
+
+    .short-desc, .long-desc {
+        text-align: left;
+    }
+} 

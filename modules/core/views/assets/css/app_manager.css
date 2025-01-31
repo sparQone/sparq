@@ -27,22 +27,45 @@
     color: #6c757d;
 }
 
-/* Grid Layout */
-.apps-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 2rem;
-    padding: 0.5rem 0;
+/* Base styles for app manager */
+.settings-header {
+    margin-bottom: 2rem;
 }
 
-/* Card Layout */
+.settings-header h2 {
+    font-size: 1.5rem;
+    font-weight: 500;
+    color: #212529;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.settings-header h2 i {
+    font-size: 1.25rem;
+}
+
+.settings-header p {
+    color: #6c757d;
+    margin: 0;
+}
+
+/* Grid Layout - Mobile First */
+.apps-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    padding: 1rem 0;
+    width: 100%;
+}
+
+/* App Cards */
 .app-card {
     background: white;
     border: 1px solid #e9ecef;
     border-radius: 0.5rem;
     padding: 1.25rem;
-    display: flex;
-    flex-direction: column;
+    width: 100%;
     box-shadow: 0 0 20px rgba(0,0,0,0.05);
 }
 
@@ -138,30 +161,6 @@
     font-size: 0.6rem;
 }
 
-/* Settings Header */
-.settings-header {
-    margin-bottom: 2rem;
-}
-
-.settings-header h2 {
-    font-size: 1.5rem;
-    font-weight: 500;
-    color: #212529;
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    margin-bottom: 0.5rem;
-}
-
-.settings-header h2 i {
-    font-size: 1.25rem;
-}
-
-.settings-header p {
-    color: #6c757d;
-    margin: 0;
-}
-
 /* App Card Header */
 .app-manager-header {
     margin-bottom: 1rem;
@@ -249,4 +248,14 @@
 /* Adjust trash icon size */
 .btn-icon i.fa-xs {
     font-size: 1rem;  /* Make trash icon smaller */
+}
+
+/* Desktop Styles */
+@media (min-width: 769px) {
+    .apps-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 2rem;
+        padding: 0.5rem 0;
+    }
+    /* Rest of desktop styles remain the same... */
 } 

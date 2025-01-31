@@ -10,6 +10,56 @@
     <link rel="stylesheet" href="{{ url_for('core_bp.static', filename='css/apps.css') }}">
     {% block additional_styles %}{% endblock %}
     <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        @media screen and (max-width: 768px) {
+            .container-fluid {
+                padding: 10px;
+            }
+            
+            .navbar {
+                padding: 0.5rem;
+            }
+            
+            .navbar-brand {
+                font-size: 1.2rem;
+            }
+            
+            .navbar-toggler {
+                margin-right: 10px;
+            }
+            
+            .sidebar {
+                position: fixed;
+                top: 56px;
+                left: -250px;
+                height: 100%;
+                width: 250px;
+                z-index: 1000;
+                transition: 0.3s;
+                background-color: #f8f9fa;
+                overflow-y: auto;
+            }
+            
+            .sidebar.active {
+                left: 0;
+            }
+            
+            .main-content {
+                margin-left: 0 !important;
+                width: 100% !important;
+                transition: 0.3s;
+            }
+            
+            .card {
+                margin-bottom: 1rem;
+            }
+            
+            .table-responsive {
+                overflow-x: auto;
+            }
+        }
+    </style>
 </head>
 <body class="{% block app_class %}{% endblock %}" style="--module-color: {{ g.current_module.color|default('#6c757d') }}">
     <header class="app-header">
@@ -84,6 +134,23 @@
         if (e.key === 'Escape') {
             const modals = document.querySelectorAll('.modal.show');
             modals.forEach(modal => modal.remove());
+        }
+    });
+    document.addEventListener('DOMContentLoaded', function() {
+        const toggler = document.querySelector('.navbar-toggler');
+        const sidebar = document.querySelector('.sidebar');
+        
+        if (toggler && sidebar) {
+            toggler.addEventListener('click', function() {
+                sidebar.classList.toggle('active');
+            });
+            
+            // Close sidebar when clicking outside
+            document.addEventListener('click', function(event) {
+                if (!sidebar.contains(event.target) && !toggler.contains(event.target)) {
+                    sidebar.classList.remove('active');
+                }
+            });
         }
     });
     </script>
