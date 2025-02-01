@@ -30,7 +30,6 @@ class EmployeeType(Enum):
 
 def generate_employee_id():
     """Generate unique employee ID"""
-    # You can implement your company's employee ID generation logic here
     import random
     return f"EMP{random.randint(10000, 99999)}"
 
@@ -54,15 +53,95 @@ class Employee(db.Model):
     manager_id = db.Column(db.Integer, db.ForeignKey('employee.id'))
     reports = db.relationship('Employee', backref=db.backref('manager', remote_side=[id]))
 
-    first_name = db.Column(db.String(50), nullable=False)
-    last_name = db.Column(db.String(50), nullable=False)
-    email = db.Column(db.String(120), unique=True, nullable=False)
     hire_date = db.Column(db.DateTime, default=datetime.utcnow)
 
     @classmethod
-    def create(cls, user, **kwargs):
-        """Create new employee profile"""
-        employee = cls(user=user, **kwargs)
-        db.session.add(employee)
-        db.session.commit()
-        return employee 
+    def create(cls, email, password=None, first_name=None, last_name=None, is_admin=False, **kwargs):
+        """
+        Create new employee profile, creating user if needed
+        
+        Args:
+            email (str): User email
+            password (str, optional): User password. Random if not provided
+            first_name (str, optional): User first name
+            last_name (str, optional): User last name
+            is_admin (bool, optional): Whether user is admin
+            **kwargs: Additional employee fields (department, position, type, etc)
+        
+        Returns:
+            Employee: Created employee instance
+        """
+        try:
+            # Check if user exists
+            user = User.get_by_email(email)
+            
+            # Create user if doesn't exist
+            if not user:
+                user = User.create(
+                    email=email,
+                    password=password or User.generate_random_password(),
+                    first_name=first_name,
+                    last_name=last_name,
+                    is_admin=is_admin
+                )
+            
+            # Create employee profile
+            employee = cls(
+                user=user,
+                department=kwargs.get('department', ''),
+                position=kwargs.get('position', ''),
+                type=EmployeeType[kwargs.get('type', 'FULL_TIME')],
+                status=kwargs.get('status', EmployeeStatus.ACTIVE),
+                start_date=kwargs.get('start_date', datetime.utcnow().date())
+            )
+            
+            db.session.add(employee)
+            db.session.commit()
+            return employee
+            
+        except Exception as e:
+            db.session.rollback()
+            raise e
+    
+    @classmethod
+    def get_by_email(cls, email):
+        """Get employee by email"""
+        return cls.query.join(User).filter(User.email == email).first()
+    
+    @classmethod
+    def create_sample_employees(cls):
+        """Create sample employees for testing/demo purposes"""
+        sample_employees = [    
+            {
+                'email': 'sarah@allaboutpies.shop',
+                'password': 'password123',
+                'first_name': 'Sarah',
+                'last_name': 'Smith',
+                'is_admin': True,
+                'department': 'Management',
+                'position': 'CEO',
+                'type': 'FULL_TIME'
+            },
+            {
+                'email': 'michael@allaboutpies.shop', 
+                'password': 'password123',
+                'first_name': 'Michael',
+                'last_name': 'Chen',
+                'department': 'Kitchen',
+                'position': 'Head Chef',
+                'type': 'FULL_TIME'
+            },
+            {
+                'email': 'david@allaboutpies.shop',
+                'password': 'password123', 
+                'first_name': 'David',
+                'last_name': 'Smith',
+                'department': 'Service',
+                'position': 'Server',
+                'type': 'PART_TIME'
+            }
+        ]
+
+        for employee_data in sample_employees:
+            if not cls.get_by_email(employee_data['email']):
+                cls.create(**employee_data)

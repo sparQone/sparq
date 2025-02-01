@@ -91,9 +91,7 @@ def create_app():
             )
             print("Created default admin user")
     
-        # Create sample users
-        User.create_sample_users()
-        print("Created sample users")
+        
     
     return app
 

@@ -35,9 +35,12 @@ class PeopleModule:
 
     @hookimpl
     def init_database(self):
-        """Initialize database tables"""
+        """Initialize database tables and create sample data"""
         from .models.employee import Employee
         db.create_all()  # This will create only tables that haven't been created yet
+        
+        # Create sample employees
+        Employee.create_sample_employees()
 
     def register_specs(self, plugin_manager):
         """Register hook specifications and implementations"""

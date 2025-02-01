@@ -68,37 +68,5 @@ class User(db.Model, UserMixin):
         db.session.commit()
         return user 
     
-    @classmethod
-    def create_sample_users(cls):
-        """Create sample users for testing/demo purposes"""
-        sample_users = [    
-            {
-                'email': 'sarah@allaboutpies.shop',
-                'password': 'password123',
-                'first_name': 'Sarah',
-                'last_name': 'Smith',
-                'is_admin': True,
-                'is_sample': True
-            },
-            {
-                'email': 'michael@allaboutpies.shop', 
-                'password': 'password123',
-                'first_name': 'Michael',
-                'last_name': 'Chen',
-                'is_admin': False,
-                'is_sample': True
-            },
-            {
-                'email': 'david@allaboutpies.shop',
-                'password': 'password123', 
-                'first_name': 'David',
-                'last_name': 'Smith',
-                'is_admin': False,
-                'is_sample': True
-            }
-        ]
-
-        for user_data in sample_users:
-            if not cls.get_by_email(user_data['email']):
-                cls.create(**user_data)
+    
     

@@ -330,29 +330,41 @@ def employees_table():
 def add_employee_htmx():
     """Add a new employee via HTMX request"""
     try:
+        # Validate required fields
+        email = request.form.get('email')
+        if not email:
+            return "Email is required", 400
+            
+        # Create user with minimal required fields
         user = User.create(
-            email=request.form.get('email'),
+            email=email,
             password=request.form.get('password'),
-            first_name=request.form.get('first_name'),
-            last_name=request.form.get('last_name'),
-            is_admin=bool(request.form.get('is_admin'))
+            first_name=request.form.get('first_name', ''),
+            last_name=request.form.get('last_name', ''),
+            is_admin=bool(request.form.get('is_admin', False))
         )
+        print(f"User created: {user}")
         
-        # Create employee profile if additional fields are provided
+        # Create employee profile if model exists
         if hasattr(user, 'employee_profile'):
             employee = Employee(
                 user_id=user.id,
-                department=request.form.get('department'),
-                position=request.form.get('position'),
+                department=request.form.get('department', ''),
+                position=request.form.get('position', ''),
                 type=EmployeeType[request.form.get('type', 'FULL_TIME')],
                 status=EmployeeStatus.ACTIVE
             )
             db.session.add(employee)
             
         db.session.commit()
+        
+        # Return updated table
         users = User.query.all()
         return render_template('employee-table-partial.html', users=users)
+        
     except Exception as e:
+        db.session.rollback()
+        print(f"Error: {str(e)}")
         return str(e), 400
 
 @blueprint.route('/employees/<int:user_id>/edit/modal')
