@@ -13,7 +13,7 @@
 # -----------------------------------------------------------------------------
 
 from flask import Blueprint, current_app
-from system.module.module_manager import hookimpl
+from system.module.hooks import hookimpl
 from .hooks import PeopleHookSpecs
 from system.db.database import db
 

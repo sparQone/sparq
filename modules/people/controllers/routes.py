@@ -48,7 +48,8 @@ def people_home():
 @login_required
 def employees():
     """Employees page"""
-    users = User.query.all()
+    # Query only users who have employee profiles, excluding admin
+    users = User.query.join(Employee).filter(User.email != 'admin').all()
     
     # Get plugin HTML for the form
     plugin_html = current_app.module_loader.pm.hook.modify_new_employee_form()
@@ -231,8 +232,10 @@ def employee_add_modal():
 @login_required 
 def employees_table():
     """Return the employees table partial template"""
-    users = User.query.all()
-    return render_template('employee-table-partial.html', users=users)
+    # Query only users who have employee profiles, excluding admin
+    users = User.query.join(Employee).filter(User.email != 'admin').all()
+    return render_template('employee-table-partial.html', 
+                         users=users)
 
 @blueprint.route('/employees/add', methods=['POST'])
 @login_required

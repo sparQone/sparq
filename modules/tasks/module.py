@@ -9,7 +9,7 @@
 
 from system.db.database import db
 from flask import current_app
-from system.module.module_manager import hookimpl
+from system.module.hooks import hookimpl
 class TasksModule:
     def __init__(self):
         """Initialize module"""

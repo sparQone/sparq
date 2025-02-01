@@ -42,24 +42,27 @@ def admin_required(f):
 def enrich_module_data(modules):
     """Add additional module data like colors"""
     enriched = []
+    
+    # Handle if modules is a dict (from app.config)
+    if isinstance(modules, dict):
+        modules = modules.values()
+        
     for module in modules:
-        # Get the manifest data
-        manifest = module if isinstance(module, dict) else module.get('manifest', {})
-        
-        # Create enriched module using manifest data
-        enriched_module = {
-            'name': manifest.get('name'),
-            'type': manifest.get('type'),
-            'main_route': manifest.get('main_route'),
-            'icon_class': manifest.get('icon_class'),
-            'color': manifest.get('color', '#6c757d'),
-            'enabled': manifest.get('enabled', True)
-        }
-        
-        # Only add if we have at least a name and type
-        if enriched_module['name'] and enriched_module['type']:
-            enriched.append(enriched_module)
+        # Module data should already be in the correct format
+        if isinstance(module, dict):
+            enriched_module = {
+                'name': module.get('name'),
+                'type': module.get('type'),
+                'main_route': module.get('main_route'),
+                'icon_class': module.get('icon_class'),
+                'color': module.get('color', '#6c757d'),
+                'enabled': module.get('enabled', True)
+            }
             
+            # Only add if we have at least a name and type
+            if enriched_module['name'] and enriched_module['type']:
+                enriched.append(enriched_module)
+                
     return enriched
 
 @blueprint.before_app_request

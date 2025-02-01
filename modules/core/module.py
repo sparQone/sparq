@@ -13,8 +13,8 @@
 # -----------------------------------------------------------------------------
 
 from pluggy import HookimplMarker
-
-hookimpl = HookimplMarker("sparqone")
+from flask import Blueprint
+from system.module.hooks import hookimpl  # Updated import
 
 class CoreModule:
     """Core module providing basic functionality"""

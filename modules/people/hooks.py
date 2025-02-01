@@ -11,7 +11,7 @@
 # See the LICENSE file for details.
 # -----------------------------------------------------------------------------
 
-from system.module.module_manager import hookspec
+from system.module.hooks import hookspec
 
 class PeopleHookSpecs:
     @hookspec

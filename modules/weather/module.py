@@ -12,7 +12,7 @@
 # -----------------------------------------------------------------------------
 
 from flask import Blueprint
-from system.module.module_manager import hookimpl
+from system.module.hooks import hookimpl
 from system.db.database import db
 
 class WeatherModule:
