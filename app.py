@@ -41,7 +41,6 @@ def create_app():
     login_manager = LoginManager()
     login_manager.init_app(app)
     login_manager.login_view = 'core_bp.login'
-    login_manager.init_app(app)
     
     @login_manager.user_loader
     def load_user(user_id):
@@ -50,6 +49,7 @@ def create_app():
     
     # Initialize and validate modules
     module_loader = initialize_modules()
+    app.module_loader = module_loader  # Store module_loader in app instance
     
     # Store manifests in app config
     app.config['INSTALLED_MODULES'] = module_loader.manifests
