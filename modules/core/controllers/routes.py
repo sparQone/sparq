@@ -238,6 +238,8 @@ def toggle_module():
             'message': f"Module {module_name} {'enabled' if enabled else 'disabled'}. Restarting application..."
         })
     except Exception as e:
+        print(f"Error toggling module: {e}")
+        print(f"Error type: {type(e)}")
         return jsonify({'error': str(e)}), 500
 
 @blueprint.route('/restart')

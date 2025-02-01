@@ -11,24 +11,26 @@
 # See the LICENSE file for details.
 # -----------------------------------------------------------------------------
 
-from flask import Blueprint, render_template, request, jsonify, g
+from flask import Blueprint, render_template, g
 from flask_login import login_required, current_user
-from ..models.appointment import Appointment, AppointmentStatus
-from system.db.database import db
 
-# Create blueprint
-blueprint = Blueprint(
-    'appointments_bp',
+# Create blueprint with correct template folder
+blueprint  = Blueprint(
+    'appointments_bp', 
     __name__,
-    template_folder='../views/templates',
-    static_folder='../views/assets'
+    template_folder='../views/templates',  # Point to the templates folder
+    static_folder='../static'  # Point to static folder for CSS/JS/etc
 )
 
 @blueprint.route('/')
 @login_required
 def appointments_home():
     """Appointments dashboard page"""
-    return render_template('appointments-dashboard.html',
-                         module_name=g.current_module['name'],
-                         module_icon=g.current_module['icon_class'],
+    return render_template("coming_soon.html",
+                         title="Appointments",
+                         module_name="Appointments",
+                         module_icon="fa-solid fa-calendar-check",
+                         page_icon="fa-solid fa-calendar-check",
+                         icon_color="#6f42c1",
+                         module_home='appointments_bp.appointments_home',
                          installed_modules=g.installed_modules) 

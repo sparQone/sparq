@@ -22,9 +22,3 @@ class AppointmentsModule:
         
     def get_routes(self):
         return [(self._blueprint, self._url_prefix)]
-
-    @hookimpl
-    def init_database(self):
-        """Initialize database tables"""
-        from .models.appointment import Appointment
-        db.create_all() 

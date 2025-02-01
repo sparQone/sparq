@@ -17,4 +17,3 @@ build/
 
 # Database
 app.db
-modules/clock/__DISABLED__
