@@ -16,6 +16,10 @@ from .loader import ModuleLoader
 
 def print_module_status(manifests, errors=None):
     """Print formatted table of module status"""
+    # Only print status in main process (not reloader)
+    if os.environ.get('WERKZEUG_RUN_MAIN') == 'true':
+        return
+        
     if not manifests:
         print("\nNo modules loaded!")
         if errors:

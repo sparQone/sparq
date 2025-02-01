@@ -45,7 +45,8 @@ def create_app():
     
     @login_manager.user_loader
     def load_user(user_id):
-        return User.query.get(int(user_id))
+        from flask import current_app
+        return db.session.get(User, int(user_id))
     
     # Initialize and validate modules
     module_loader = initialize_modules()
