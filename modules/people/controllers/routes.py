@@ -247,6 +247,16 @@ def add_employee_htmx():
         if not email:
             return "Email is required", 400
             
+        # Check if user already exists
+        existing_user = User.query.filter_by(email=email).first()
+        if existing_user:
+            return """
+                <div class="alert alert-danger" role="alert">
+                    <i class="fas fa-exclamation-circle me-2"></i>
+                    <strong>Error:</strong> An account with this email already exists.
+                </div>
+            """, 422
+            
         # Create user with minimal required fields
         user = User.create(
             email=email,
@@ -257,27 +267,41 @@ def add_employee_htmx():
         )
         print(f"User created: {user}")
         
-        # Create employee profile if model exists
-        if hasattr(user, 'employee_profile'):
-            employee = Employee(
-                user_id=user.id,
-                department=request.form.get('department', ''),
-                position=request.form.get('position', ''),
-                type=EmployeeType[request.form.get('type', 'FULL_TIME')],
-                status=EmployeeStatus.ACTIVE
-            )
-            db.session.add(employee)
+        # Check if employee profile already exists
+        existing_employee = Employee.query.filter_by(user_id=user.id).first()
+        if existing_employee:
+            db.session.rollback()
+            return """
+                <div class="alert alert-danger" role="alert">
+                    <i class="fas fa-exclamation-circle"></i>
+                    An employee profile already exists for this user.
+                </div>
+            """, 422
             
+        # Create employee profile
+        employee = Employee(
+            user_id=user.id,
+            department=request.form.get('department', ''),
+            position=request.form.get('position', ''),
+            type=EmployeeType[request.form.get('type', 'FULL_TIME')],
+            status=EmployeeStatus.ACTIVE
+        )
+        db.session.add(employee)
         db.session.commit()
         
         # Return updated table
-        users = User.query.all()
+        users = User.query.join(Employee).filter(User.email != 'admin').all()
         return render_template('employee-table-partial.html', users=users)
         
     except Exception as e:
         db.session.rollback()
         print(f"Error: {str(e)}")
-        return str(e), 400
+        return f"""
+            <div class="alert alert-danger" role="alert">
+                <i class="fas fa-exclamation-circle"></i>
+                Error creating employee: {str(e)}
+            </div>
+        """, 400
 
 @blueprint.route('/employees/<int:user_id>/edit/modal')
 @login_required
@@ -330,22 +354,18 @@ def edit_employee_htmx(user_id):
 @blueprint.route('/employees/<int:user_id>', methods=['DELETE'])
 @login_required
 def delete_user(user_id):
-    """Delete a user via HTMX request"""
+    """Delete a user and their employee profile"""
     try:
         user = User.query.get_or_404(user_id)
-        if user.email == 'admin':
-            return "Cannot delete admin user", 400
-            
-        # First delete employee profile if it exists
-        if hasattr(user, 'employee_profile') and user.employee_profile:
-            if hasattr(user.employee_profile, 'nickname_data') and user.employee_profile.nickname_data:
-                db.session.delete(user.employee_profile.nickname_data)
+        
+        # Delete employee profile if it exists
+        if hasattr(user, 'employee_profile'):
             db.session.delete(user.employee_profile)
             
         db.session.delete(user)
         db.session.commit()
         
-        users = User.query.all()
+        users = User.query.join(Employee).filter(User.email != 'admin').all()
         return render_template('employee-table-partial.html', users=users)
     except Exception as e:
         return str(e), 400 

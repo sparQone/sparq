@@ -17,7 +17,7 @@
     <!-- Table content -->
     <div id="employees-table-content" 
          hx-get="{{ url_for('people_bp.employees_table') }}" 
-         hx-trigger="load, employeeChanged from:body"
+         hx-trigger="load, employeeChanged from:#employees-table-content"
          hx-swap="innerHTML">
         <div class="d-flex justify-content-center">
             <div class="spinner-border" role="status">

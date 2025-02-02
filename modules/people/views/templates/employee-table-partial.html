@@ -42,6 +42,13 @@
                             hx-delete="{{ url_for('people_bp.delete_user', user_id=user.id) }}"
                             hx-confirm="Are you sure you want to delete this employee?"
                             hx-target="#employees-table-content"
+                            hx-swap="innerHTML"
+                            hx-on::after-request="
+                                if(event.detail.successful) {
+                                    const modal = document.querySelector('.modal');
+                                    if(modal) modal.remove();
+                                }
+                            "
                             title="Delete">
                         <i class="fas fa-trash"></i>
                     </button>
