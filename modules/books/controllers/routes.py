@@ -25,7 +25,7 @@ blueprint = Blueprint(
 @login_required
 def books_home():
     """Books home page"""
-    return render_template("coming_soon.html",
+    return render_template("books-index.html",
                          title="Books",
                          module_name="Books",
                          module_icon="fa-solid fa-book",
