@@ -328,28 +328,50 @@ def edit_employee_htmx(user_id):
     """Edit an employee via HTMX request"""
     try:
         user = User.query.get_or_404(user_id)
-        user.email = request.form.get('email')
-        user.first_name = request.form.get('first_name')
-        user.last_name = request.form.get('last_name')
+        
+        # Validate required fields
+        email = request.form.get('email')
+        first_name = request.form.get('first_name')
+        last_name = request.form.get('last_name')
+        
+        if not email or not first_name or not last_name:
+            return "All required fields must be filled out", 400
+            
+        # Check if email is changed and already exists
+        if email != user.email and User.query.filter_by(email=email).first():
+            return "An account with this email already exists", 400
+        
+        # Update user fields
+        user.email = email
+        user.first_name = first_name
+        user.last_name = last_name
         user.is_admin = bool(request.form.get('is_admin'))
         
         # Update password only if provided
         password = request.form.get('password')
-        if password:
+        if password and password.strip():
             user.set_password(password)
         
         # Update employee profile if it exists
         if hasattr(user, 'employee_profile') and user.employee_profile:
-            user.employee_profile.department = request.form.get('department')
-            user.employee_profile.position = request.form.get('position')
+            user.employee_profile.department = request.form.get('department', '')
+            user.employee_profile.position = request.form.get('position', '')
             if request.form.get('type'):
-                user.employee_profile.type = EmployeeType[request.form.get('type')]
+                try:
+                    user.employee_profile.type = EmployeeType[request.form.get('type')]
+                except KeyError:
+                    return f"Invalid employee type: {request.form.get('type')}", 400
             
         db.session.commit()
-        users = User.query.all()
+        
+        # Query only users who have employee profiles, excluding admin
+        users = User.query.join(Employee).filter(User.email != 'admin').all()
         return render_template('employee-table-partial.html', users=users)
+        
     except Exception as e:
-        return str(e), 400
+        db.session.rollback()
+        print(f"Error updating employee: {str(e)}")  # Add logging
+        return f"Error updating employee: {str(e)}", 400
 
 @blueprint.route('/employees/<int:user_id>', methods=['DELETE'])
 @login_required

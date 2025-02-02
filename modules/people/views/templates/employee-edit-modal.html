@@ -13,10 +13,20 @@
                         onclick="this.closest('.modal').remove()"
                         aria-label="Close"></button>
             </div>
+            <div id="modal-error" class="alert alert-danger mx-3 mt-3" style="display: none;"></div>
+            
             <form hx-put="{{ url_for('people_bp.edit_employee_htmx', user_id=user.id) }}"
                   hx-target="#employees-table-content"
                   hx-swap="innerHTML"
-                  hx-on::after-request="if(event.detail.successful) this.closest('.modal').remove()">
+                  hx-on::after-request="
+                    const error = event.detail.xhr.status >= 400;
+                    if (error) {
+                        const errorDiv = this.querySelector('#modal-error');
+                        errorDiv.textContent = event.detail.xhr.responseText;
+                        errorDiv.style.display = 'block';
+                    } else {
+                        this.closest('.modal').remove();
+                    }">
                 <div class="modal-body">
                     <div class="mb-3">
                         <label for="email" class="form-label">Email</label>
