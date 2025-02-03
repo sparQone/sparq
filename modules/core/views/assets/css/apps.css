@@ -174,4 +174,34 @@
 
 .app-name[data-app] {
     --app-color: var(--module-color);
+}
+
+@media screen and (max-width: 768px) {
+    .settings-apps {
+        padding: 15px;
+    }
+
+    .app-card .card-body {
+        padding: 15px;
+    }
+
+    .app-card .app-header {
+        flex-direction: row;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .app-card .app-icon {
+        font-size: 1.5rem;
+        margin-bottom: 0;
+    }
+
+    .app-card .app-actions {
+        flex-direction: row;
+        gap: 10px;
+    }
+
+    .app-card .app-description {
+        margin: 10px 0;
+    }
 } 
