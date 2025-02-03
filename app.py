@@ -15,13 +15,19 @@
 import warnings
 warnings.filterwarnings('ignore', message='urllib3 v2 only supports OpenSSL 1.1.1+')
 
-from flask import Flask, request, jsonify, redirect, url_for
+from flask import Flask, request, jsonify, redirect, url_for, g
+from flask_babel import Babel
 from system.module.loader import ModuleLoader
 from system.module.utils import print_module_status, initialize_modules
 from flask_login import LoginManager
 from system.db.database import db
 from modules.core.models.user import User
+from system.i18n.translation import preload_translations, translate, format_date, format_number
 import os
+
+def get_locale():
+    """Get locale from URL parameters or default to English"""
+    return request.args.get('lang', 'en')
 
 def create_app():
     app = Flask(__name__, 
@@ -74,6 +80,24 @@ def create_app():
                 is_admin=True
             )
             print("Created default admin user")
+    
+    # Add translation function to globals and formatting functions as filters
+    app.jinja_env.globals['_'] = translate
+    app.jinja_env.filters['format_date'] = format_date
+    app.jinja_env.filters['format_number'] = format_number
+    
+    @app.before_request
+    def before_request():
+        # Set current module based on URL path
+        path = request.path.split('/')[1] or 'core'
+        g.current_module['name'] = path.lower()
+        print("current_module=%s" % g.current_module['name'])
+        g.lang = request.args.get('lang', app.config.get('DEFAULT_LANGUAGE', 'en'))
+    
+    # Load translations after app is fully configured
+    @app.before_first_request
+    def load_translations():
+        preload_translations()
     
     return app
 

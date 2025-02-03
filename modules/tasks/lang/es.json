@@ -1,0 +1,40 @@
+{
+    "_meta": {
+        "date_formats": {
+            "short": "DD/MM/YYYY",
+            "medium": "DD MMM YYYY",
+            "long": "DD [de] MMMM [de] YYYY",
+            "time": "HH:mm",
+            "datetime": "DD/MM/YYYY HH:mm"
+        },
+        "number_formats": {
+            "decimal_separator": ",",
+            "thousand_separator": ".",
+            "currency_symbol": "€",
+            "currency_format": "{symbol}{amount}"
+        }
+    },
+    "Tasks": "Tareas",
+    "Add Task": "Agregar Tarea",
+    "Edit Task": "Editar Tarea",
+    "Delete Task": "Eliminar Tarea",
+    
+    "Description": "Descripción",
+    "Due Date": "Fecha de Vencimiento",
+    "Status": "Estado",
+    "Priority": "Prioridad",
+    "Save": "Guardar",
+    "Cancel": "Cancelar",
+    "Actions": "Acciones",
+    "Pending": "Pendiente",
+    "In Progress": "En Progreso",
+    "Completed": "Completado",
+    "Low": "Baja",
+    "Medium": "Media",
+    "High": "Alta",
+    "Created": "Creado",
+    "Add New Task": "Agregar Nueva Tarea",
+    "Save Task": "Guardar Tarea",
+    "Update Task": "Actualizar Tarea",
+    "Are you sure you want to delete this task?": "¿Está seguro de que desea eliminar esta tarea?"
+} 
