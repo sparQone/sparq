@@ -12,6 +12,7 @@ architecture for managing core business operations, allowing businesses to enabl
 - **Modular System**: Easily extend functionality with independent modules.
 - **Dynamic Module Loading**: Modules are auto-discovered and loaded.
 - **Extensible Plugin Architecture**: Uses `pluggy` for module integration.
+- **Language Support**: Supports multiple languages and user-specific settings.
 - **Built-in Core Modules**:
   - **Core**: Authentication, module management, and UI framework.
   - **People**: Employee management, roles, and departments.
