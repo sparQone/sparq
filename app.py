@@ -15,13 +15,14 @@
 import warnings
 warnings.filterwarnings('ignore', message='urllib3 v2 only supports OpenSSL 1.1.1+')
 
-from flask import Flask, request, jsonify, redirect, url_for, g
+from flask import Flask, request, jsonify, redirect, url_for, g, session
 from flask_babel import Babel
 from system.module.loader import ModuleLoader
 from system.module.utils import print_module_status, initialize_modules
-from flask_login import LoginManager
+from flask_login import LoginManager, current_user
 from system.db.database import db
 from modules.core.models.user import User
+from modules.core.models.user_setting import UserSetting
 from system.i18n.translation import preload_translations, translate, format_date, format_number
 import os
 
@@ -92,7 +93,20 @@ def create_app():
         path = request.path.split('/')[1] or 'core'
         g.current_module['name'] = path.lower()
         print("current_module=%s" % g.current_module['name'])
-        g.lang = request.args.get('lang', app.config.get('DEFAULT_LANGUAGE', 'en'))
+        
+        # Language selection priority:
+        # 1. URL parameter
+        # 2. Session
+        # 3. User setting (if authenticated)
+        # 4. Default language
+        g.lang = request.args.get('lang') or \
+                 session.get('lang') or \
+                 (UserSetting.get(current_user.id, 'language') if current_user.is_authenticated else None) or \
+                 app.config.get('DEFAULT_LANGUAGE', 'en')
+        
+        # Store in session if not already there
+        if 'lang' not in session or session['lang'] != g.lang:
+            session['lang'] = g.lang
     
     # Load translations after app is fully configured
     @app.before_first_request

@@ -11,7 +11,7 @@
 # See the LICENSE file for details.
 # -----------------------------------------------------------------------------
 
-from flask import Blueprint, render_template, jsonify, current_app, request, redirect, url_for, flash, g
+from flask import Blueprint, render_template, jsonify, current_app, request, redirect, url_for, flash, g, session
 from flask_login import login_user, logout_user, login_required, current_user
 from functools import wraps
 from ..models.user import User
@@ -20,6 +20,7 @@ import os
 import signal
 import importlib
 import sys
+from ..models.user_setting import UserSetting
 
 # Create blueprint
 blueprint = Blueprint(
@@ -162,21 +163,38 @@ def register():
             
     return render_template('register.html')
 
+SUPPORTED_LANGUAGES = {
+    'en': 'English',
+    'es': 'Español'
+}
+
+@blueprint.route('/settings/language', methods=['POST'])
+@login_required
+def update_language():
+    lang = request.form.get('language')
+    if lang in SUPPORTED_LANGUAGES:
+        session['lang'] = lang
+        if current_user.is_authenticated:
+            UserSetting.set(current_user.id, 'language', lang)
+        return jsonify({'success': True})
+    return jsonify({'error': 'Invalid language'}), 400
+
 @blueprint.route('/settings')
 @login_required
 def settings():
-    """Settings page"""
-    if not current_user.is_admin:
-        return redirect(url_for('core_bp.index'))
-        
-    return render_template("settings/index.html",
+    user_lang = None
+    if current_user.is_authenticated:
+        user_lang = UserSetting.get(current_user.id, 'language')
+    
+    return render_template('settings/index.html',
+                         languages=SUPPORTED_LANGUAGES,
+                         current_language=user_lang or session.get('lang', 'en'),
                          title="Settings",
                          module_name="Settings",
                          module_icon="fa-solid fa-gear",
                          page_icon="fa-solid fa-gear",
                          icon_color="#6c757d",
-                         module_home='core_bp.settings',
-                         installed_modules=g.installed_modules)
+                         module_home='core_bp.settings')
 
 @blueprint.route("/settings/apps")
 @login_required
