@@ -121,10 +121,11 @@ The core module should contain common translations used across multiple modules.
 
 ## Language Selection
 
-The current language is determined by:
+The current language is determined in the following priority order:
 1. URL parameter: `?lang=es`
-2. User preferences (if implemented)
-3. Default language from configuration
+2. User setting (stored in database for authenticated users)
+3. Session storage (for temporary preferences)
+4. Default language from configuration
 
 ```python
 # Default language configuration in config.py
