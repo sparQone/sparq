@@ -165,7 +165,8 @@ def register():
 
 SUPPORTED_LANGUAGES = {
     'en': 'English',
-    'es': 'Español'
+    'es': 'Español',
+    'nl': 'Nederlands'
 }
 
 @blueprint.route('/settings/language', methods=['POST'])

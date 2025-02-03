@@ -1,0 +1,40 @@
+{
+    "_meta": {
+        "date_formats": {
+            "short": "DD-MM-YYYY",
+            "medium": "DD MMM YYYY",
+            "long": "DD MMMM YYYY",
+            "time": "HH:mm",
+            "datetime": "DD-MM-YYYY HH:mm"
+        },
+        "number_formats": {
+            "decimal_separator": ",",
+            "thousand_separator": ".",
+            "currency_symbol": "€",
+            "currency_format": "€ {amount}"
+        }
+    },
+    "Tasks": "Taken",
+    "Add Task": "Taak Toevoegen",
+    "Edit Task": "Taak Bewerken",
+    "Delete Task": "Taak Verwijderen",
+    "Task Name": "Taaknaam",
+    "Description": "Beschrijving",
+    "Due Date": "Vervaldatum",
+    "Status": "Status",
+    "Priority": "Prioriteit",
+    "Save": "Opslaan",
+    "Cancel": "Annuleren",
+    "Actions": "Acties",
+    "Pending": "In Afwachting",
+    "In Progress": "In Uitvoering",
+    "Completed": "Voltooid",
+    "Low": "Laag",
+    "Medium": "Gemiddeld",
+    "High": "Hoog",
+    "Created": "Aangemaakt",
+    "Add New Task": "Nieuwe Taak Toevoegen",
+    "Save Task": "Taak Opslaan",
+    "Update Task": "Taak Bijwerken",
+    "Are you sure you want to delete this task?": "Weet u zeker dat u deze taak wilt verwijderen?"
+} 
