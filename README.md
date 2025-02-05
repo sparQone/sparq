@@ -1,8 +1,18 @@
-# sparQ
+<h1 align="center">
+sparQ
+</h1>
+<p align="center">
+<a href="https://opensource.org/licenses/Apache-2.0">
+    <img src="https://img.shields.io/badge/License-Apache_2.0-blue.svg">
+</a>  
+</p>
 
 sparQ is a modular HR/Team Management and general business application platform built with Python and Flask. It provides a flexible, plugin-based 
 architecture for managing core business operations, allowing businesses to enable or disable modules based on their needs.  
 
+
+
+  
 ![sparQ Dashboard](modules/core/views/assets/images/screen1.png)  
 
   
