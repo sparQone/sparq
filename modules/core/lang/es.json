@@ -1,0 +1,36 @@
+{
+    "Settings": "Configuración",
+    "Configure user and system-wide settings": "Configurar ajustes de usuario y del sistema",
+    "User Settings": "Ajustes de Usuario",
+    "Language Settings": "Configuración de Idioma",
+    "Interface Language": "Idioma de la Interfaz",
+    "System Settings": "Ajustes del Sistema",
+    "App Manager": "Gestor de Aplicaciones",
+    "Manage installed applications and modules": "Gestionar aplicaciones y módulos instalados",
+    "Manage Apps": "Gestionar Apps",
+    
+    "Apps": "Aplicaciones",
+    "Logout": "Cerrar Sesión",
+    "Admin": "Administrador",
+    "User": "Usuario",
+
+    "Manage Applications": "Gestionar Aplicaciones",
+    "Enable, disable, or remove installed applications": "Habilitar, deshabilitar o eliminar aplicaciones instaladas",
+    "Are you sure you want to remove": "¿Está seguro que desea eliminar",
+    "This cannot be undone": "Esto no se puede deshacer",
+    "Server failed to restart": "El servidor no pudo reiniciarse",
+    "Waiting for server to restart...": "Esperando que el servidor se reinicie...",
+    "Server restarted, reloading page...": "Servidor reiniciado, recargando página...",
+
+    "_meta": {
+        "date_formats": {
+            "short": "DD/MM/YYYY",
+            "medium": "DD MMM YYYY",
+            "long": "DD de MMMM de YYYY"
+        },
+        "number_formats": {
+            "decimal_separator": ",",
+            "thousand_separator": "."
+        }
+    }
+} 

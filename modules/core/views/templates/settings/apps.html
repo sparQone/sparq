@@ -12,18 +12,18 @@
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
                 <a href="{{ url_for('core_bp.settings') }}">
-                    <i class="fas fa-cog"></i> Settings
+                    <i class="fas fa-cog"></i> {{ _("Settings") }}
                 </a>
             </li>
             <li class="breadcrumb-item active" aria-current="page">
-                <i class="fas fa-puzzle-piece" style="color: var(--bs-primary)"></i> App Manager
+                <i class="fas fa-puzzle-piece" style="color: var(--bs-primary)"></i> {{ _("App Manager") }}
             </li>
         </ol>
     </nav>
 
     <div class="settings-header">
-        <h2><i class="fas fa-puzzle-piece" style="color: var(--bs-primary)"></i> Manage Applications</h2>
-        <p class="text-muted">Enable, disable, or remove installed applications</p>
+        <h2><i class="fas fa-puzzle-piece" style="color: var(--bs-primary)"></i> {{ _("Manage Applications") }}</h2>
+        <p class="text-muted">{{ _("Enable, disable, or remove installed applications") }}</p>
     </div>
 
     <div class="apps-grid">
@@ -178,7 +178,7 @@ async function restartApplication() {
 }
 
 async function reloadAfterRestart() {
-    showToast('Waiting for server to restart...');
+    showToast('{{ _("Waiting for server to restart...") }}');
     
     // First wait for server to go down
     await new Promise(resolve => setTimeout(resolve, 1000));
@@ -186,7 +186,7 @@ async function reloadAfterRestart() {
     // Then wait for it to come back up
     try {
         await waitForServer();
-        showToast('Server restarted, reloading page...');
+        showToast('{{ _("Server restarted, reloading page...") }}');
         
         // Force a hard reload of the page
         window.location.href = window.location.href;
@@ -196,7 +196,7 @@ async function reloadAfterRestart() {
             window.location.reload(true);
         }, 500);
     } catch (error) {
-        showToast('Server failed to restart', 'error');
+        showToast('{{ _("Server failed to restart") }}', 'error');
     }
 }
 
@@ -219,7 +219,7 @@ async function waitForServer(retries = 20) {
 }
 
 function confirmRemove(moduleName) {
-    if (confirm(`Are you sure you want to remove ${moduleName}? This cannot be undone.`)) {
+    if (confirm(`{{ _("Are you sure you want to remove") }} ${moduleName}? {{ _("This cannot be undone") }}.`)) {
         removeModule(moduleName);
     }
 }

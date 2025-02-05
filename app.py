@@ -91,7 +91,6 @@ def create_app():
         # Set current module based on URL path
         path = request.path.split('/')[1] or 'core'
         g.current_module['name'] = path.lower()
-        print("current_module=%s" % g.current_module['name'])
         
         # Language selection priority:
         # 1. URL parameter
