@@ -3,7 +3,7 @@
 sparQ is a modular HR/Team Management and general business application platform built with Python and Flask. It provides a flexible, plugin-based 
 architecture for managing core business operations, allowing businesses to enable or disable modules based on their needs.  
 
-![sparQ Dashboard](https://github.com/remarqable/sparq/blob/master/modules/core/views/assets/images/screen1.png)  
+![sparQ Dashboard](modules/core/views/assets/images/screen1.png)  
 
   
 
@@ -70,7 +70,7 @@ Access the application at `http://localhost:8000`.
 
 sparQ follows a "building block" approach where functionality is divided into independent modules.
 
-[How to write a new module - (Applications and Extensions)](https://github.com/remarqable/sparq/blob/master/docs/Write%20a%20module%20-%20App.md)
+[How to write a new module - (Applications and Extensions)](https://github.com/sparqone/sparq/blob/master/docs/Write%20a%20module%20-%20App.md)
 
 
 ## Security

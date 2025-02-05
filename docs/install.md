@@ -9,7 +9,7 @@ Requirements:
 
 Get the code:
 ```bash
-git clone https://github.com/remarqable/sparq.git
+git clone https://github.com/sparqone/sparq
 cd sparq
 ```
 
