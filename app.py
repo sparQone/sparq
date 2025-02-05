@@ -16,7 +16,6 @@ import warnings
 warnings.filterwarnings('ignore', message='urllib3 v2 only supports OpenSSL 1.1.1+')
 
 from flask import Flask, request, jsonify, redirect, url_for, g, session
-from flask_babel import Babel
 from system.module.loader import ModuleLoader
 from system.module.utils import print_module_status, initialize_modules
 from flask_login import LoginManager, current_user

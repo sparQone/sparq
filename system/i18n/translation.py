@@ -14,7 +14,6 @@ import json
 import os
 from datetime import datetime
 from flask import g, current_app
-from flask_babel import gettext as flask_gettext
 
 # Store translations in memory
 TRANSLATIONS = {}
@@ -47,17 +46,19 @@ def translate(text):
     lang = g.get('lang', current_app.config.get('DEFAULT_LANGUAGE', 'en'))
     current_module = g.get('current_module', {}).get('name', 'core')
 
-    # First try module-specific JSON translation
-    module_trans = TRANSLATIONS.get(lang, {}).get(current_module, {}).get(text)
-    if module_trans:
-        return module_trans
+    # If we're not in the core module, try the module-specific translation
+    if current_module != 'core':
+        module_trans = TRANSLATIONS.get(lang, {}).get(current_module, {}).get(text)
+        # Only use module translation if it's nonempty
+        if module_trans is not None and module_trans != "":
+            return module_trans
 
-    # Then try core module JSON translations
+    # Fallback to core translation
     core_trans = TRANSLATIONS.get(lang, {}).get('core', {}).get(text)
-    if core_trans:
+    if core_trans is not None and core_trans != "":
         return core_trans
 
-    # Finally return the original text
+    # Finally, return the original text if no translation is found.
     return text 
 
 def get_format_patterns(lang=None):
@@ -66,12 +67,16 @@ def get_format_patterns(lang=None):
         lang = g.get('lang', current_app.config.get('DEFAULT_LANGUAGE', 'en'))
     
     # Get patterns from core module first (defaults)
-    patterns = TRANSLATIONS.get(lang, {}).get('core', {}).get('_meta', {})
+    patterns = TRANSLATIONS.get(lang, {}).get('core', {}).get('_meta', {}).copy()
     
-    # Override with current module patterns if they exist
+    # Override with current module patterns if they exist, but only if the value is nonempty.
     current_module = g.get('current_module', {}).get('name', 'core')
     module_patterns = TRANSLATIONS.get(lang, {}).get(current_module, {}).get('_meta', {})
-    patterns.update(module_patterns)
+    
+    for key, value in module_patterns.items():
+        # Only override if the module value is not empty
+        if value:
+            patterns[key] = value
     
     return patterns
 
