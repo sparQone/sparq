@@ -188,14 +188,12 @@ def settings():
         user_lang = UserSetting.get(current_user.id, 'language')
     
     return render_template('settings/index.html',
-                         languages=SUPPORTED_LANGUAGES,
-                         current_language=user_lang or session.get('lang', 'en'),
-                         title="Settings",
-                         module_name="Settings",
-                         module_icon="fa-solid fa-gear",
-                         page_icon="fa-solid fa-gear",
-                         icon_color="#6c757d",
-                         module_home='core_bp.settings')
+                        languages=SUPPORTED_LANGUAGES,
+                        current_language=user_lang or session.get('lang', 'en'),
+                        module_name="Settings",
+                        module_icon="fa-solid fa-cog",
+                        module_home='core_bp.settings',
+                        installed_modules=g.installed_modules)
 
 @blueprint.route("/settings/apps")
 @login_required
