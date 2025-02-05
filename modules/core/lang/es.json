@@ -21,6 +21,16 @@
     "Server failed to restart": "El servidor no pudo reiniciarse",
     "Waiting for server to restart...": "Esperando que el servidor se reinicie...",
     "Server restarted, reloading page...": "Servidor reiniciado, recargando página...",
+    
+    "Application Error": "Error de Aplicación",
+    "Oops! Something went wrong": "¡Ups! Algo salió mal",
+    "An unexpected error has occurred. Our team has been notified and we're looking into it.": "Ha ocurrido un error inesperado. Nuestro equipo ha sido notificado y estamos investigando el problema.",
+    "Return Home": "Volver al Inicio",
+    "Try Again": "Intentar de Nuevo",
+    "Page Not Found": "Página No Encontrada",
+    "Oops! Page Not Found": "¡Ups! Página No Encontrada",
+    "The page you're looking for doesn't exist or has been moved.": "La página que buscas no existe o ha sido movida.",
+    "Go Back": "Volver Atrás",
 
     "_meta": {
         "date_formats": {

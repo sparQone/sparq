@@ -266,6 +266,43 @@ body {
     box-shadow: 0 0 20px rgba(0,0,0,0.05);
 }
 
+.error-container {
+    min-height: calc(100vh - 60px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+}
+
+.error-content {
+    text-align: center;
+    max-width: 600px;
+}
+
+.error-logo {
+    height: 60px;
+    margin-bottom: 2rem;
+    opacity: 0.8;
+}
+
+.error-content h1 {
+    color: var(--bs-primary);
+    font-size: 2rem;
+    margin-bottom: 1rem;
+}
+
+.error-content p {
+    color: #6c757d;
+    margin-bottom: 2rem;
+}
+
+.error-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-bottom: 2rem;
+}
+
 /* Responsive padding */
 @media (max-width: 768px) {
     .content-card {

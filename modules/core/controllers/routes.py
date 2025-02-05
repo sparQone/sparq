@@ -22,6 +22,7 @@ import importlib
 import sys
 from ..models.user_setting import UserSetting
 
+
 # Create blueprint
 blueprint = Blueprint(
     'core_bp', 
@@ -29,6 +30,7 @@ blueprint = Blueprint(
     template_folder='../views/templates',
     static_folder='../views/assets'
 )
+
 
 def admin_required(f):
     """Decorator to require admin access for a route"""
@@ -270,3 +272,41 @@ def system_restart():
         python = sys.executable
         os.execl(python, python, *sys.argv)
     return redirect(url_for('core_bp.index'))
+
+@blueprint.route('/exception')
+@login_required
+@admin_required
+def test_exception():
+    """Test route to trigger a 500 error page"""
+    # Deliberately raise an exception
+    raise Exception("This is a test exception to verify the 500 error page functionality")
+
+# Add these error handlers to the routes.py file
+@blueprint.errorhandler(Exception)
+def handle_exception(error):
+    """Handle all exceptions"""
+    
+    return render_template('errors/500.html',
+                         error=error,
+                         module_name="Error",
+                         module_icon="fa-solid fa-exclamation-triangle",
+                         module_home='core_bp.index'), 500
+
+@blueprint.app_errorhandler(500)
+def internal_error(error):
+    """Handle internal server errors"""
+    
+    return render_template('errors/500.html',
+                         error=error,                         
+                         module_name="Error",
+                         module_icon="fa-solid fa-exclamation-triangle",
+                         module_home='core_bp.index'), 500
+
+@blueprint.app_errorhandler(404)
+def not_found_error(error):
+    """Handle 404 errors"""
+    return render_template('errors/404.html',
+                         error=error,                         
+                         module_name="Error",
+                         module_icon="fa-solid fa-exclamation-triangle",
+                         module_home='core_bp.index'), 404
