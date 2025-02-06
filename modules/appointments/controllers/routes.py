@@ -27,10 +27,10 @@ blueprint  = Blueprint(
 def appointments_home():
     """Appointments dashboard page"""
     return render_template("coming_soon.html",
-                         title="Appointments",
-                         module_name="Appointments",
-                         module_icon="fa-solid fa-calendar-check",
-                         page_icon="fa-solid fa-calendar-check",
-                         icon_color="#6f42c1",
-                         module_home='appointments_bp.appointments_home',
-                         installed_modules=g.installed_modules) 
+                        title="Appointments",
+                        module_name=g.current_module['name'],
+                        module_icon=g.current_module['icon_class'],
+                        page_icon=g.current_module['icon_class'],
+                        icon_color=g.current_module['color'],
+                        module_home='appointments_bp.appointments_home',
+                        installed_modules=g.installed_modules) 

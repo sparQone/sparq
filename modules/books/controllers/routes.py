@@ -26,10 +26,10 @@ blueprint = Blueprint(
 def books_home():
     """Books home page"""
     return render_template("books-index.html",
-                         title="Books",
-                         module_name="Books",
-                         module_icon="fa-solid fa-book",
-                         page_icon="fa-solid fa-book",
-                         icon_color="#6f42c1",
-                         module_home='books_bp.books_home',
-                         installed_modules=g.installed_modules) 
+                        title="Books",
+                        module_name=g.current_module['name'],
+                        module_icon=g.current_module['icon_class'],
+                        page_icon=g.current_module['icon_class'],
+                        icon_color=g.current_module['color'],
+                        module_home='books_bp.books_home',
+                        installed_modules=g.installed_modules) 

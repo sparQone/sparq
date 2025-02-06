@@ -18,10 +18,6 @@ from ..models.employee import Employee, EmployeeType, EmployeeStatus
 from system.db.database import db
 from datetime import datetime
 
-# Module constants
-MODULE_NAME = "People"
-MODULE_ICON = "fa-solid fa-users"
-MODULE_HOME = "people_bp.people_home"
 
 # Create blueprint
 blueprint = Blueprint(
@@ -61,156 +57,162 @@ def employees():
     combined_plugin_html = "\n".join(filter(None, flattened_html))
     
     return render_template("people-employees.html",
-                         active_page='employees',
-                         users=users,
-                         module_name=MODULE_NAME,
-                         module_icon=MODULE_ICON,
-                         module_home=MODULE_HOME,
-                         plugin_html=combined_plugin_html,
-                         installed_modules=g.installed_modules)
+                        active_page='employees',
+                        users=users,
+                        module_name=g.current_module['name'],
+                        module_icon=g.current_module['icon_class'],
+                        page_icon=g.current_module['icon_class'],
+                        icon_color=g.current_module['color'],
+                        module_home='people_bp.people_home',
+                        plugin_html=combined_plugin_html,
+                        installed_modules=g.installed_modules)
 
 
 @blueprint.route("/hiring")
 @login_required
 def hiring():
     return render_template("people-coming-soon.html",
-                         active_page='hiring',
-                         title="Hiring",
-                         module_name=MODULE_NAME,
-                         module_icon=MODULE_ICON,
-                         module_home=MODULE_HOME,
-                         page_icon="fa-solid fa-user-plus",
-                         icon_color="#198754",
-                         installed_modules=g.installed_modules)
+                        active_page='hiring',
+                        title="Hiring",
+                        module_name=g.current_module['name'],
+                        module_icon=g.current_module['icon_class'],
+                        page_icon=g.current_module['icon_class'],
+                        icon_color=g.current_module['color'],
+                        module_home='people_bp.people_home',
+                        installed_modules=g.installed_modules)
 
 @blueprint.route("/onboarding")
 @login_required
 def onboarding():
     """Onboarding page (coming soon)"""
     return render_template("people-coming-soon.html",
-                         active_page='onboarding',
-                         title="Onboarding",
-                         module_name=MODULE_NAME,
-                         module_icon=MODULE_ICON,
-                         module_home=MODULE_HOME,
-                         page_icon="fa-solid fa-handshake",
-                         icon_color="#6610f2",
-                         installed_modules=g.installed_modules)
+                        active_page='onboarding',
+                        title="Onboarding",
+                        module_name=g.current_module['name'],
+                        module_icon=g.current_module['icon_class'],
+                        page_icon=g.current_module['icon_class'],
+                        icon_color=g.current_module['color'],
+                        module_home='people_bp.people_home',
+                        installed_modules=g.installed_modules)
 
 @blueprint.route("/dashboard")
 @login_required
 def dashboard():
     """People dashboard page"""
     return render_template("people-dashboard.html",
-                         active_page='dashboard',
-                         module_name=MODULE_NAME,
-                         module_icon=MODULE_ICON,
-                         module_home=MODULE_HOME,
-                         installed_modules=g.installed_modules)
+                        active_page='dashboard',
+                        module_name=g.current_module['name'],
+                        module_icon=g.current_module['icon_class'],
+                        page_icon=g.current_module['icon_class'],
+                        icon_color=g.current_module['color'],
+                        module_home='people_bp.people_home',
+                        installed_modules=g.installed_modules)
 
 @blueprint.route("/updates")
 @login_required
 def updates():
     """Company updates page"""
     return render_template("people-updates.html",
-                         active_page='updates',
-                         title="Company Updates",
-                         module_name=MODULE_NAME,
-                         module_icon=MODULE_ICON,
-                         module_home=MODULE_HOME,
-                         installed_modules=g.installed_modules)
+                        active_page='updates',
+                        title="Company Updates",
+                        module_name=g.current_module['name'],
+                        module_icon=g.current_module['icon_class'],
+                        page_icon=g.current_module['icon_class'],
+                        icon_color=g.current_module['color'],
+                        module_home='people_bp.people_home',
+                        installed_modules=g.installed_modules)
 
 @blueprint.route("/time_tracking")
 @login_required
 def time_tracking():
     return render_template("people-coming-soon.html",
-                         active_page='time_tracking',
-                         title="Time Tracking",
-                         module_name=MODULE_NAME,
-                         module_icon=MODULE_ICON,
-                         module_home=MODULE_HOME,
-                         page_icon="fa-solid fa-clock",
-                         icon_color="#dc3545",
-                         installed_modules=g.installed_modules)
+                        active_page='time_tracking',
+                        title="Time Tracking",
+                        module_name=g.current_module['name'],
+                        module_icon=g.current_module['icon_class'],
+                        page_icon=g.current_module['icon_class'],
+                        icon_color=g.current_module['color'],
+                        module_home='people_bp.people_home',
+                        installed_modules=g.installed_modules)
 
 @blueprint.route("/scheduling")
 @login_required
 def scheduling():
     return render_template("people-coming-soon.html",
-                         active_page='scheduling',
-                         title="Shift Scheduling",
-                         module_name=MODULE_NAME,
-                         module_icon=MODULE_ICON,
-                         module_home=MODULE_HOME,
-                         page_icon="fa-solid fa-calendar-alt",
-                         icon_color="#0dcaf0",
-                         installed_modules=g.installed_modules)
+                        active_page='scheduling',
+                        title="Shift Scheduling",
+                        module_name=g.current_module['name'],
+                        module_icon=g.current_module['icon_class'],
+                        page_icon=g.current_module['icon_class'],
+                        icon_color=g.current_module['color'],
+                        module_home='people_bp.people_home',
+                        installed_modules=g.installed_modules)
 
 @blueprint.route("/forms")
 @login_required
 def forms():
     return render_template("people-coming-soon.html",
-                         active_page='forms',
-                         title="Forms",
-                         module_name=MODULE_NAME,
-                         module_icon=MODULE_ICON,
-                         module_home=MODULE_HOME,
-                         page_icon="fa-solid fa-file-alt",
-                         icon_color="#20c997",
-                         installed_modules=g.installed_modules)
+                        active_page='forms',
+                        title="Forms",
+                        module_name=g.current_module['name'],
+                        module_icon=g.current_module['icon_class'],
+                        page_icon=g.current_module['icon_class'],
+                        icon_color=g.current_module['color'],
+                        module_home='people_bp.people_home',
+                        installed_modules=g.installed_modules)
 
 @blueprint.route("/reimbursement")
 @login_required
 def reimbursement():
     """Reimbursement page (coming soon)"""
     return render_template("people-coming-soon.html",
-                         active_page='reimbursement',
-                         title="Reimbursement",
-                         module_name=MODULE_NAME,
-                         module_icon=MODULE_ICON,
-                         module_home=MODULE_HOME,
-                         page_icon="fa-solid fa-receipt",
-                         icon_color="#20c997",
-                         installed_modules=g.installed_modules)
+                        active_page='reimbursement',
+                        title="Reimbursement",
+                        module_name=g.current_module['name'],
+                        module_icon=g.current_module['icon_class'],
+                        page_icon=g.current_module['icon_class'],
+                        icon_color=g.current_module['color'],
+                        module_home='people_bp.people_home',
+                        installed_modules=g.installed_modules)
 
 @blueprint.route("/docs")
 @login_required
 def docs():
     return render_template("people-coming-soon.html",
-                         active_page='docs',
-                         title="Documents",
-                         module_name=MODULE_NAME,
-                         module_icon=MODULE_ICON,
-                         module_home=MODULE_HOME,
-                         page_icon="fa-solid fa-folder",
-                         icon_color="#6c757d",
-                         installed_modules=g.installed_modules)
+                        active_page='docs',
+                        title="Documents",
+                        module_name=g.current_module['name'],
+                        module_icon=g.current_module['icon_class'],
+                        page_icon=g.current_module['icon_class'],
+                        icon_color=g.current_module['color'],
+                        module_home='people_bp.people_home',
+                        installed_modules=g.installed_modules)
 
 @blueprint.route("/knowledge")
 @login_required
 def knowledge():
     return render_template("people-coming-soon.html",
-                         active_page='knowledge',
-                         title="Knowledge Base",
-                         module_name=MODULE_NAME,
-                         module_icon=MODULE_ICON,
-                         module_home=MODULE_HOME,
-                         page_icon="fa-solid fa-book",
-                         icon_color="#d63384",
-                         installed_modules=g.installed_modules)
+                        active_page='knowledge',
+                        title="Knowledge Base",
+                        module_name=g.current_module['name'],
+                        module_icon=g.current_module['icon_class'],
+                        page_icon=g.current_module['icon_class'],
+                        icon_color=g.current_module['color'],
+                        module_home='people_bp.people_home',
+                        installed_modules=g.installed_modules)
 
 @blueprint.route("/settings")
 @login_required
 def settings():
     return render_template("people-coming-soon.html",
-                         active_page='settings',
-                         title="Settings",
-                         module_name=MODULE_NAME,
-                         module_icon=MODULE_ICON,
-                         module_home=MODULE_HOME,
-                         page_icon="fa-solid fa-cog",
-                         icon_color="#6c757d",
-                         installed_modules=g.installed_modules)
+                        active_page='settings',
+                        title="Settings",
+                        module_name=g.current_module['name'],
+                        module_icon=g.current_module['icon_class'],
+                        page_icon=g.current_module['icon_class'],
+                        icon_color=g.current_module['color'],
+                        module_home='people_bp.people_home',
+                        installed_modules=g.installed_modules)
 
 
 @blueprint.route('/employees/add/modal')

@@ -28,7 +28,10 @@ blueprint = Blueprint(
 def clock_home():
     """Clock page"""
     return render_template("clock.html",
-                         module_name="Clock",
-                         module_icon="fa-regular fa-clock",
-                         module_home='clock_bp.clock_home',
-                         installed_modules=g.installed_modules)
+                        title="Clock",
+                        module_name=g.current_module['name'],
+                        module_icon=g.current_module['icon_class'],
+                        page_icon=g.current_module['icon_class'],
+                        icon_color=g.current_module['color'],
+                        module_home='clock_bp.clock_home',
+                        installed_modules=g.installed_modules)
