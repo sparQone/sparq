@@ -16,6 +16,7 @@ from flask import Blueprint, current_app
 from system.module.hooks import hookimpl
 from .hooks import PeopleHookSpecs
 from system.db.database import db
+from .models.employee import Employee
 
 class PeopleModule:
     def __init__(self):
@@ -29,14 +30,11 @@ class PeopleModule:
         self._url_prefix = url_prefix
 
     def get_routes(self):
-        """Get routes for the module"""
-        from .controllers.routes import blueprint
-        return [(blueprint, '/people')]
+        return [(self._blueprint, self._url_prefix)] 
 
     @hookimpl
     def init_database(self):
         """Initialize database tables and create sample data"""
-        from .models.employee import Employee
         db.create_all()  # This will create only tables that haven't been created yet
         
         # Create sample employees

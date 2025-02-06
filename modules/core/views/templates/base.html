@@ -70,9 +70,9 @@
                         <img src="{{ url_for('core_bp.static', filename='images/sparq-logo.png') }}" alt="SparqOne" class="app-logo">
                     </a>
                     <div class="app-title-divider"></div>
-                    <a href="{{ url_for(module_home) }}" class="app-name" data-app="{{ module_name }}" style="--module-color: {{ g.current_module.color|default('#6c757d') }}">
-                        <i class="{{ module_icon }}"></i>
-                        <span>{{ module_name }}</span>
+                    <a href="{{ url_for(module_home) }}" class="app-name" data-app="{{ g.current_module.name }}" style="--module-color: {{ g.current_module.color|default('#6c757d') }}">
+                        <i class="{{ g.current_module.icon_class }}"></i>
+                        <span>{{ g.current_module.name }}</span>
                     </a>
                 </div>
                 <div class="user-nav">
@@ -82,7 +82,7 @@
                         </button>
                         <div class="dropdown-menu dropdown-menu-end apps-dropdown">
                             <div class="apps-grid">
-                                {% for mod in installed_modules|sort(attribute='name') %}
+                                {% for mod in g.installed_modules|sort(attribute='name') %}
                                     {% if mod.type == 'App' and mod.enabled %}
                                         <a href="{{ mod.main_route }}" 
                                            class="app-item {{ mod.name|lower }}-app" 

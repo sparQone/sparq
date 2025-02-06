@@ -26,11 +26,6 @@ blueprint  = Blueprint(
 @login_required
 def appointments_home():
     """Appointments dashboard page"""
-    return render_template("coming_soon.html",
+    return render_template("appointments/index.html",
                         title="Appointments",
-                        module_name=g.current_module['name'],
-                        module_icon=g.current_module['icon_class'],
-                        page_icon=g.current_module['icon_class'],
-                        icon_color=g.current_module['color'],
-                        module_home='appointments_bp.appointments_home',
-                        installed_modules=g.installed_modules) 
+                        module_home='appointments_bp.appointments_home')

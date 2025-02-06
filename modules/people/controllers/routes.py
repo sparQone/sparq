@@ -56,16 +56,11 @@ def employees():
     flattened_html = [item for sublist in plugin_html for item in (sublist if isinstance(sublist, list) else [sublist])]
     combined_plugin_html = "\n".join(filter(None, flattened_html))
     
-    return render_template("people-employees.html",
+    return render_template("employees/index.html",
                         active_page='employees',
                         users=users,
-                        module_name=g.current_module['name'],
-                        module_icon=g.current_module['icon_class'],
-                        page_icon=g.current_module['icon_class'],
-                        icon_color=g.current_module['color'],
                         module_home='people_bp.people_home',
-                        plugin_html=combined_plugin_html,
-                        installed_modules=g.installed_modules)
+                        plugin_html=combined_plugin_html)
 
 
 @blueprint.route("/hiring")
@@ -74,12 +69,7 @@ def hiring():
     return render_template("people-coming-soon.html",
                         active_page='hiring',
                         title="Hiring",
-                        module_name=g.current_module['name'],
-                        module_icon=g.current_module['icon_class'],
-                        page_icon=g.current_module['icon_class'],
-                        icon_color=g.current_module['color'],
-                        module_home='people_bp.people_home',
-                        installed_modules=g.installed_modules)
+                        module_home='people_bp.people_home')
 
 @blueprint.route("/onboarding")
 @login_required
@@ -88,12 +78,7 @@ def onboarding():
     return render_template("people-coming-soon.html",
                         active_page='onboarding',
                         title="Onboarding",
-                        module_name=g.current_module['name'],
-                        module_icon=g.current_module['icon_class'],
-                        page_icon=g.current_module['icon_class'],
-                        icon_color=g.current_module['color'],
-                        module_home='people_bp.people_home',
-                        installed_modules=g.installed_modules)
+                        module_home='people_bp.people_home')
 
 @blueprint.route("/dashboard")
 @login_required
@@ -101,12 +86,7 @@ def dashboard():
     """People dashboard page"""
     return render_template("people-dashboard.html",
                         active_page='dashboard',
-                        module_name=g.current_module['name'],
-                        module_icon=g.current_module['icon_class'],
-                        page_icon=g.current_module['icon_class'],
-                        icon_color=g.current_module['color'],
-                        module_home='people_bp.people_home',
-                        installed_modules=g.installed_modules)
+                        module_home='people_bp.people_home')
 
 @blueprint.route("/updates")
 @login_required
@@ -115,12 +95,7 @@ def updates():
     return render_template("people-updates.html",
                         active_page='updates',
                         title="Company Updates",
-                        module_name=g.current_module['name'],
-                        module_icon=g.current_module['icon_class'],
-                        page_icon=g.current_module['icon_class'],
-                        icon_color=g.current_module['color'],
-                        module_home='people_bp.people_home',
-                        installed_modules=g.installed_modules)
+                        module_home='people_bp.people_home')
 
 @blueprint.route("/time_tracking")
 @login_required
@@ -128,12 +103,7 @@ def time_tracking():
     return render_template("people-coming-soon.html",
                         active_page='time_tracking',
                         title="Time Tracking",
-                        module_name=g.current_module['name'],
-                        module_icon=g.current_module['icon_class'],
-                        page_icon=g.current_module['icon_class'],
-                        icon_color=g.current_module['color'],
-                        module_home='people_bp.people_home',
-                        installed_modules=g.installed_modules)
+                        module_home='people_bp.people_home')
 
 @blueprint.route("/scheduling")
 @login_required
@@ -141,12 +111,7 @@ def scheduling():
     return render_template("people-coming-soon.html",
                         active_page='scheduling',
                         title="Shift Scheduling",
-                        module_name=g.current_module['name'],
-                        module_icon=g.current_module['icon_class'],
-                        page_icon=g.current_module['icon_class'],
-                        icon_color=g.current_module['color'],
-                        module_home='people_bp.people_home',
-                        installed_modules=g.installed_modules)
+                        module_home='people_bp.people_home')
 
 @blueprint.route("/forms")
 @login_required
@@ -154,12 +119,7 @@ def forms():
     return render_template("people-coming-soon.html",
                         active_page='forms',
                         title="Forms",
-                        module_name=g.current_module['name'],
-                        module_icon=g.current_module['icon_class'],
-                        page_icon=g.current_module['icon_class'],
-                        icon_color=g.current_module['color'],
-                        module_home='people_bp.people_home',
-                        installed_modules=g.installed_modules)
+                        module_home='people_bp.people_home')
 
 @blueprint.route("/reimbursement")
 @login_required
@@ -168,12 +128,7 @@ def reimbursement():
     return render_template("people-coming-soon.html",
                         active_page='reimbursement',
                         title="Reimbursement",
-                        module_name=g.current_module['name'],
-                        module_icon=g.current_module['icon_class'],
-                        page_icon=g.current_module['icon_class'],
-                        icon_color=g.current_module['color'],
-                        module_home='people_bp.people_home',
-                        installed_modules=g.installed_modules)
+                        module_home='people_bp.people_home')
 
 @blueprint.route("/docs")
 @login_required
@@ -181,12 +136,7 @@ def docs():
     return render_template("people-coming-soon.html",
                         active_page='docs',
                         title="Documents",
-                        module_name=g.current_module['name'],
-                        module_icon=g.current_module['icon_class'],
-                        page_icon=g.current_module['icon_class'],
-                        icon_color=g.current_module['color'],
-                        module_home='people_bp.people_home',
-                        installed_modules=g.installed_modules)
+                        module_home='people_bp.people_home')
 
 @blueprint.route("/knowledge")
 @login_required
@@ -194,12 +144,7 @@ def knowledge():
     return render_template("people-coming-soon.html",
                         active_page='knowledge',
                         title="Knowledge Base",
-                        module_name=g.current_module['name'],
-                        module_icon=g.current_module['icon_class'],
-                        page_icon=g.current_module['icon_class'],
-                        icon_color=g.current_module['color'],
-                        module_home='people_bp.people_home',
-                        installed_modules=g.installed_modules)
+                        module_home='people_bp.people_home')
 
 @blueprint.route("/settings")
 @login_required
@@ -207,12 +152,7 @@ def settings():
     return render_template("people-coming-soon.html",
                         active_page='settings',
                         title="Settings",
-                        module_name=g.current_module['name'],
-                        module_icon=g.current_module['icon_class'],
-                        page_icon=g.current_module['icon_class'],
-                        icon_color=g.current_module['color'],
-                        module_home='people_bp.people_home',
-                        installed_modules=g.installed_modules)
+                        module_home='people_bp.people_home')
 
 
 @blueprint.route('/employees/add/modal')
@@ -228,7 +168,7 @@ def employee_add_modal():
     flattened_html = [item for sublist in plugin_html for item in (sublist if isinstance(sublist, list) else [sublist])]
     combined_plugin_html = "\n".join(filter(None, flattened_html))
     
-    return render_template('employee-add-modal.html', plugin_html=combined_plugin_html)
+    return render_template('employees/add-modal.html', plugin_html=combined_plugin_html)
 
 @blueprint.route('/employees/table')
 @login_required 
@@ -236,7 +176,7 @@ def employees_table():
     """Return the employees table partial template"""
     # Query only users who have employee profiles, excluding admin
     users = User.query.join(Employee).filter(User.email != 'admin').all()
-    return render_template('employee-table-partial.html', 
+    return render_template('employees/table-partial.html', 
                          users=users)
 
 @blueprint.route('/employees/add', methods=['POST'])
@@ -293,7 +233,7 @@ def add_employee_htmx():
         
         # Return updated table
         users = User.query.join(Employee).filter(User.email != 'admin').all()
-        return render_template('employee-table-partial.html', users=users)
+        return render_template('employees/table-partial.html', users=users)
         
     except Exception as e:
         db.session.rollback()
@@ -320,7 +260,7 @@ def employee_edit_modal(user_id):
     flattened_html = [item for sublist in plugin_html for item in (sublist if isinstance(sublist, list) else [sublist])]
     combined_plugin_html = "\n".join(filter(None, flattened_html))
     
-    return render_template('employee-edit-modal.html', 
+    return render_template('employees/edit-modal.html', 
                          user=user, 
                          plugin_html=combined_plugin_html)
 
@@ -368,7 +308,7 @@ def edit_employee_htmx(user_id):
         
         # Query only users who have employee profiles, excluding admin
         users = User.query.join(Employee).filter(User.email != 'admin').all()
-        return render_template('employee-table-partial.html', users=users)
+        return render_template('employees/table-partial.html', users=users)
         
     except Exception as e:
         db.session.rollback()
@@ -390,6 +330,6 @@ def delete_user(user_id):
         db.session.commit()
         
         users = User.query.join(Employee).filter(User.email != 'admin').all()
-        return render_template('employee-table-partial.html', users=users)
+        return render_template('employees/table-partial.html', users=users)
     except Exception as e:
         return str(e), 400 

@@ -30,14 +30,10 @@ weather = Weather()
 @login_required
 def weather_home():
     """Weather module home page"""
-    return render_template("weather.html",
+    return render_template("weather/index.html",
                         title="Weather",
-                        module_name=g.current_module['name'],
-                        module_icon=g.current_module['icon_class'],
-                        page_icon=g.current_module['icon_class'],
-                        icon_color=g.current_module['color'],
-                        module_home='weather_bp.weather_home',
-                        installed_modules=g.installed_modules)
+                        module_home='weather_bp.weather_home')
+    
 
 @blueprint.route("/lookup", methods=['POST'])
 def lookup_weather():

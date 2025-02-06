@@ -5,9 +5,9 @@
 {% block content %}
 <div class="coming-soon-container">
     <div class="coming-soon">
-        <i class="{{ module_icon }} app-icon-books"></i>
+        <i class="{{ g.current_module['icon_class'] }}" style="color: {{ g.current_module['color'] }}"></i>
         <h2>{{ title }}</h2>
-        <p>We're working on something exciting! Check back later.</p>
+        <p>We're working on something exciting! Check back later....</p>
     </div>
 </div>
 {% endblock %} 

@@ -15,7 +15,7 @@ manifest = {
     'version': '1.0',
     'depends': ['core'],
     'main_route': '/esign',
-    'icon_class': 'fa-regular fa-file-signature',
+    'icon_class': 'fa-solid fa-file-signature',
     'type': 'App',
     'color': '#007bff',  # Blue color
     'description': 'Electronic document signing',

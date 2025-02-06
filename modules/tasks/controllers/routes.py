@@ -15,6 +15,7 @@ from flask import Blueprint, render_template, request, redirect, url_for, g, fla
 from flask_login import login_required
 from ..models.task import Task
 
+# Create blueprint
 blueprint = Blueprint(
     'tasks_bp',
     __name__,
@@ -32,14 +33,9 @@ def tasks_home():
     except:
         tasks = []  # If table doesn't exist or any other error, just use empty list
         
-    return render_template("tasks.html",
-                        title=g.current_module['name'],
-                        module_name=g.current_module['name'],
-                        module_icon=g.current_module['icon_class'],
-                        page_icon=g.current_module['icon_class'],
-                        icon_color=g.current_module['color'],
+    return render_template("tasks/index.html",
+                        title="Tasks",
                         module_home='tasks_bp.tasks_home',
-                        installed_modules=g.installed_modules,
                         tasks=tasks,
                         flash_duration=1000)
 

@@ -23,15 +23,11 @@ blueprint = Blueprint(
     static_folder='../views/assets'
 )
 
+# Clock home page
 @blueprint.route("/")
 @login_required
 def clock_home():
     """Clock page"""
-    return render_template("clock.html",
+    return render_template("clock/index.html",
                         title="Clock",
-                        module_name=g.current_module['name'],
-                        module_icon=g.current_module['icon_class'],
-                        page_icon=g.current_module['icon_class'],
-                        icon_color=g.current_module['color'],
-                        module_home='clock_bp.clock_home',
-                        installed_modules=g.installed_modules)
+                        module_home='clock_bp.clock_home')

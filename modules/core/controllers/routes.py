@@ -189,7 +189,7 @@ def settings():
     if current_user.is_authenticated:
         user_lang = UserSetting.get(current_user.id, 'language')
     
-    return render_template('settings/index.html',
+    return render_template('settings/settings-index.html',
                         languages=SUPPORTED_LANGUAGES,
                         current_language=user_lang or session.get('lang', 'en'),
                         module_name="Settings",

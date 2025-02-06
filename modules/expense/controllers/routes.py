@@ -24,11 +24,6 @@ blueprint = Blueprint(
 @blueprint.route("/")
 @login_required
 def expense_home():
-    return render_template("coming_soon.html",
+    return render_template("expense/index.html",
                         title="Expense",
-                        module_name=g.current_module['name'],
-                        module_icon=g.current_module['icon_class'],
-                        page_icon=g.current_module['icon_class'],
-                        icon_color=g.current_module['color'],
-                        module_home='expense_bp.expense_home',
-                        installed_modules=g.installed_modules) 
+                        module_home='expense_bp.expense_home') 
