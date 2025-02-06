@@ -1,6 +1,9 @@
 <h1 align="center">
 sparQ
 </h1>
+
+ <p align="center"><a href="https://sparqone.github.io">Project Home</a></p>
+
 <p align="center">
 <a href="https://opensource.org/licenses/Apache-2.0">
     <img src="https://img.shields.io/badge/License-Apache_2.0-blue.svg">
@@ -15,7 +18,7 @@ architecture for managing core business operations, allowing businesses to enabl
   
 ![sparQ Dashboard](modules/core/views/assets/images/screen1.png)  
 
-  
+[Documentation](https://sparqone.github.io)
 
 ## Features
 
@@ -33,48 +36,6 @@ architecture for managing core business operations, allowing businesses to enabl
   - **Weather & Clock**: Utility modules (For demonstration purpose)
 - **Modern UI**: HTMX for dynamic updates, Bootstrap styling, and responsive layouts.
 
-## Getting Started
-
-### Prerequisites
-- Python 3.8+
-- Flask
-- SQLAlchemy
-- HTMX
-
-### Installation
-
-
-Requirements:
-- Python 3.10+
-- pip
-- git
-- OSX/Linux
-
-
-Get the code:
-```bash
-git clone https://github.com/remarqable/sparq
-cd sparq
-```
-
-Install venv if you don't have it:
-```bash
-sudo apt install python3-venv
-```
-
-Create a virtual environment and install the dependencies:
-```bash
-python3 -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
-```
-
-Run the app:
-```bash
-python3 app.py
-```
-
-Access the application at `http://localhost:8000`.
 
 ## Module System
 
