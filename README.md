@@ -60,7 +60,7 @@ sparQ follows a "building block" approach where functionality is divided into in
 sparQ is released under the Apache-2.0 license
 
 ## Contributing
-We welcome contributions! Please submit issues or pull requests on [GitHub](https://github.com/remarqable/sparq).
+We welcome contributions! Please submit issues or pull requests on [GitHub](https://github.com/sparqone/sparq).
 
 ## Contact
 For questions or support, reach out to [asim95@gmail.com](mailto:asim95@gmail.com).
