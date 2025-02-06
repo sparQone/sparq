@@ -28,21 +28,28 @@ tasks/
         templates/
             tasks.html
         assets/
-            styles.css
+            css/
+                tasks.css
 ```
 
 ---
 
 ### **2. Define the Manifest File**
 
-The manifest file specifies metadata about the module. Create `__manifest__.py` inside the `tasks` directory with the following content:
+The manifest file specifies metadata about the module. Create `__manifest__.py` inside the `tasks` directory:
 
 ```python
 manifest = {
-    "name": "TaskManagerModule",
-    "type": "Application",
-    "description": "A module for managing tasks.",
-    "version": "1.0.0"
+    'name': 'Tasks',
+    'version': '1.0',
+    'main_route': '/tasks',
+    'icon_class': 'fa-regular fa-check-square',
+    'type': 'App',
+    'color': '#007bff',  # Blue color
+    'depends': ['core'],
+    'enabled': True,
+    'description': 'Task and to-do management',
+    'long_description': 'Simple yet powerful task management system. Create, organize, and track tasks with ease. Perfect for personal to-dos or team task management.'
 }
 ```
 
@@ -50,10 +57,11 @@ manifest = {
 
 ### **3. Define the Model**
 
-In the `models` directory, create a file `task.py` to define the database model for tasks.
+In the `models` directory, create a file `task.py` to define the database model for tasks:
 
 ```python
 from system.db.database import db
+from flask import current_app
 
 class Task(db.Model):
     __tablename__ = 'task'
@@ -62,9 +70,18 @@ class Task(db.Model):
     name = db.Column(db.String(255), nullable=False)
     created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
     updated_at = db.Column(db.DateTime, default=db.func.current_timestamp(), onupdate=db.func.current_timestamp())
-
+    
     def __init__(self, name):
         self.name = name
+
+    @classmethod
+    def create_sample_data(cls):
+        """Initialize sample tasks if table is empty"""
+        if not cls.query.first():  # Only create if table is empty
+            cls.create("Review project requirements")
+            cls.create("Schedule team meeting")
+            cls.create("Update documentation")
+            print("Sample tasks created")
 
     @staticmethod
     def create(name):
@@ -98,176 +115,208 @@ class Task(db.Model):
 
 ### **4. Create Controllers and Routes**
 
-In the `controllers` directory, create a file `routes.py` for handling HTTP routes.
+In the `controllers` directory, create a file `routes.py`:
 
 ```python
-from flask import Blueprint, render_template, request, jsonify
-from tasks.models.task import Task
+from flask import Blueprint, render_template, request, redirect, url_for, g, flash
+from flask_login import login_required
+from ..models.task import Task
 
-tasks_bp = Blueprint('tasks_bp', __name__, template_folder='../views/templates', static_folder='../views/assets')
+blueprint = Blueprint(
+    'tasks_bp',
+    __name__,
+    template_folder='../views/templates',
+    static_folder='../views/assets'
+)
 
-@tasks_bp.route('/tasks', methods=['GET'])
-def index():
-    tasks = Task.get_all()
-    return render_template('tasks.html', tasks=tasks)
-
-@tasks_bp.route('/tasks', methods=['POST'])
-def create_task():
-    name = request.form.get('name')
-    task = Task.create(name)
-    return jsonify({"id": task.id, "name": task.name})
-
-@tasks_bp.route('/tasks/<int:task_id>', methods=['DELETE'])
-def delete_task(task_id):
-    Task.delete(task_id)
-    return jsonify({"status": "success"})
-
-@tasks_bp.route('/tasks/<int:task_id>', methods=['PUT'])
-def update_task(task_id):
-    name = request.form.get('name')
-    task = Task.update(task_id, name)
-    if task:
-        return jsonify({"id": task.id, "name": task.name})
-    return jsonify({"error": "Task not found"}), 404
+@blueprint.route("/")
+@login_required
+def tasks_home():
+    """Tasks home page"""
+    try:
+        tasks = Task.get_all()
+    except:
+        tasks = []  # If table doesn't exist or any other error, just use empty list
+        
+    return render_template("tasks.html",
+                        title=g.current_module['name'],
+                        module_name=g.current_module['name'],
+                        module_icon=g.current_module['icon_class'],
+                        page_icon=g.current_module['icon_class'],
+                        icon_color=g.current_module['color'],
+                        module_home='tasks_bp.tasks_home',
+                        installed_modules=g.installed_modules,
+                        tasks=tasks,
+                        flash_duration=1000)
 ```
 
 ---
 
-### **5. Create Templates and CSS**
+### **5. Create Module Class**
 
-#### **HTML Template**
-In `views/templates`, create a `tasks.html` file for the UI.
+Create `module.py` to handle module initialization:
+
+```python
+from system.db.database import db
+from flask import current_app
+from system.module.hooks import hookimpl
+
+class TasksModule:
+    def __init__(self):
+        """Initialize module"""
+        self._blueprint = None
+        self._url_prefix = None
+
+    def register_blueprint(self, blueprint, url_prefix):
+        """Register blueprint with the module"""
+        self._blueprint = blueprint
+        self._url_prefix = url_prefix
+
+    def get_routes(self):
+        """Get module routes"""
+        from .controllers.routes import blueprint as tasks_blueprint
+        return [(tasks_blueprint, '/tasks')]
+
+    @hookimpl
+    def init_database(self):
+        """Initialize database tables and sample data"""
+        from .models.task import Task
+        db.create_all()
+        try:
+            Task.create_sample_data()
+        except Exception as e:
+            print(f"Error creating sample tasks: {e}")
+```
+
+---
+
+### **6. Create Templates**
+
+In `views/templates`, create `tasks.html`:
 
 ```html
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Task Manager</title>
-    <link rel="stylesheet" type="text/css" href="/assets/styles.css">
-</head>
-<body>
-    <div class="container">
-        <h1>Task Manager</h1>
-        <form id="task-form">
-            <input type="text" name="name" placeholder="New Task" required>
-            <button type="submit">Add Task</button>
-        </form>
-        <ul id="task-list">
-            {% for task in tasks %}
-            <li data-id="{{ task.id }}">{{ task.name }}</li>
-            {% endfor %}
-        </ul>
+{% extends "base.html" %}
+
+{% block title %}{{ _("Tasks") }}{% endblock %}
+
+{% block app_class %}tasks-app{% endblock %}
+
+{% block additional_styles %}
+<link rel="stylesheet" href="{{ url_for('tasks_bp.static', filename='css/tasks.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="content-card tasks-container">
+    <div class="tasks-header">
+        <h2>{{ _("Tasks") }}</h2>
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addTaskModal">
+            <i class="fas fa-plus"></i> {{ _("Add Task") }}
+        </button>
     </div>
-    <script>
-        document.getElementById('task-form').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            const formData = new FormData(this);
-            const response = await fetch('/tasks', {
-                method: 'POST',
-                body: formData
-            });
-            const task = await response.json();
-            const li = document.createElement('li');
-            li.textContent = task.name;
-            li.dataset.id = task.id;
-            document.getElementById('task-list').appendChild(li);
-        });
-    </script>
-</body>
-</html>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert" id="flash-{{ loop.index }}">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+</div>
+{% endblock %}
 ```
 
-#### **CSS File**
-In `views/assets`, create a `styles.css` file to style the Task Manager UI.
+---
+
+### **7. Add CSS Styling**
+
+In `views/assets/css`, create `tasks.css`:
 
 ```css
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f9;
-    color: #333;
-    margin: 0;
-    padding: 0;
+/* Tasks Module Styles */
+.tasks-app {
+    --module-color: #dc3545;
+    --flash-duration: 3000ms;  /* Configure flash message duration */
 }
 
-.container {
-    max-width: 600px;
-    margin: 50px auto;
-    background: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+.tasks-app .app-header {
+    border-bottom-color: var(--module-color);
 }
 
-h1 {
-    text-align: center;
-    color: #555;
+.app-icon-tasks,
+[data-app="Tasks"] i {
+    color: var(--module-color) !important;
 }
 
-form {
+/* Tasks layout */
+.tasks-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.tasks-header {
     display: flex;
-    margin-bottom: 20px;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
 }
 
-form input {
-    flex: 1;
-    padding: 10px;
-    font-size: 16px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    margin-right: 10px;
-}
-
-form button {
-    padding: 10px 20px;
-    font-size: 16px;
-    background-color: #5cb85c;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-form button:hover {
-    background-color: #4cae4c;
-}
-
-ul {
-    list-style: none;
-    padding: 0;
-}
-
-ul li {
-    padding: 10px;
-    background: #f9f9f9;
-    border: 1px solid #ddd;
-    margin-bottom: 10px;
-    border-radius: 4px;
+.tasks-header h2 {
+    margin: 0;
 }
 ```
 
 ---
 
-### **6. Register the Module**
+### **8. Add Translations**
 
-In `module.py`, register the blueprint for the module.
+Create a `lang` directory in your module with language files:
 
-```python
-from tasks.controllers.routes import tasks_bp
+```
+tasks/
+    lang/
+        es.json
+```
 
-class TaskManagerModule:
-    def __init__(self, app):
-        app.register_blueprint(tasks_bp)
+Example translation file (es.json):
+```json
+{
+    "_meta": {
+        "date_formats": {
+            "short": "DD/MM/YYYY",
+            "medium": "DD MMM YYYY",
+            "long": "DD [de] MMMM [de] YYYY",
+            "time": "HH:mm",
+            "datetime": "DD/MM/YYYY HH:mm"
+        },
+        "number_formats": {
+            "decimal_separator": ",",
+            "thousand_separator": ".",
+            "currency_symbol": "€",
+            "currency_format": "{symbol}{amount}"
+        }
+    },
+    "Tasks": "Tareas",
+    "Add Task": "Agregar Tarea",
+    "Edit Task": "Editar Tarea",
+    "Delete Task": "Eliminar Tarea"
+}
 ```
 
 ---
 
-### **7. Test Your Module**
+### **9. Test Your Module**
 
-1. Start the Flask application.
-2. Visit `/tasks` in your browser.
-3. Add, update, and delete tasks using the provided UI and verify the functionality.
+1. Start the Flask application
+2. Visit `/tasks` in your browser
+3. Verify that:
+   - The module appears in the app selector
+   - Tasks page loads with proper styling
+   - Translations work when changing language
+   - Sample tasks are created in the database
 
----
-
-With these steps, you have created a fully functional "Task Manager" module of type **Application**. It demonstrates CRUD operations, dynamic module loading, and a simple UI with CSS styling. This example can serve as a template for other application modules.
+This creates a fully functional Tasks module that integrates with the sparQ platform's core features including authentication, internationalization, and the module system.
 
