@@ -1,0 +1,436 @@
+{% extends "people-base.html" %}
+
+{% block title %}{{ employee.user.first_name }} {{ employee.user.last_name }} - {{ _("Employee Details") }}{% endblock %}
+
+{% block people_content %}
+<div class="content-card">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="{{ url_for('people_bp.employees') }}">{{ _("Employees") }}</a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="#">{{ employee.user.first_name }} {{ employee.user.last_name }}</a>
+            </li>
+        </ol>
+    </nav>
+
+    <div class="employee-details">
+        <div class="editable-field" data-field="name">
+            <h1>
+                <span class="field-value">{{ employee.user.first_name }} {{ employee.user.last_name }}</span>
+                <button class="edit-btn" 
+                        hx-get="{{ url_for('people_bp.edit_field', employee_id=employee.id, field='name') }}"
+                        hx-target="#modal-container"
+                        hx-swap="innerHTML">
+                    <i class="fas fa-edit"></i>
+                </button>
+            </h1>
+        </div>
+        <p class="position-title">{{ employee.position or "Owner" }}</p>
+
+        <div class="contact-info">
+            <div class="contact-item">
+                <i class="fas fa-phone text-muted"></i>
+                <span>{{ employee.phone }}</span>
+            </div>
+            <div class="contact-item">
+                <i class="fas fa-envelope text-muted"></i>
+                <span>{{ employee.user.email }}</span>
+            </div>
+        </div>
+
+        <div class="detail-tabs mt-4">
+            <button class="tab-btn active" data-tab="main">Main</button>
+            <button class="tab-btn" data-tab="personal">Personal</button>
+        </div>
+
+        <div class="detail-sections mt-4">
+            <!-- Main Tab Content -->
+            <div class="tab-content active" id="main-tab">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="info-section">
+                            <h3>Employment</h3>
+                            <div class="info-item">
+                                <label>Hire Date</label>
+                                <div>{{ employee.start_date|format_date if employee.start_date }}</div>
+                            </div>
+                            <div class="info-item">
+                                <label>Employment Type</label>
+                                <div>{{ employee.type.value if employee.type }}</div>
+                            </div>
+                            <div class="info-item">
+                                <label>Compensation</label>
+                                <div>{{ employee.formatted_salary if employee.salary }}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="info-section">
+                            <div class="section-header">
+                                <h3>Notes</h3>
+                                <button class="btn btn-sm btn-link"><i class="fas fa-plus"></i></button>
+                            </div>
+                            <div class="note-item">
+                                <i class="fas fa-sticky-note"></i>
+                                <div>
+                                    <div class="note-title">Asim does a great...</div>
+                                    <div class="note-date">01/22/2025</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="info-section">
+                            <div class="section-header">
+                                <h3>Documents</h3>
+                                <button class="btn btn-sm btn-link"><i class="fas fa-upload"></i></button>
+                            </div>
+                            <div class="document-item">
+                                <i class="fas fa-file-pdf"></i>
+                                <span>Resume.pdf</span>
+                            </div>
+                            <div class="documents-coming-soon">
+                                Coming Soon
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <h3>Shortcuts</h3>
+                        <div class="shortcuts-grid">
+                            <div class="shortcut-card">
+                                <div class="shortcut-icon onboarding">
+                                    <i class="fas fa-clipboard-list"></i>
+                                </div>
+                                <h4>Onboarding</h4>
+                                <p>Sarah has 0 tasks to complete onboarding.</p>
+                            </div>
+                            <div class="shortcut-card">
+                                <div class="shortcut-icon time">
+                                    <i class="fas fa-clock"></i>
+                                </div>
+                                <h4>Time Tracking</h4>
+                                <p>0 Time Sheets Ready for approval.</p>
+                            </div>
+                            <div class="shortcut-card">
+                                <div class="shortcut-icon reimbursement">
+                                    <i class="fas fa-receipt"></i>
+                                </div>
+                                <h4>Reimbursements</h4>
+                                <p>0 outstanding reimbursements.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Personal Tab Content -->
+            <div class="tab-content" id="personal-tab" style="display: none;">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="info-section">
+                            <h3>Personal Information</h3>
+                            <div class="info-item">
+                                <label>Birthday</label>
+                                <div>{{ employee.birthday|format_date if employee.birthday }}</div>
+                            </div>
+                            <div class="info-item">
+                                <label>Gender</label>
+                                <div>{{ employee.gender.value if employee.gender }}</div>
+                            </div>
+                            <div class="info-item">
+                                <label>Address</label>
+                                <div>
+                                    {{ employee.full_address if employee.address }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="info-section">
+                            <h3>Emergency Contact</h3>
+                            <div class="info-item">
+                                <label>Name</label>
+                                <div>{{ employee.emergency_contact_name }}</div>
+                            </div>
+                            <div class="info-item">
+                                <label>Phone</label>
+                                <div>{{ employee.emergency_contact_phone }}</div>
+                            </div>
+                            {% if employee.emergency_contact_relationship %}
+                            <div class="info-item">
+                                <label>Relationship</label>
+                                <div>{{ employee.emergency_contact_relationship }}</div>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="info-section">
+                            <h3>Social</h3>
+                            <div class="info-item">
+                                <label>Social Media</label>
+                                <div>hashed_social_1</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Container -->
+<div id="modal-container"></div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const tabButtons = document.querySelectorAll('.tab-btn');
+    const tabContents = document.querySelectorAll('.tab-content');
+
+    tabButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            // Remove active class from all buttons and contents
+            tabButtons.forEach(btn => btn.classList.remove('active'));
+            tabContents.forEach(content => {
+                content.style.display = 'none';
+                content.classList.remove('active');
+            });
+
+            // Add active class to clicked button
+            button.classList.add('active');
+
+            // Show corresponding content
+            const tabId = button.getAttribute('data-tab');
+            const activeContent = document.getElementById(`${tabId}-tab`);
+            activeContent.style.display = 'block';
+            activeContent.classList.add('active');
+        });
+    });
+});
+</script>
+
+<style>
+/* Employee Details Styles */
+.employee-details h1 {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+}
+
+.position-title {
+    color: #6c757d;
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+}
+
+.contact-info {
+    display: flex;
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.contact-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.detail-tabs {
+    display: flex;
+    gap: 1rem;
+    border-bottom: 1px solid #dee2e6;
+    padding-bottom: 1rem;
+}
+
+.tab-btn {
+    border: none;
+    background: none;
+    padding: 0.5rem 1rem;
+    color: #6c757d;
+    font-weight: 500;
+}
+
+.tab-btn.active {
+    color: var(--module-color);
+    border-bottom: 2px solid var(--module-color);
+}
+
+.info-section {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    height: 100%;
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.info-section h3 {
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+    color: #444;
+}
+
+.info-item {
+    margin-bottom: 1rem;
+}
+
+.info-item label {
+    color: #6c757d;
+    font-size: 0.9rem;
+    margin-bottom: 0.25rem;
+}
+
+.note-item {
+    display: flex;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    background: #f8f9fa;
+    border-radius: 4px;
+    margin-bottom: 0.5rem;
+}
+
+.note-title {
+    font-weight: 500;
+}
+
+.note-date {
+    font-size: 0.8rem;
+    color: #6c757d;
+}
+
+.document-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    border-radius: 4px;
+}
+
+.documents-coming-soon {
+    text-align: center;
+    color: #6c757d;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 4px;
+}
+
+.shortcuts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1rem;
+}
+
+.shortcut-card {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.shortcut-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+}
+
+.shortcut-icon.onboarding {
+    background: rgba(25, 135, 84, 0.1);
+    color: #198754;
+}
+
+.shortcut-icon.time {
+    background: rgba(13, 110, 253, 0.1);
+    color: #0d6efd;
+}
+
+.shortcut-icon.reimbursement {
+    background: rgba(102, 16, 242, 0.1);
+    color: #6610f2;
+}
+
+.shortcut-card h4 {
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+}
+
+.shortcut-card p {
+    color: #6c757d;
+    margin: 0;
+}
+
+.tab-content {
+    transition: opacity 0.3s ease;
+}
+
+.tab-content.active {
+    opacity: 1;
+}
+
+.info-item label {
+    font-size: 0.875rem;
+    color: #6c757d;
+    margin-bottom: 0.25rem;
+    display: block;
+}
+
+.info-item {
+    margin-bottom: 1rem;
+}
+
+.info-item:last-child {
+    margin-bottom: 0;
+}
+
+.editable-field {
+    position: relative;
+    display: inline-block;
+}
+
+.edit-btn {
+    opacity: 0;
+    position: absolute;
+    right: -40px;
+    top: 50%;
+    transform: translateY(-70%);
+    border: none;
+    background: none;
+    color: var(--bs-primary);
+    transition: all 0.2s;
+    cursor: pointer;
+    padding: 5px 10px;
+    margin-left: 10px;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+}
+
+.editable-field:hover .edit-btn {
+    opacity: 1;
+    right: -45px;
+}
+
+.field-value {
+    display: inline-block;
+    margin-right: 10px;
+}
+</style>
+{% endblock %} 

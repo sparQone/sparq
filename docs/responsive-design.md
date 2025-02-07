@@ -134,7 +134,7 @@ Dynamically adjust content visibility based on screen size.
     <span>{{ employee.location }}</span>
   </div>
   <div class="tertiary-info">
-    <span>{{ employee.hire_date }}</span>
+    <span>{{ employee.start_date|format_date }}</span>
     <span>{{ employee.manager }}</span>
   </div>
 </div>

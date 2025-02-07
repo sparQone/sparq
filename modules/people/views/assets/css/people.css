@@ -160,11 +160,13 @@
 }
 
 .status-active {
-    color: #198754;
+    color: #198754;  /* Bootstrap success color */
+    font-size: 0.5rem;  /* Make the dot smaller */
 }
 
 .status-inactive {
-    color: #dc3545;
+    color: #6c757d;  /* Bootstrap secondary color */
+    font-size: 0.5rem;  /* Make the dot smaller */
 }
 
 .admin-badge {
@@ -386,11 +388,13 @@
 
 /* Status Indicators */
 .status-active {
-    color: #198754;
+    color: #198754;  /* Bootstrap success color */
+    font-size: 0.5rem;  /* Make the dot smaller */
 }
 
 .status-inactive {
-    color: #dc3545;
+    color: #6c757d;  /* Bootstrap secondary color */
+    font-size: 0.5rem;  /* Make the dot smaller */
 }
 
 .admin-badge {
@@ -399,4 +403,52 @@
     padding: 2px 8px;
     border-radius: 0.25rem;
     font-size: 0.8em;
+}
+
+.employee-row {
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.employee-row:hover {
+    background-color: rgba(0,0,0,0.02);
+}
+
+.user-initials {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--bs-primary);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 500;
+}
+
+/* Status Indicators */
+.status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-right: 0.5rem;
+    display: inline-block;
+}
+
+.status-dot.active {
+    background-color: #198754;  /* Bootstrap success color */
+}
+
+.status-dot.inactive {
+    background-color: #6c757d;  /* Bootstrap secondary color */
+}
+
+/* Status text colors */
+.status-dot.active + span {
+    color: #198754;  /* Match dot color */
+    font-weight: 500;
+}
+
+.status-dot.inactive + span {
+    color: #6c757d;  /* Match dot color */
 } 

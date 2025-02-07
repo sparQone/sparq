@@ -333,3 +333,65 @@ def delete_user(user_id):
         return render_template('employees/table-partial.html', users=users)
     except Exception as e:
         return str(e), 400 
+
+@blueprint.route("/employees/<int:employee_id>")
+@login_required
+def employee_details(employee_id):
+    """Employee details page"""
+    employee = Employee.query.get_or_404(employee_id)
+    
+    return render_template("employees/details.html",
+                        employee=employee,
+                        active_page='employees',
+                        module_home='people_bp.people_home')
+
+@blueprint.route("/employees/<int:employee_id>/edit/<field>", methods=['GET'])
+@login_required
+def edit_field(employee_id, field):
+    """Get edit modal for a specific field"""
+    employee = Employee.query.get_or_404(employee_id)
+    
+    field_labels = {
+        'name': 'Name',
+        # Add other fields here as we expand
+    }
+    
+    return render_template(
+        'employees/edit-field-modal.html',
+        employee=employee,
+        field=field,
+        field_label=field_labels.get(field, field.title())
+    )
+
+@blueprint.route("/employees/<int:employee_id>/update/<field>", methods=['PUT'])
+@login_required
+def update_field(employee_id, field):
+    """Update a specific field"""
+    try:
+        employee = Employee.query.get_or_404(employee_id)
+        
+        if field == 'name':
+            employee.user.first_name = request.form.get('first_name')
+            employee.user.last_name = request.form.get('last_name')
+            db.session.commit()
+            
+            # Return just the updated field HTML
+            return f"""
+            <div class="editable-field" data-field="name">
+                <h1>
+                    <span class="field-value">{employee.user.first_name} {employee.user.last_name}</span>
+                    <button class="edit-btn" 
+                            hx-get="{url_for('people_bp.edit_field', employee_id=employee.id, field='name')}"
+                            hx-target="#modal-container"
+                            hx-swap="innerHTML">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                </h1>
+            </div>
+            """
+            
+        return "Field not supported", 400
+        
+    except Exception as e:
+        db.session.rollback()
+        return str(e), 400 

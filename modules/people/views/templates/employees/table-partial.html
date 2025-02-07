@@ -7,29 +7,33 @@
     <table class="table table-hover">
         <thead>
             <tr>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Department</th>
-                <th>Position</th>
-                <th>Type</th>
-                <th>Status</th>
+                <th>{{ _("Name") }}</th>
+                <th>{{ _("Position") }}</th>
+                <th>{{ _("Department") }}</th>
+                <th>{{ _("Type") }}</th>
+                <th>{{ _("Status") }}</th>
                 <th>Actions</th>
             </tr>
         </thead>
         <tbody>
             {% for user in users %}
-            <tr>
-                <td>{{ user.first_name }} {{ user.last_name }}</td>
-                <td>{{ user.email }}</td>
-                <td>{{ user.employee_profile.department }}</td>
-                <td>{{ user.employee_profile.position }}</td>
-                <td>{{ user.employee_profile.type.value|title }}</td>
+            <tr class="employee-row" onclick="window.location.href='{{ url_for('people_bp.employee_details', employee_id=user.employee_profile.id) }}'">
                 <td>
-                    {% if user.is_active %}
-                    <i class="fas fa-circle status-active"></i> Active
-                    {% else %}
-                    <i class="fas fa-circle status-inactive"></i> Inactive
-                    {% endif %}
+                    <div class="d-flex align-items-center">
+                        <div class="user-initials me-2">
+                            {{ user.first_name[0] }}{{ user.last_name[0] }}
+                        </div>
+                        {{ user.first_name }} {{ user.last_name }}
+                    </div>
+                </td>
+                <td>{{ user.employee_profile.position }}</td>
+                <td>{{ user.employee_profile.department }}</td>
+                <td>{{ user.employee_profile.type.value }}</td>
+                <td>
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-circle status-active me-2"></i>
+                        {{ user.employee_profile.status.value }}
+                    </div>
                 </td>
                 <td class="action-buttons">
                     <button class="btn btn-sm btn-outline-primary" 
