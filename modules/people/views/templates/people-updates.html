@@ -3,6 +3,22 @@
 {% block additional_styles %}
 {{ super() }}
 <link rel="stylesheet" href="{{ url_for('people_bp.static', filename='css/updates.css') }}">
+<style>
+    body::before {
+        content: "MOCKUP";
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) rotate(-30deg);
+        font-size: 100px;
+        font-weight: bold;
+        color: rgba(128, 128, 128, 0.2);
+        white-space: nowrap;
+        z-index: 9999;
+        pointer-events: none;
+        user-select: none;
+    }
+</style>
 {% endblock %}
 
 {% block title %}Company Updates{% endblock %}
