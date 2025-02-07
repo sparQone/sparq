@@ -67,6 +67,35 @@ class User(db.Model, UserMixin):
         db.session.add(user)
         db.session.commit()
         return user 
+
+    def update_setting(self, key, value):
+        """Update or create a user setting"""
+        try:
+            # Try to get existing setting
+            setting = UserSetting.query.filter_by(
+                user_id=self.id,
+                key=key
+            ).first()
+            
+            if setting:
+                # Update existing setting
+                setting.value = value
+            else:
+                # Create new setting
+                setting = UserSetting(
+                    user_id=self.id,
+                    key=key,
+                    value=value
+                )
+                db.session.add(setting)
+                
+            db.session.commit()
+            return True
+            
+        except Exception as e:
+            db.session.rollback()
+            print(f"Error updating user setting: {str(e)}")
+            return False
     
     
     

@@ -310,3 +310,20 @@ def not_found_error(error):
                          module_name="Error",
                          module_icon="fa-solid fa-exclamation-triangle",
                          module_home='core_bp.index'), 404
+
+@blueprint.route('/language/<lang_code>', methods=['POST'])
+@login_required
+def change_language(lang_code):
+    """Change user's language preference"""
+    if lang_code not in current_app.config['LANGUAGES']:
+        return jsonify({'error': 'Invalid language code'}), 400
+        
+    try:
+        if current_user.update_setting('language', lang_code):
+            session['language'] = lang_code
+            return jsonify({'success': True})
+        return jsonify({'error': 'Failed to update language setting'}), 500
+        
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500

@@ -4,16 +4,30 @@
 
 {% block people_content %}
 <div class="content-card">
-    <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item">
-                <a href="{{ url_for('people_bp.employees') }}">{{ _("Employees") }}</a>
-            </li>
-            <li class="breadcrumb-item">
-                <a href="#">{{ employee.user.first_name }} {{ employee.user.last_name }}</a>
-            </li>
-        </ol>
-    </nav>
+    <div class="d-flex justify-content-between align-items-start">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a href="{{ url_for('people_bp.employees') }}">{{ _("Employees") }}</a>
+                </li>
+                <li class="breadcrumb-item">
+                    <a href="#">{{ employee.user.first_name }} {{ employee.user.last_name }}</a>
+                </li>
+            </ol>
+        </nav>
+        
+        <button class="btn btn-outline-secondary btn-sm"
+                hx-delete="{{ url_for('people_bp.delete_user', user_id=employee.user.id) }}"
+                hx-confirm="Are you sure you want to delete this employee?"
+                hx-on::after-request="
+                    if(event.detail.successful) {
+                        window.location.href = '{{ url_for('people_bp.employees') }}';
+                    }
+                "
+                title="Delete Employee">
+            <i class="fas fa-trash"></i>
+        </button>
+    </div>
 
     <div class="employee-details">
         <div class="editable-field" data-field="name">
@@ -431,6 +445,20 @@ document.addEventListener('DOMContentLoaded', function() {
 .field-value {
     display: inline-block;
     margin-right: 10px;
+}
+
+.btn-outline-secondary {
+    border-color: #dee2e6;
+    color: #adb5bd;
+    opacity: 0.6;
+    transition: all 0.2s;
+}
+
+.btn-outline-secondary:hover {
+    border-color: #dc3545;
+    color: #dc3545;
+    background-color: transparent;
+    opacity: 1;
 }
 </style>
 {% endblock %} 

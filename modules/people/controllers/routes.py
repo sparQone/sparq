@@ -245,24 +245,6 @@ def add_employee_htmx():
             </div>
         """, 400
 
-@blueprint.route('/employees/<int:user_id>/edit/modal')
-@login_required
-def employee_edit_modal(user_id):
-    """Return the edit employee modal template"""
-    user = User.query.get_or_404(user_id)
-    
-    # Get plugin HTML for the form - using the same hook as add form
-    plugin_html = current_app.module_loader.pm.hook.modify_new_employee_form()
-    if not plugin_html:
-        plugin_html = []
-    
-    # Flatten and combine plugin HTML
-    flattened_html = [item for sublist in plugin_html for item in (sublist if isinstance(sublist, list) else [sublist])]
-    combined_plugin_html = "\n".join(filter(None, flattened_html))
-    
-    return render_template('employees/edit-modal.html', 
-                         user=user, 
-                         plugin_html=combined_plugin_html)
 
 @blueprint.route('/employees/<int:user_id>', methods=['PUT'])
 @login_required

@@ -156,6 +156,7 @@
 }
 
 .action-buttons {
+    width: 1%;  /* Makes the column as narrow as possible */
     white-space: nowrap;
 }
 
@@ -451,4 +452,19 @@
 
 .status-dot.inactive + span {
     color: #6c757d;  /* Match dot color */
+}
+
+/* Add these styles */
+.action-buttons .btn-outline-secondary {
+    border-color: #dee2e6;
+    color: #adb5bd;
+    opacity: 0.6;
+    transition: all 0.2s;
+}
+
+.action-buttons .btn-outline-secondary:hover {
+    border-color: #dc3545;
+    color: #dc3545;
+    background-color: transparent;
+    opacity: 1;
 } 
