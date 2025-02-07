@@ -45,66 +45,61 @@ document.addEventListener('DOMContentLoaded', function() {
     // Filter updates
     const filterButtons = document.querySelectorAll('.filter-buttons .btn');
 
-    filterButtons.forEach(button => {
-        button.addEventListener('click', function(e) {
-            // Update active state
-            filterButtons.forEach(btn => btn.classList.remove('active'));
-            this.classList.add('active');
-            
-            // Apply filter
-            applyCurrentFilter();
+    // Search updates
+    const searchInput = document.getElementById('updateSearch');
+    if (searchInput) {
+        searchInput.addEventListener('input', function() {
+            applyFilters();
         });
-    });
+    }
 
-    // Function to apply current filter
-    function applyCurrentFilter() {
+    // Combined function to apply both search and type filters
+    function applyFilters() {
+        const searchTerm = searchInput.value.toLowerCase();
         const activeFilter = document.querySelector('.filter-buttons .btn.active').dataset.filter;
         const updates = document.querySelectorAll('.update-card');
         
         updates.forEach(update => {
+            const content = update.querySelector('.update-content').textContent.toLowerCase();
+            const author = update.querySelector('.author-name').textContent.toLowerCase();
             const updateType = update.dataset.type;
-            if (activeFilter === 'all' || updateType === activeFilter) {
-                update.style.display = '';
-            } else {
-                update.style.display = 'none';
-            }
+            
+            const matchesSearch = content.includes(searchTerm) || author.includes(searchTerm);
+            const matchesFilter = activeFilter === 'all' || updateType === activeFilter;
+
+            update.style.display = (matchesSearch && matchesFilter) ? '' : 'none';
         });
     }
 
-    // Apply filter before content is shown
+    // Apply filters before content is shown
     document.body.addEventListener('htmx:beforeSwap', function(evt) {
         const fragment = new DOMParser().parseFromString(evt.detail.serverResponse, 'text/html');
         const updates = fragment.querySelectorAll('.update-card');
+        
+        // Get current filter and search values
         const activeFilter = document.querySelector('.filter-buttons .btn.active').dataset.filter;
+        const searchTerm = searchInput.value.toLowerCase();
         
         updates.forEach(update => {
+            const content = update.querySelector('.update-content').textContent.toLowerCase();
+            const author = update.querySelector('.author-name').textContent.toLowerCase();
             const updateType = update.dataset.type;
-            if (activeFilter === 'all' || updateType === activeFilter) {
-                update.style.display = '';
-            } else {
-                update.style.display = 'none';
-            }
+            
+            const matchesSearch = content.includes(searchTerm) || author.includes(searchTerm);
+            const matchesFilter = activeFilter === 'all' || updateType === activeFilter;
+
+            update.style.display = (matchesSearch && matchesFilter) ? '' : 'none';
         });
         
         evt.detail.serverResponse = fragment.body.innerHTML;
     });
 
-    // Search updates
-    const searchInput = document.getElementById('updateSearch');
-    if (searchInput) {
-        searchInput.addEventListener('input', function() {
-            const searchTerm = this.value.toLowerCase();
-            const updates = document.querySelectorAll('.update-card');
-            const activeFilter = document.querySelector('.filter-buttons .btn.active').dataset.filter;
-
-            updates.forEach(update => {
-                const content = update.querySelector('.update-content').textContent.toLowerCase();
-                const author = update.querySelector('.author-name').textContent.toLowerCase();
-                const matchesSearch = content.includes(searchTerm) || author.includes(searchTerm);
-                const matchesFilter = activeFilter === 'all' || update.dataset.type === activeFilter;
-
-                update.style.display = (matchesSearch && matchesFilter) ? '' : 'none';
-            });
+    // Filter button click handler
+    filterButtons.forEach(button => {
+        button.addEventListener('click', function(e) {
+            filterButtons.forEach(btn => btn.classList.remove('active'));
+            this.classList.add('active');
+            applyFilters();
         });
-    }
+    });
 }); 
