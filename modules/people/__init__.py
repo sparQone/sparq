@@ -11,12 +11,17 @@
 # See the LICENSE file for details.
 # -----------------------------------------------------------------------------
 
-from flask import Blueprint
-from .controllers.routes import blueprint as people_blueprint
 from .module import PeopleModule
+from .utils.filters import init_filters
 
 # Create module instance
 module_instance = PeopleModule()
 
-# Register routes
-module_instance.register_blueprint(people_blueprint, url_prefix='/people') 
+def init_module(app):
+    """Initialize the people module"""
+    # Initialize filters first
+    init_filters(app)
+    
+    # Import and register blueprint with routes
+    from .controllers import blueprint
+    app.register_blueprint(blueprint, url_prefix='/people') 

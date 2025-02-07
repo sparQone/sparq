@@ -157,4 +157,84 @@
 
 #newUpdateForm {
     max-width: 100%;
+}
+
+/* Update type badges */
+.update-type-general {
+    background-color: #0dcaf0 !important;  /* Original teal */
+}
+
+.update-type-announcement {
+    background-color: #dc3545 !important;  /* Red */
+}
+
+.update-type-news {
+    background-color: #198754 !important;  /* Green */
+}
+
+.update-type-event {
+    background-color: #6f42c1 !important;  /* Purple */
+}
+
+/* Also update the filter buttons to match */
+.filter-buttons .btn[data-filter="General"] {
+    color: #0dcaf0;
+    border-color: #0dcaf0;
+}
+.filter-buttons .btn[data-filter="General"]:hover,
+.filter-buttons .btn[data-filter="General"].active {
+    background-color: #0dcaf0;
+    border-color: #0dcaf0;
+    color: white;
+}
+
+.filter-buttons .btn[data-filter="Announcement"] {
+    color: #dc3545;
+    border-color: #dc3545;
+}
+.filter-buttons .btn[data-filter="Announcement"]:hover,
+.filter-buttons .btn[data-filter="Announcement"].active {
+    background-color: #dc3545;
+    border-color: #dc3545;
+    color: white;
+}
+
+.filter-buttons .btn[data-filter="News"] {
+    color: #198754;
+    border-color: #198754;
+}
+.filter-buttons .btn[data-filter="News"]:hover,
+.filter-buttons .btn[data-filter="News"].active {
+    background-color: #198754;
+    border-color: #198754;
+    color: white;
+}
+
+.filter-buttons .btn[data-filter="Event"] {
+    color: #6f42c1;
+    border-color: #6f42c1;
+}
+.filter-buttons .btn[data-filter="Event"]:hover,
+.filter-buttons .btn[data-filter="Event"].active {
+    background-color: #6f42c1;
+    border-color: #6f42c1;
+    color: white;
+}
+
+/* Toast positioning */
+.toast {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    z-index: 1050;
+}
+
+/* Not implemented buttons styling */
+.not-implemented {
+    opacity: 0.7;
+    cursor: help;
+}
+
+.not-implemented:hover {
+    opacity: 1;
 } 

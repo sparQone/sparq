@@ -1,0 +1,92 @@
+{% extends "people-base.html" %}
+
+{% block additional_styles %}
+{{ super() }}
+<link rel="stylesheet" href="{{ url_for('people_bp.static', filename='css/updates.css') }}">
+{% endblock %}
+
+{% block additional_scripts %}
+{{ super() }}
+<script src="{{ url_for('people_bp.static', filename='js/updates.js') }}"></script>
+{% endblock %}
+
+{% block title %}Company Updates{% endblock %}
+
+{% block people_content %}
+<div class="content-card">
+    <!-- Header with actions -->
+    <div class="updates-header">
+        <h2>Company Updates</h2>
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newUpdateModal">
+            <i class="fas fa-plus"></i> New Update
+        </button>
+    </div>
+
+    <!-- Filters and search -->
+    <div class="updates-filters">
+        <div class="search-box">
+            <i class="fas fa-search"></i>
+            <input type="text" id="updateSearch" placeholder="Search updates..." class="form-control">
+        </div>
+        <div class="filter-buttons">
+            <button class="btn btn-outline-secondary active" data-filter="all">All</button>
+            {% for type in update_types %}
+            <button class="btn btn-outline-secondary" data-filter="{{ type.value }}">{{ type.value }}</button>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Updates feed -->
+    <div class="updates-feed"
+         hx-get="{{ url_for('people_bp.get_updates') }}"
+         hx-trigger="load, every 1s limit:60, every 10s"
+         hx-swap="innerHTML">
+    </div>
+</div>
+
+<!-- New Update Modal -->
+<div class="modal fade" id="newUpdateModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">New Update</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="newUpdateForm" 
+                  hx-post="{{ url_for('people_bp.create_update') }}"
+                  hx-target=".updates-feed"
+                  hx-swap="innerHTML"
+                  hx-on::after-request="if(event.detail.successful) {
+                      bootstrap.Modal.getInstance(document.getElementById('newUpdateModal')).hide();
+                      this.reset();
+                  }">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Update Type</label>
+                        <div class="btn-group w-100" role="group">
+                            {% for type in update_types %}
+                            <input type="radio" class="btn-check" name="type" id="type{{ type.name }}" 
+                                   value="{{ type.name }}" {{ 'checked' if type == update_types.GENERAL }}>
+                            <label class="btn btn-outline-primary" for="type{{ type.name }}">{{ type.value }}</label>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Content</label>
+                        <textarea class="form-control" name="content" rows="4" required 
+                                 placeholder="What would you like to share?"></textarea>
+                    </div>
+                    <div class="form-check mb-3">
+                        <input type="checkbox" class="form-check-input" id="pinUpdate" name="pin">
+                        <label class="form-check-label" for="pinUpdate">Pin this update</label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Post Update</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %} 

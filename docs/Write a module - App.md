@@ -26,7 +26,8 @@ tasks/
         routes.py
     views/
         templates/
-            tasks.html
+            tasks/
+                index.html
         assets/
             css/
                 tasks.css
@@ -192,7 +193,7 @@ class TasksModule:
 
 ### **6. Create Templates**
 
-In `views/templates`, create `tasks.html`:
+In `views/templates/tasks`, create `index.html`:
 
 ```html
 {% extends "base.html" %}

@@ -419,8 +419,8 @@
     width: 36px;
     height: 36px;
     border-radius: 50%;
-    background: var(--bs-primary);
-    color: white;
+    background: #e9ecef !important;  /* Changed from var(--bs-primary) */
+    color: #495057 !important;  /* Changed from white */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -467,4 +467,23 @@
     color: #dc3545;
     background-color: transparent;
     opacity: 1;
+}
+
+/* Employee avatar styling - matching updates style */
+.employee-avatar {
+    width: 40px;
+    height: 40px;
+    background: #e9ecef;  /* Same gray as updates */
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 500;
+    color: #495057;  /* Dark gray text */
+}
+
+/* Remove any existing blue styling */
+.avatar-circle {
+    background: #e9ecef !important;  /* Override any existing color */
+    color: #495057 !important;
 } 

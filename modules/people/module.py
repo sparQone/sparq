@@ -12,25 +12,19 @@
 # See the LICENSE file for details.
 # -----------------------------------------------------------------------------
 
-from flask import Blueprint, current_app
 from system.module.hooks import hookimpl
 from .hooks import PeopleHookSpecs
 from system.db.database import db
 from .models.employee import Employee
+from .controllers import blueprint
 
 class PeopleModule:
     def __init__(self):
-        self.blueprint = Blueprint('people_bp', __name__,
-                                 template_folder='views/templates',
-                                 static_folder='views/assets')
-
-    def register_blueprint(self, blueprint, url_prefix):
-        """Register blueprint with the module"""
-        self._blueprint = blueprint
-        self._url_prefix = url_prefix
+        self.blueprint = blueprint
 
     def get_routes(self):
-        return [(self._blueprint, self._url_prefix)] 
+        """Return list of routes to register"""
+        return [(self.blueprint, '/people')]
 
     @hookimpl
     def init_database(self):

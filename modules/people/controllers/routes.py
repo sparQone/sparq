@@ -11,21 +11,13 @@
 # See the LICENSE file for details.
 # -----------------------------------------------------------------------------
 
-from flask import Blueprint, render_template, request, redirect, url_for, flash, current_app, g
+from flask import render_template, request, redirect, url_for, flash, current_app, g
 from flask_login import login_required, current_user
 from modules.core.models.user import User
 from ..models.employee import Employee, EmployeeType, EmployeeStatus
 from system.db.database import db
 from datetime import datetime
-
-
-# Create blueprint
-blueprint = Blueprint(
-    'people_bp', 
-    __name__,
-    template_folder='../views/templates',
-    static_folder='../views/assets'
-)
+from . import blueprint
 
 @blueprint.route("/")
 @login_required
@@ -86,15 +78,6 @@ def dashboard():
     """People dashboard page"""
     return render_template("people-dashboard.html",
                         active_page='dashboard',
-                        module_home='people_bp.people_home')
-
-@blueprint.route("/updates")
-@login_required
-def updates():
-    """Company updates page"""
-    return render_template("people-updates.html",
-                        active_page='updates',
-                        title="Company Updates",
                         module_home='people_bp.people_home')
 
 @blueprint.route("/time_tracking")

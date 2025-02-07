@@ -6,6 +6,9 @@
 <link rel="stylesheet" href="{{ url_for('people_bp.static', filename='css/people.css') }}">
 {% endblock %}
 
+{% block additional_scripts %}
+{% endblock %}
+
 {% block content %}
 <div class="people-layout">
     {% include 'people_nav.html' with context %}
