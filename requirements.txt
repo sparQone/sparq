@@ -4,6 +4,8 @@
 #
 #    pip-compile --output-file=requirements.txt requirements.in
 #
+bidict==0.23.1
+    # via python-socketio
 blinker==1.9.0
     # via
     #   -r requirements.in
@@ -24,11 +26,16 @@ flask==3.1.0
     # via
     #   -r requirements.in
     #   flask-login
+    #   flask-socketio
     #   flask-sqlalchemy
 flask-login==0.6.3
     # via -r requirements.in
+flask-socketio==5.5.1
+    # via -r requirements.in
 flask-sqlalchemy==3.1.1
     # via -r requirements.in
+h11==0.14.0
+    # via wsproto
 humanize==4.11.0
     # via -r requirements.in
 idna==3.10
@@ -54,8 +61,14 @@ pluggy==1.5.0
     # via -r requirements.in
 python-dotenv==1.0.1
     # via -r requirements.in
+python-engineio==4.11.2
+    # via python-socketio
+python-socketio==5.12.1
+    # via flask-socketio
 requests==2.32.3
     # via -r requirements.in
+simple-websocket==1.1.0
+    # via python-engineio
 sqlalchemy==2.0.38
     # via
     #   -r requirements.in
@@ -71,6 +84,8 @@ werkzeug==3.1.3
     #   -r requirements.in
     #   flask
     #   flask-login
+wsproto==1.2.0
+    # via simple-websocket
 zipp==3.21.0
     # via
     #   -r requirements.in
