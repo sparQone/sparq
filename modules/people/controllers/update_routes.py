@@ -51,21 +51,43 @@ def create_update():
     """Create a new update"""
     try:
         data = request.form
+        
+        # Validate required fields
+        if not data.get("type") or not data.get("content"):
+            return "Type and content are required", 400
+            
+        # Validate update type
+        try:
+            update_type = UpdateType[data["type"]]
+        except KeyError:
+            return f"Invalid update type: {data.get('type')}", 400
+        
         update = Update(
             user_id=current_user.id,
-            type=UpdateType[data["type"]],
+            type=update_type,
             content=data["content"],
             pinned="pin" in data,
         )
+        
         db.session.add(update)
         db.session.commit()
-
-        # Emit update event with debug info after response
-        current_app.socketio.emit("updates_changed", {"update_id": update.id}, include_self=True)
-
-        return response
+        
+        # Emit WebSocket event to all clients
+        # The posting client will ignore it since it gets HTMX update
+        current_app.socketio.emit("updates_changed", {"update_id": update.id})
+        
+        # Return the updated list for the posting client via HTMX
+        updates = Update.query.order_by(Update.created_at.desc()).all()
+        return render_template(
+            "updates/partials/updates_list.html", 
+            updates=updates, 
+            current_user=current_user
+        )
+                             
     except Exception as e:
-        return jsonify({"status": "error", "message": str(e)}), 400
+        print(f"Error creating update: {str(e)}")  # Add logging
+        db.session.rollback()
+        return f"Error creating update: {str(e)}", 400
 
 
 @blueprint.route("/updates/<int:update_id>/pin", methods=["POST"])

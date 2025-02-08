@@ -42,7 +42,11 @@
 </div>
 
 <!-- New Update Modal -->
-<div class="modal fade" id="newUpdateModal" tabindex="-1" aria-labelledby="newUpdateModalLabel">
+<div class="modal fade" 
+     id="newUpdateModal" 
+     tabindex="-1" 
+     aria-labelledby="newUpdateModalLabel"
+     inert>
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
@@ -51,22 +55,33 @@
             </div>
             <form id="newUpdateForm" 
                   hx-post="{{ url_for('people_bp.create_update') }}"
-                  hx-on::after-request="if(event.detail.successful) {
-                      const modal = bootstrap.Modal.getInstance(document.getElementById('newUpdateModal'));
-                      if (modal) {
-                          modal.hide();
-                          // Return focus to the 'New Update' button
-                          document.querySelector('[data-bs-target=\'#newUpdateModal\']').focus();
-                      }
-                      this.reset();
-                  }">
+                  hx-target=".updates-feed"
+                  hx-swap="innerHTML"
+                  hx-indicator="#submitSpinner"
+                  hx-on::after-request="
+                      if(event.detail.successful) {
+                          const modal = bootstrap.Modal.getInstance(document.getElementById('newUpdateModal'));
+                          if (modal) {
+                              modal.hide();
+                              document.querySelector('[data-bs-target=\'#newUpdateModal\']').focus();
+                          }
+                          this.reset();
+                      } else {
+                          // Show error message
+                          const errorDiv = document.getElementById('updateError');
+                          errorDiv.textContent = event.detail.xhr.responseText;
+                          errorDiv.style.display = 'block';
+                      }">
                 <div class="modal-body">
+                    <!-- Add error message div -->
+                    <div id="updateError" class="alert alert-danger" style="display: none;"></div>
+                    
                     <div class="mb-3">
                         <label class="form-label">Update Type</label>
                         <div class="btn-group w-100" role="group">
                             {% for type in update_types %}
                             <input type="radio" class="btn-check" name="type" id="type{{ type.name }}" 
-                                   value="{{ type.name }}" {{ 'checked' if type == update_types.GENERAL }}>
+                                   value="{{ type.name }}" {{ 'checked' if type == update_types.GENERAL }} required>
                             <label class="btn btn-outline-primary" for="type{{ type.name }}">{{ type.value }}</label>
                             {% endfor %}
                         </div>
@@ -83,7 +98,10 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Post Update</button>
+                    <button type="submit" class="btn btn-primary">
+                        <span id="submitSpinner" class="spinner-border spinner-border-sm htmx-indicator" role="status"></span>
+                        Post Update
+                    </button>
                 </div>
             </form>
         </div>
@@ -96,11 +114,38 @@
 <script src="{{ url_for('people_bp.static', filename='js/updates.js') }}"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Initialize modal with proper focus management
     const newUpdateModal = document.getElementById('newUpdateModal');
+    const modalElement = bootstrap.Modal.getOrCreateInstance(newUpdateModal);
+    
+    // Remove inert attribute when modal opens
+    newUpdateModal.addEventListener('show.bs.modal', function () {
+        newUpdateModal.removeAttribute('inert');
+    });
+    
+    // Focus content field when modal is fully shown
+    newUpdateModal.addEventListener('shown.bs.modal', function () {
+        // Focus the content textarea
+        document.querySelector('textarea[name="content"]').focus();
+    });
+    
+    newUpdateModal.addEventListener('hide.bs.modal', function () {
+        // Remove focus from any element inside modal before hiding
+        document.activeElement.blur();
+    });
+    
     newUpdateModal.addEventListener('hidden.bs.modal', function () {
-        // Return focus to the trigger button when modal is closed
+        // Add inert attribute back
+        newUpdateModal.setAttribute('inert', '');
+        // Return focus to trigger button
         document.querySelector('[data-bs-target=\'#newUpdateModal\']').focus();
+        // Clear error messages
+        const errorDiv = document.getElementById('updateError');
+        if (errorDiv) {
+            errorDiv.style.display = 'none';
+            errorDiv.textContent = '';
+        }
+        // Reset form
+        document.getElementById('newUpdateForm').reset();
     });
     
     // Connect to WebSocket
