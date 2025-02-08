@@ -13,6 +13,7 @@
 
 from system.module.hooks import hookspec
 
+
 class PeopleHookSpecs:
     @hookspec
     def modify_new_employee_form(self):
@@ -58,4 +59,4 @@ class PeopleHookSpecs:
     @hookspec
     def employee_updated(self, employee, changes):
         """Called after an employee is updated"""
-        pass 
+        pass

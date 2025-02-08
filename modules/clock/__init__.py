@@ -12,6 +12,7 @@
 # -----------------------------------------------------------------------------
 
 from flask import Blueprint
+
 from .controllers.routes import blueprint as clock_blueprint
 from .module import ClockModule
 
@@ -19,4 +20,4 @@ from .module import ClockModule
 module_instance = ClockModule()
 
 # Register routes
-module_instance.register_blueprint(clock_blueprint, url_prefix='/clock')
+module_instance.register_blueprint(clock_blueprint, url_prefix="/clock")

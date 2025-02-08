@@ -11,9 +11,4 @@
 # See the LICENSE file for details.
 # -----------------------------------------------------------------------------
 
-state = {
-    'enabled': True,    
-    'disabled_at': None, 
-    'disabled_by': None,
-    'disable_reason': None
-} 
+state = {"enabled": True, "disabled_at": None, "disabled_by": None, "disable_reason": None}

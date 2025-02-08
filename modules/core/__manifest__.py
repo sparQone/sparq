@@ -2,7 +2,7 @@
 # sparQ
 #
 # Description:
-#     Core module manifest defining module metadata, dependencies, and 
+#     Core module manifest defining module metadata, dependencies, and
 #     configuration. Required for module discovery and initialization.
 #
 # Copyright (c) 2025 remarQable LLC
@@ -12,13 +12,13 @@
 # -----------------------------------------------------------------------------
 
 manifest = {
-    'name': 'Core',
-    'version': '1.0',
-    'main_route': '/core',
-    'icon_class': 'fa-solid fa-home',
-    'type': 'System',  
-    'color': '#6c757d', 
-    'depends': [],
-    'description': 'Core system functionality',
-    'long_description': 'Provides essential system features including user authentication, module management, and basic application framework. Required for all other modules to function.'
+    "name": "Core",
+    "version": "1.0",
+    "main_route": "/core",
+    "icon_class": "fa-solid fa-home",
+    "type": "System",
+    "color": "#6c757d",
+    "depends": [],
+    "description": "Core system functionality",
+    "long_description": "Provides essential system features including user authentication, module management, and basic application framework. Required for all other modules to function.",
 }

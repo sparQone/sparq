@@ -12,6 +12,7 @@
 # -----------------------------------------------------------------------------
 
 from flask import Blueprint
+
 from .controllers.routes import blueprint as weather_blueprint
 from .module import WeatherModule
 
@@ -19,4 +20,4 @@ from .module import WeatherModule
 module_instance = WeatherModule()
 
 # Register routes
-module_instance.register_blueprint(weather_blueprint, url_prefix='/weather')
+module_instance.register_blueprint(weather_blueprint, url_prefix="/weather")

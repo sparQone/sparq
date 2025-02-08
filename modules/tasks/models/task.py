@@ -12,17 +12,21 @@
 # See the LICENSE file for details.
 # -----------------------------------------------------------------------------
 
-from system.db.database import db
 from flask import current_app
 
+from system.db.database import db
+
+
 class Task(db.Model):
-    __tablename__ = 'task'
+    __tablename__ = "task"
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(255), nullable=False)
     created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
-    updated_at = db.Column(db.DateTime, default=db.func.current_timestamp(), onupdate=db.func.current_timestamp())
-    
+    updated_at = db.Column(
+        db.DateTime, default=db.func.current_timestamp(), onupdate=db.func.current_timestamp()
+    )
+
     def __init__(self, name):
         self.name = name
 

@@ -12,11 +12,13 @@
 # See the LICENSE file for details.
 # -----------------------------------------------------------------------------
 
-from system.module.hooks import hookimpl
-from .hooks import PeopleHookSpecs
 from system.db.database import db
-from .models.employee import Employee
+from system.module.hooks import hookimpl
+
 from .controllers import blueprint
+from .hooks import PeopleHookSpecs
+from .models.employee import Employee
+
 
 class PeopleModule:
     def __init__(self):
@@ -24,13 +26,13 @@ class PeopleModule:
 
     def get_routes(self):
         """Return list of routes to register"""
-        return [(self.blueprint, '/people')]
+        return [(self.blueprint, "/people")]
 
     @hookimpl
     def init_database(self):
         """Initialize database tables and create sample data"""
         db.create_all()  # This will create only tables that haven't been created yet
-        
+
         # Create sample employees
         Employee.create_sample_employees()
 
@@ -39,5 +41,6 @@ class PeopleModule:
         plugin_manager.add_hookspecs(PeopleHookSpecs)
         plugin_manager.register(self)
 
+
 # Create module instance
-module_instance = PeopleModule() 
+module_instance = PeopleModule()

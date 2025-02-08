@@ -11,5 +11,7 @@
 # See the LICENSE file for details.
 # -----------------------------------------------------------------------------
 
-from .translation import translate, preload_translations
-__all__ = ['translate', 'preload_translations'] 
+from .translation import preload_translations
+from .translation import translate
+
+__all__ = ["translate", "preload_translations"]
