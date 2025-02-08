@@ -107,12 +107,11 @@ def create_app():
             session['lang'] = g.lang
     
     # Load translations after app is fully configured
-    @app.before_first_request
-    def load_translations():
+    with app.app_context():
         preload_translations()
     
     return app
 
 if __name__ == '__main__':
-    app = create_app()
-    app.run(debug=True, host="0.0.0.0", port=8000)
+    flask_app = create_app()
+    flask_app.run(debug=True, host="0.0.0.0", port=8000)
