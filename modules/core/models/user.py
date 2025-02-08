@@ -15,7 +15,9 @@
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
 from system.db.database import db
+from system.db.decorators import ModelRegistry
 
+@ModelRegistry.register
 class User(db.Model, UserMixin):
     """Core user model for authentication and basic user info"""
     __tablename__ = 'user'

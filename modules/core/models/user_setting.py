@@ -1,8 +1,11 @@
 from system.db.database import db
 from datetime import datetime
 from modules.core.models.user import User
+from system.db.decorators import ModelRegistry
 
+@ModelRegistry.register
 class UserSetting(db.Model):
+    """User settings model"""
     __tablename__ = 'user_setting'
     
     id = db.Column(db.Integer, primary_key=True)

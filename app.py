@@ -24,6 +24,7 @@ from modules.core.models.user import User
 from modules.core.models.user_setting import UserSetting
 from system.i18n.translation import preload_translations, translate, format_date, format_number
 import os
+from system.db.decorators import ModelRegistry
 
 def get_locale():
     """Get locale from URL parameters or default to English"""
@@ -114,4 +115,12 @@ def create_app():
 
 if __name__ == '__main__':
     flask_app = create_app()
+
+    # After create_app() and before app.run()
+    ModelRegistry.print_summary()
+
     flask_app.run(debug=True, host="0.0.0.0", port=8000)
+    
+
+
+

@@ -15,6 +15,7 @@ from system.db.database import db
 from enum import Enum
 from modules.core.models.user import User
 from datetime import datetime
+from system.db.decorators import ModelRegistry
 
 class EmployeeStatus(Enum):
     ACTIVE = 'Active'
@@ -39,6 +40,7 @@ def generate_employee_id():
     import random
     return f"EMP{random.randint(10000, 99999)}"
 
+@ModelRegistry.register
 class Employee(db.Model):
     """Employee specific information"""
     __tablename__ = 'employee'

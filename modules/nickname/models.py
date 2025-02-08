@@ -10,7 +10,9 @@ from modules.people.models.employee import Employee
 from system.db.database import db
 from flask import current_app
 from sqlalchemy import inspect
+from system.db.decorators import ModelRegistry
 
+@ModelRegistry.register
 class EmployeeNickname(db.Model):
     """Extension table for employee nicknames"""
     __tablename__ = 'employee_nickname'

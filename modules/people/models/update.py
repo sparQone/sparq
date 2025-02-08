@@ -11,6 +11,7 @@
 from enum import Enum
 from system.db.database import db
 from datetime import datetime
+from system.db.decorators import ModelRegistry
 
 class UpdateType(Enum):
     GENERAL = 'General'
@@ -18,6 +19,7 @@ class UpdateType(Enum):
     NEWS = 'News'
     EVENT = 'Event'
 
+@ModelRegistry.register
 class Reply(db.Model):
     """Update reply model"""
     __tablename__ = 'update_reply'
@@ -32,6 +34,7 @@ class Reply(db.Model):
     update = db.relationship('Update', backref='replies')
     user = db.relationship('User', backref='update_replies')
 
+@ModelRegistry.register
 class Update(db.Model):
     """Update model"""
     __tablename__ = 'update'
