@@ -10,6 +10,8 @@
 # See the LICENSE file for details.
 # -----------------------------------------------------------------------------
 
+import os
+
 class ModelRegistry:
     """Simple registry to track SQLAlchemy models across modules"""
     models = []
@@ -48,20 +50,50 @@ class ModelRegistry:
     @classmethod
     def print_summary(cls):
         """Print a summary of all registered models"""
+        # Only print in main process (not reloader)
+        if os.environ.get('WERKZEUG_RUN_MAIN') == 'true':
+            return
+            
         print("\nDatabase Model Registry:")
-        print("------------------------")
+        
         
         # Find the longest names for padding
         max_module = max(len(m['module']) for m in cls.models)
         max_model = max(len(m['model']) for m in cls.models)
         
+        print(f"{'-' * max_module}---{'-' * max_model}---{'-' * 20}")
         # Print header
-        print(f"\nModule{' ' * (max_module - 6)}   Model{' ' * (max_model - 2)}   Table")
-        print(f"{'-' * max_module}   {'-' * max_model}   {'-' * 20}")
+        print(f"Module{' ' * (max_module - 6)}   Model{' ' * (max_model - 2)}   Table")
+        print(f"{'-' * max_module}---{'-' * max_model}---{'-' * 20}")
         
         # Sort by module order first, then by registration order
         for model in sorted(cls.models, key=lambda x: (cls._get_module_order(x['module']), x['module'], x['order'])):
             module_pad = ' ' * (max_module - len(model['module']))
             model_pad = ' ' * (max_model - len(model['model']))
             print(f"{model['module']}{module_pad}   {model['model']}{model_pad}   {model['table']}")
-        print() 
+        print()
+
+def print_registry(models):
+    """Print model registry"""
+    if getattr(print_registry, 'has_printed', False):
+        return
+        
+    print("\nDatabase Model Registry:")
+    print("------------------------")
+    
+    # Find the longest names for padding
+    max_module = max(len(m['module']) for m in models)
+    max_model = max(len(m['model']) for m in models)
+    
+    # Print header
+    print(f"\nModule{' ' * (max_module - 6)}   Model{' ' * (max_model - 2)}   Table")
+    print(f"{'-' * max_module}   {'-' * max_model}   {'-' * 20}")
+    
+    # Sort and print models
+    for model in sorted(models, key=lambda x: (ModelRegistry._get_module_order(x['module']), x['module'], x['order'])):
+        module_pad = ' ' * (max_module - len(model['module']))
+        model_pad = ' ' * (max_model - len(model['model']))
+        print(f"{model['module']}{module_pad}   {model['model']}{model_pad}   {model['table']}")
+    print()
+    
+    print_registry.has_printed = True 

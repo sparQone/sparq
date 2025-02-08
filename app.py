@@ -71,6 +71,9 @@ def create_app():
         # Call init_database hooks for all modules
         module_loader.pm.hook.init_database()
         
+        # Print model registry after all models are loaded
+        ModelRegistry.print_summary()
+        
         # Then check for admin user
         if not User.get_by_email('admin'):
             User.create(
@@ -115,10 +118,6 @@ def create_app():
 
 if __name__ == '__main__':
     flask_app = create_app()
-
-    # After create_app() and before app.run()
-    ModelRegistry.print_summary()
-
     flask_app.run(debug=True, host="0.0.0.0", port=8000)
     
 
