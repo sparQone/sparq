@@ -5,10 +5,6 @@
 <link rel="stylesheet" href="{{ url_for('people_bp.static', filename='css/updates.css') }}">
 {% endblock %}
 
-{% block additional_scripts %}
-{{ super() }}
-<script src="{{ url_for('people_bp.static', filename='js/updates.js') }}"></script>
-{% endblock %}
 
 {% block title %}Company Updates{% endblock %}
 
@@ -36,28 +32,32 @@
         </div>
     </div>
 
-    <!-- Updates feed -->
+    <!-- Updates feed - ONLY triggered on load and by WebSocket events -->
     <div class="updates-feed"
          hx-get="{{ url_for('people_bp.get_updates') }}"
-         hx-trigger="load, every 1s limit:60, every 10s"
-         hx-swap="innerHTML">
+         hx-trigger="load, updates-refresh from:body"
+         hx-swap="innerHTML"
+         hx-target="this">
     </div>
 </div>
 
 <!-- New Update Modal -->
-<div class="modal fade" id="newUpdateModal" tabindex="-1">
+<div class="modal fade" id="newUpdateModal" tabindex="-1" aria-labelledby="newUpdateModalLabel">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">New Update</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                <h5 class="modal-title" id="newUpdateModalLabel">New Update</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form id="newUpdateForm" 
                   hx-post="{{ url_for('people_bp.create_update') }}"
-                  hx-target=".updates-feed"
-                  hx-swap="innerHTML"
                   hx-on::after-request="if(event.detail.successful) {
-                      bootstrap.Modal.getInstance(document.getElementById('newUpdateModal')).hide();
+                      const modal = bootstrap.Modal.getInstance(document.getElementById('newUpdateModal'));
+                      if (modal) {
+                          modal.hide();
+                          // Return focus to the 'New Update' button
+                          document.querySelector('[data-bs-target=\'#newUpdateModal\']').focus();
+                      }
                       this.reset();
                   }">
                 <div class="modal-body">
@@ -89,4 +89,56 @@
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block additional_scripts %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+<script src="{{ url_for('people_bp.static', filename='js/updates.js') }}"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize modal with proper focus management
+    const newUpdateModal = document.getElementById('newUpdateModal');
+    newUpdateModal.addEventListener('hidden.bs.modal', function () {
+        // Return focus to the trigger button when modal is closed
+        document.querySelector('[data-bs-target=\'#newUpdateModal\']').focus();
+    });
+    
+    // Connect to WebSocket
+    const socket = io();
+    
+    // Log connection status
+    socket.on('connect', () => {
+        // console.log('WebSocket connected');
+    });
+    
+    socket.on('disconnect', () => {
+        // console.log('WebSocket disconnected');
+    });
+    
+    // Listen for updates with logging
+    socket.on('updates_changed', (data) => {
+        // console.log('Received updates_changed event:', data);
+        // Get the updates feed element
+        const updatesFeed = document.querySelector('.updates-feed');
+        
+        // Use HTMX to get updates
+        htmx.ajax('GET', '{{ url_for("people_bp.get_updates") }}', {
+            target: updatesFeed,
+            swap: 'innerHTML',
+            afterSwap: function() {
+                // Reapply filters after content is updated
+                if (typeof applyFilters === 'function') {
+                    applyFilters();
+                }
+                
+                // Reinitialize tooltips on new content
+                const tooltips = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+                tooltips.forEach(tooltip => {
+                    new bootstrap.Tooltip(tooltip);
+                });
+            }
+        });
+    });
+});
+</script>
 {% endblock %} 

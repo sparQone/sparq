@@ -25,6 +25,7 @@ from modules.core.models.user_setting import UserSetting
 from system.i18n.translation import preload_translations, translate, format_date, format_number
 import os
 from system.db.decorators import ModelRegistry
+from flask_socketio import SocketIO
 
 def get_locale():
     """Get locale from URL parameters or default to English"""
@@ -35,6 +36,10 @@ def create_app():
                 template_folder='modules/core/views/templates',
                 static_folder='modules/core/views/assets',
                 static_url_path='/assets')
+    
+    # Initialize SocketIO
+    socketio = SocketIO(app)
+    app.socketio = socketio  # Store for access in other modules
     
     # Configure SQLAlchemy
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(os.path.dirname(os.path.abspath(__file__)), 'app.db')
@@ -118,7 +123,7 @@ def create_app():
 
 if __name__ == '__main__':
     flask_app = create_app()
-    flask_app.run(debug=True, host="0.0.0.0", port=8000)
+    flask_app.socketio.run(flask_app, debug=True, host="0.0.0.0", port=8000)
     
 
 

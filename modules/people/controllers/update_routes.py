@@ -10,7 +10,7 @@
 # See the LICENSE file for details.
 # -----------------------------------------------------------------------------
 
-from flask import render_template, request, jsonify, Response as FlaskResponse, stream_with_context
+from flask import render_template, request, jsonify, Response as FlaskResponse, stream_with_context, current_app
 from flask_login import login_required, current_user
 from . import blueprint
 from ..models.update import Update, UpdateType, Reply
@@ -45,10 +45,11 @@ def create_update():
         db.session.add(update)
         db.session.commit()
         
-        updates = Update.query.order_by(Update.created_at.desc()).all()
-        return render_template('updates/partials/updates_list.html',
-                             updates=updates,
-                             current_user=current_user)
+        
+        # Emit update event with debug info after response
+        current_app.socketio.emit('updates_changed', {'update_id': update.id}, include_self=True)
+        
+        return response
     except Exception as e:
         return jsonify({'status': 'error', 'message': str(e)}), 400
 
@@ -72,41 +73,6 @@ def toggle_like(update_id):
         update.likes.append(current_user)
     db.session.commit()
     return jsonify({'status': 'success', 'likes_count': len(update.likes)})
-
-@blueprint.route('/updates/stream')
-@login_required
-def stream_updates():
-    def event_stream():
-        last_id = request.headers.get('Last-Event-ID', 0)
-        try:
-            while True:
-                updates = Update.query.filter(Update.id > last_id)\
-                                   .order_by(Update.created_at.desc())\
-                                   .limit(10).all()
-                
-                if updates:
-                    for update in updates:
-                        html = render_template('updates/partials/update_card.html', 
-                                            update=update,
-                                            current_user=current_user)
-                        # Format as proper SSE event
-                        yield f"id: {update.id}\nevent: message\ndata: {html}\n\n"
-                        last_id = update.id
-                
-                time.sleep(1)
-        except GeneratorExit:
-            pass
-
-    return FlaskResponse(
-        stream_with_context(event_stream()),
-        mimetype='text/event-stream',
-        headers={
-            'Cache-Control': 'no-cache',
-            'Content-Type': 'text/event-stream',
-            'Connection': 'keep-alive',
-            'X-Accel-Buffering': 'no'  # Disable nginx buffering if using nginx
-        }
-    )
 
 @blueprint.route('/updates/list')
 @login_required
