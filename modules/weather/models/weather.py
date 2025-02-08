@@ -14,8 +14,6 @@
 
 import requests
 
-from system.db.database import db
-
 
 class Weather:
     def get_current_weather(self, city):

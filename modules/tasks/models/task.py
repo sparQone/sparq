@@ -12,8 +12,6 @@
 # See the LICENSE file for details.
 # -----------------------------------------------------------------------------
 
-from flask import current_app
-
 from system.db.database import db
 
 

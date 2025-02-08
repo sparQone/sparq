@@ -7,9 +7,7 @@
 #
 # Copyright (c) 2025 remarQable LLC
 
-from flask import Blueprint
 
-from .controllers.routes import blueprint as tasks_blueprint
 from .module import TasksModule
 
 # Create module instance

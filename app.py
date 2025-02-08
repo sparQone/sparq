@@ -12,19 +12,12 @@
 # See the LICENSE file for details.
 # -----------------------------------------------------------------------------
 
-import warnings
-
-warnings.filterwarnings("ignore", message="urllib3 v2 only supports OpenSSL 1.1.1+")
-
 import os
 
 from flask import Flask
 from flask import g
-from flask import jsonify
-from flask import redirect
 from flask import request
 from flask import session
-from flask import url_for
 from flask_login import LoginManager
 from flask_login import current_user
 from flask_socketio import SocketIO
@@ -37,9 +30,7 @@ from system.i18n.translation import format_date
 from system.i18n.translation import format_number
 from system.i18n.translation import preload_translations
 from system.i18n.translation import translate
-from system.module.loader import ModuleLoader
 from system.module.utils import initialize_modules
-from system.module.utils import print_module_status
 
 
 def get_locale():
@@ -76,8 +67,6 @@ def create_app():
 
     @login_manager.user_loader
     def load_user(user_id):
-        from flask import current_app
-
         return db.session.get(User, int(user_id))
 
     # Initialize and validate modules

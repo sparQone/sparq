@@ -11,11 +11,8 @@
 # This software is released under an open-source license.
 # See the LICENSE file for details.
 # -----------------------------------------------------------------------------
-from flask import Blueprint
-from flask import current_app
 
-from system.db.database import db
-from system.module.hooks import hookimpl
+from flask import Blueprint
 
 
 class AppointmentsModule:
