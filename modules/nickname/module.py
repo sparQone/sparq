@@ -13,13 +13,16 @@
 
 from flask import Blueprint
 from pluggy import HookimplMarker
-from .models import EmployeeNickname, NicknameModel
+
+from .models import EmployeeNickname
+from .models import NicknameModel
 
 hookimpl = HookimplMarker("sparqone")
 
+
 class NicknameModule:
     def __init__(self):
-        self.blueprint = Blueprint('nickname_bp', __name__)
+        self.blueprint = Blueprint("nickname_bp", __name__)
         self.model = NicknameModel()
         self.setup_routes()
 
@@ -62,5 +65,5 @@ class NicknameModule:
     @hookimpl
     def process_new_employee(self, form_data, employee):
         """Process nickname when a new employee is created"""
-        if 'nickname' in form_data and form_data['nickname']:
-            EmployeeNickname.create_or_update(employee, form_data['nickname']) 
+        if "nickname" in form_data and form_data["nickname"]:
+            EmployeeNickname.create_or_update(employee, form_data["nickname"])

@@ -17,11 +17,13 @@ from .utils.filters import init_filters
 # Create module instance
 module_instance = PeopleModule()
 
+
 def init_module(app):
     """Initialize the people module"""
     # Initialize filters first
     init_filters(app)
-    
+
     # Import and register blueprint with routes
     from .controllers import blueprint
-    app.register_blueprint(blueprint, url_prefix='/people') 
+
+    app.register_blueprint(blueprint, url_prefix="/people")

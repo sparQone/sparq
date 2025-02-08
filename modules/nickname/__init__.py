@@ -8,4 +8,4 @@
 # Copyright (c) 2025 remarQable LLC
 from .module import NicknameModule
 
-module_instance = NicknameModule() 
+module_instance = NicknameModule()

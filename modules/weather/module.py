@@ -12,14 +12,16 @@
 # -----------------------------------------------------------------------------
 
 from flask import Blueprint
-from system.module.hooks import hookimpl
+
 from system.db.database import db
+from system.module.hooks import hookimpl
+
 
 class WeatherModule:
     def __init__(self):
-        self.blueprint = Blueprint('weather_bp', __name__,
-                                 template_folder='views/templates',
-                                 static_folder='views/assets')
+        self.blueprint = Blueprint(
+            "weather_bp", __name__, template_folder="views/templates", static_folder="views/assets"
+        )
 
     def register_blueprint(self, blueprint, url_prefix):
         """Register blueprint with the module"""
@@ -29,12 +31,14 @@ class WeatherModule:
     def get_routes(self):
         """Get routes for the module"""
         from .controllers.routes import blueprint
-        return [(blueprint, '/weather')]
+
+        return [(blueprint, "/weather")]
 
     @hookimpl
     def init_database(self):
         """Initialize database tables"""
         db.create_all()
 
+
 # Create module instance
-module_instance = WeatherModule() 
+module_instance = WeatherModule()

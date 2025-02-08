@@ -11,23 +11,22 @@
 # See the LICENSE file for details.
 # -----------------------------------------------------------------------------
 
-from flask import Blueprint, render_template, g
-from flask_login import login_required
 from datetime import datetime
+
+from flask import Blueprint
+from flask import g
+from flask import render_template
+from flask_login import login_required
 
 # Create blueprint
 blueprint = Blueprint(
-    'clock_bp', 
-    __name__, 
-    template_folder='../views/templates',
-    static_folder='../views/assets'
+    "clock_bp", __name__, template_folder="../views/templates", static_folder="../views/assets"
 )
+
 
 # Clock home page
 @blueprint.route("/")
 @login_required
 def clock_home():
     """Clock page"""
-    return render_template("clock/index.html",
-                        title="Clock",
-                        module_home='clock_bp.clock_home')
+    return render_template("clock/index.html", title="Clock", module_home="clock_bp.clock_home")

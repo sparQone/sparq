@@ -7,9 +7,12 @@
 #
 # Copyright (c) 2025 remarQable LLC
 
-from system.db.database import db
 from flask import current_app
+
+from system.db.database import db
 from system.module.hooks import hookimpl
+
+
 class TasksModule:
     def __init__(self):
         """Initialize module"""
@@ -24,15 +27,16 @@ class TasksModule:
     def get_routes(self):
         """Get module routes"""
         from .controllers.routes import blueprint as tasks_blueprint
-        return [(tasks_blueprint, '/tasks')]
+
+        return [(tasks_blueprint, "/tasks")]
 
     @hookimpl
     def init_database(self):
         """Initialize database tables and sample data"""
         from .models.task import Task
+
         db.create_all()
         try:
             Task.create_sample_data()
         except Exception as e:
             print(f"Error creating sample tasks: {e}")
-

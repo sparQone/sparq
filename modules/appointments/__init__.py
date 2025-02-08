@@ -13,6 +13,7 @@
 # -----------------------------------------------------------------------------
 
 from flask import Blueprint
+
 from .controllers.routes import blueprint as appointments_blueprint
 from .module import AppointmentsModule
 
@@ -20,4 +21,4 @@ from .module import AppointmentsModule
 module_instance = AppointmentsModule()
 
 # Register routes
-module_instance.register_blueprint(appointments_blueprint, url_prefix='/appointments') 
+module_instance.register_blueprint(appointments_blueprint, url_prefix="/appointments")

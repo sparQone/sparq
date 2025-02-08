@@ -11,6 +11,7 @@
 # See the LICENSE file for details.
 # -----------------------------------------------------------------------------
 from flask import Blueprint
+
 from .controllers.routes import blueprint as esign_blueprint
 from .module import ESignModule
 
@@ -18,4 +19,4 @@ from .module import ESignModule
 module_instance = ESignModule()
 
 # Register routes
-module_instance.register_blueprint(esign_blueprint, url_prefix='/esign') 
+module_instance.register_blueprint(esign_blueprint, url_prefix="/esign")

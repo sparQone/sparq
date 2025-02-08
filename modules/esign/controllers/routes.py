@@ -11,20 +11,18 @@
 # See the LICENSE file for details.
 # -----------------------------------------------------------------------------
 
-from flask import Blueprint, render_template, g
+from flask import Blueprint
+from flask import g
+from flask import render_template
 from flask_login import login_required
 
 blueprint = Blueprint(
-    'esign_bp',
-    __name__,
-    template_folder='../views/templates',
-    static_folder='../views/assets'
+    "esign_bp", __name__, template_folder="../views/templates", static_folder="../views/assets"
 )
+
 
 @blueprint.route("/")
 @login_required
 def esign_home():
     """E-Sign home page"""
-    return render_template("esign/index.html",
-                        title="E-Sign",
-                        module_home='esign_bp.esign_home') 
+    return render_template("esign/index.html", title="E-Sign", module_home="esign_bp.esign_home")

@@ -18,6 +18,7 @@ import pluggy
 hookspec = pluggy.HookspecMarker("sparqone")
 hookimpl = pluggy.HookimplMarker("sparqone")
 
+
 class ModuleSpecs:
     @hookspec
     def init_database(self):
@@ -25,4 +26,4 @@ class ModuleSpecs:
         This hook is called after all modules are loaded and the database
         connection is established.
         """
-        pass 
+        pass

@@ -11,24 +11,26 @@
 # -----------------------------------------------------------------------------
 
 from datetime import datetime
+
 import humanize
+
 
 def init_filters(bp):
     """Initialize custom template filters"""
-    
-    @bp.app_template_filter('timeago')
+
+    @bp.app_template_filter("timeago")
     def timeago_filter(value):
         """Convert datetime to '... time ago' text"""
         if not value:
-            return ''
-            
+            return ""
+
         now = datetime.utcnow()
         try:
             # Convert to datetime if string
             if isinstance(value, str):
-                value = datetime.fromisoformat(value.replace('Z', '+00:00'))
-                
+                value = datetime.fromisoformat(value.replace("Z", "+00:00"))
+
             return humanize.naturaltime(now - value)
         except Exception as e:
             print(f"Error in timeago filter: {e}")  # Add logging
-            return '' 
+            return ""

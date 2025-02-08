@@ -13,13 +13,13 @@
 # -----------------------------------------------------------------------------
 
 manifest = {
-    'name': 'Appointments',
-    'version': '1.0',
-    'main_route': '/appointments',
-    'icon_class': 'fa-solid fa-calendar-check',
-    'type': 'App',
-    'color': '#6f42c1',  # Purple
-    'depends': ['core'],
-    'description': 'Appointment scheduling and calendar management',
-    'long_description': 'Complete appointment booking system with calendar integration, availability management, and automated reminders. Perfect for service-based businesses and professional scheduling.'
-} 
+    "name": "Appointments",
+    "version": "1.0",
+    "main_route": "/appointments",
+    "icon_class": "fa-solid fa-calendar-check",
+    "type": "App",
+    "color": "#6f42c1",  # Purple
+    "depends": ["core"],
+    "description": "Appointment scheduling and calendar management",
+    "long_description": "Complete appointment booking system with calendar integration, availability management, and automated reminders. Perfect for service-based businesses and professional scheduling.",
+}
