@@ -11,5 +11,14 @@ blueprint = Blueprint(
 init_filters(blueprint)
 
 # Import routes to register them with blueprint
-from . import routes
-from . import update_routes
+from . import employee
+from . import update
+from . import docs
+from . import forms
+from . import hiring
+from . import onboarding
+from . import scheduling
+from . import reimbursement
+from . import knowledge
+from . import time_tracking
+from . import dashboard
