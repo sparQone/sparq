@@ -10,6 +10,7 @@
 # This software is released under an open-source license.
 # See the LICENSE file for details.
 # -----------------------------------------------------------------------------
+
 from flask import Blueprint
 
 from .controllers.routes import blueprint as esign_blueprint

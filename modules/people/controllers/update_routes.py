@@ -10,15 +10,11 @@
 # See the LICENSE file for details.
 # -----------------------------------------------------------------------------
 
-import json
-import time
 
-from flask import Response as FlaskResponse
 from flask import current_app
 from flask import jsonify
 from flask import render_template
 from flask import request
-from flask import stream_with_context
 from flask_login import current_user
 from flask_login import login_required
 

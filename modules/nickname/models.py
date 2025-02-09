@@ -6,10 +6,10 @@
 #     Handles the creation and updating of employee nicknames.
 #
 # Copyright (c) 2025 remarQable LLC
-from flask import current_app
+# -----------------------------------------------------------------------------
+
 from sqlalchemy import inspect
 
-from modules.people.models.employee import Employee
 from system.db.database import db
 from system.db.decorators import ModelRegistry
 
