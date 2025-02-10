@@ -55,7 +55,7 @@
 </div>
 {% endblock %}
 
-{% block scripts %}
+{% block additional_scripts %}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const cityInput = document.getElementById('cityInput');
@@ -120,6 +120,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const city = cityInput.value.trim();
         if (!city) return;
         
+        console.log('Searching weather for:', city); // Debug line
         showLoading();
         
         fetch('/weather/lookup', {
@@ -129,19 +130,26 @@ document.addEventListener('DOMContentLoaded', function() {
             },
             body: JSON.stringify({ city: city })
         })
-        .then(response => response.json())
+        .then(response => {
+            console.log('Response status:', response.status); // Debug line
+            return response.json();
+        })
         .then(data => {
+            console.log('Weather data:', data); // Debug line
             if (data.error) {
                 showError();
             } else {
                 showWeather(data);
             }
         })
-        .catch(() => showError());
+        .catch(error => {
+            console.error('Weather fetch error:', error); // Debug line
+            showError();
+        });
     }
     
     // Load Minneapolis weather on page load
-    searchWeather();
+    setTimeout(searchWeather, 100); // Small delay to ensure DOM is ready
     
     searchBtn.addEventListener('click', searchWeather);
     cityInput.addEventListener('keypress', (e) => {

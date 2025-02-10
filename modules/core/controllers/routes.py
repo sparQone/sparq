@@ -56,65 +56,28 @@ def admin_required(f):
     return decorated_function
 
 
-def enrich_module_data(modules):
-    """Add additional module data like colors"""
-    enriched = []
-
-    # Handle if modules is a dict (from app.config)
-    if isinstance(modules, dict):
-        modules = modules.values()
-
-    for module in modules:
-        # Module data should already be in the correct format
-        if isinstance(module, dict):
-            enriched_module = {
-                "name": module.get("name"),
-                "type": module.get("type"),
-                "main_route": module.get("main_route"),
-                "icon_class": module.get("icon_class"),
-                "color": module.get("color", "#6c757d"),
-                "enabled": module.get("enabled", True),
-            }
-
-            # Only add if we have at least a name and type
-            if enriched_module["name"] and enriched_module["type"]:
-                enriched.append(enriched_module)
-
-    return enriched
-
-
 @blueprint.before_app_request
 def before_request():
     """Make installed modules available to all templates and set current module"""
-    g.installed_modules = current_app.config.get("INSTALLED_MODULES", [])
-    if hasattr(g, "installed_modules"):
-        g.installed_modules = enrich_module_data(g.installed_modules)
+    g.installed_modules = current_app.config.get("INSTALLED_MODULES", {}).values()
 
-        # Default core module data
-        default_core = {
-            "name": "Core",
-            "type": "App",
-            "main_route": "/core",
-            "icon_class": "fa-solid fa-home",
-            "color": "#6c757d",
-        }
+    # Get current module from request path
+    path = request.path.split("/")[1] or "core"  # Default to core if root path
 
-        # Get current module from request path
-        path = request.path.split("/")[1] or "core"  # Default to core if root path
+    # First try to find the current module
+    current_module = next(
+        (m for m in g.installed_modules if m.get("name", "").lower() == path.lower()), None
+    )
 
-        # First try to find the current module
+    # If not found, try to find core module
+    if not current_module:
         current_module = next(
-            (m for m in g.installed_modules if m.get("name", "").lower() == path.lower()), None
+            (m for m in g.installed_modules if m.get("name", "").lower() == "core"),
+            {"name": "Core", "type": "App"}  # Minimal default if core not found
         )
 
-        # If not found, try to find core module
-        if not current_module:
-            current_module = next(
-                (m for m in g.installed_modules if m.get("name", "").lower() == "core"),
-                default_core,  # Fall back to default core data
-            )
-
-        g.current_module = current_module
+    # Always ensure g.current_module exists
+    g.current_module = current_module or {"name": "Core", "type": "App"}
 
 
 @blueprint.route("/")
