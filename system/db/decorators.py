@@ -66,7 +66,7 @@ class ModelRegistry:
 
         print(f"{'-' * max_module}---{'-' * max_model}---{'-' * 20}")
         # Print header
-        print(f"Module{' ' * (max_module - 6)}   Model{' ' * (max_model - 2)}   Table")
+        print(f"Module{' ' * (max_module - 6)}   Model{' ' * (max_model - 2)}Table")
         print(f"{'-' * max_module}---{'-' * max_model}---{'-' * 20}")
 
         # Sort by module order first, then by registration order
