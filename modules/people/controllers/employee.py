@@ -11,14 +11,17 @@
 # -----------------------------------------------------------------------------
 
 from flask import current_app, g, render_template, request, redirect, url_for, flash
-from flask_login import login_required
+from flask_login import login_required, current_user
 from datetime import datetime
+import logging
 
 from modules.core.models.user import User
 from modules.people.models.employee import Employee, EmployeeType, EmployeeStatus, Gender
+from modules.people.decorators import admin_required
 from system.db.database import db
 from . import blueprint
 
+logger = logging.getLogger(__name__)
 
 @blueprint.route("/")
 @login_required
@@ -47,6 +50,13 @@ def dashboard():
 @login_required
 def employees():
     """Employees list page"""
+    print(f"\nDEBUG: Current user: {current_user.id} - {current_user.email}")
+    print(f"DEBUG: Is admin: {current_user.is_admin}")
+    print(f"DEBUG: Has employee profile: {current_user.employee_profile is not None}")
+    print(f"DEBUG: Template variables:")
+    print(f"DEBUG: - current_user.is_admin: {current_user.is_admin}")
+    print(f"DEBUG: - employee_id value: {current_user.employee_profile.id if current_user.employee_profile else 'None'}")
+    print(f"DEBUG: - url: {url_for('people_bp.employee_detail', employee_id=current_user.employee_profile.id)}\n")
     users = User.query.join(Employee).filter(User.email != "admin").all()
     return render_template(
         "employees/index.html",
@@ -58,6 +68,7 @@ def employees():
 
 @blueprint.route("/employees/new", methods=["GET"])
 @login_required
+@admin_required
 def new_employee():
     """Show new employee form"""
     # Get all employees as potential managers
@@ -75,6 +86,7 @@ def new_employee():
 
 @blueprint.route("/employees", methods=["POST"])
 @login_required
+@admin_required
 def create_employee():
     """Create a new employee"""
     try:
@@ -126,6 +138,7 @@ def create_employee():
 
 @blueprint.route("/employees/<int:employee_id>/edit", methods=["GET", "POST"])
 @login_required
+@admin_required
 def edit_employee(employee_id):
     """Edit an employee"""
     employee = Employee.query.get_or_404(employee_id)
@@ -208,6 +221,7 @@ def edit_employee(employee_id):
 
 @blueprint.route("/employees/<int:employee_id>/delete", methods=["POST"])
 @login_required
+@admin_required
 def delete_employee(employee_id):
     """Delete an employee"""
     try:
@@ -229,6 +243,7 @@ def delete_employee(employee_id):
 
 @blueprint.route("/employees/<int:employee_id>/delete-modal", methods=["GET"])
 @login_required
+@admin_required
 def delete_modal(employee_id):
     """Show delete confirmation modal"""
     return render_template(
@@ -241,43 +256,22 @@ def delete_modal(employee_id):
 def employee_detail(employee_id):
     """Show employee details"""
     employee = Employee.query.get_or_404(employee_id)
+    
+    # Check if user is admin or viewing their own profile
+    is_admin = current_user.is_admin
+    is_self = current_user.id == employee.user_id
+    
+    # If not admin and not viewing own profile, show limited view
+    if not is_admin and not is_self:
+        return render_template(
+            "employees/employee-view/details.html",  # Limited view template
+            employee=employee,
+            module_home="people_bp.people_home"
+        )
+    
+    # Admin or self view gets full details
     return render_template(
-        "employees/details.html",
+        "employees/admin-view/details.html",  # Full admin view template
         employee=employee,
         module_home="people_bp.people_home"
     )
-
-@blueprint.route("/employees/<int:employee_id>/edit-field/<field>", methods=["GET"])
-@login_required
-def edit_field(employee_id, field):
-    """Show edit field modal"""
-    employee = Employee.query.get_or_404(employee_id)
-    field_label = field.replace('_', ' ').title()
-    return render_template(
-        "employees/edit-field-modal.html",
-        employee=employee,
-        field=field,
-        field_label=field_label
-    )
-
-@blueprint.route("/employees/<int:employee_id>/update-field/<field>", methods=["PUT"])
-@login_required
-def update_field(employee_id, field):
-    """Update employee field"""
-    employee = Employee.query.get_or_404(employee_id)
-    
-    if field == 'name':
-        employee.user.first_name = request.form.get('first_name')
-        employee.user.last_name = request.form.get('last_name')
-    # Add other field updates as needed
-    
-    try:
-        db.session.commit()
-        return render_template(
-            "employees/field-value.html",
-            employee=employee,
-            field=field
-        )
-    except Exception as e:
-        db.session.rollback()
-        return str(e), 400 

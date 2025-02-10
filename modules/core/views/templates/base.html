@@ -113,8 +113,12 @@
                                 <a href="{{ url_for('core_bp.settings') }}" class="dropdown-item">
                                     <i class="fas fa-cog"></i> {{ _("Settings") }}
                                 </a>
-                                <div class="dropdown-divider"></div>
+                            {% elif current_user.employee_profile %}
+                                <a href="{{ url_for('people_bp.employee_detail', employee_id=current_user.employee_profile.id) }}" class="dropdown-item">
+                                    <i class="fas fa-id-card"></i> {{ _("My Profile") }}
+                                </a>
                             {% endif %}
+                            <div class="dropdown-divider"></div>
                             <a href="{{ url_for('core_bp.logout') }}" class="dropdown-item">
                                 <i class="fas fa-sign-out-alt"></i> {{ _("Logout") }}
                             </a>

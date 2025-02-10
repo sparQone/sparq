@@ -12,6 +12,7 @@
 # See the LICENSE file for details.
 # -----------------------------------------------------------------------------
 
+import logging
 from flask_login import UserMixin
 from werkzeug.security import check_password_hash
 from werkzeug.security import generate_password_hash
@@ -19,6 +20,7 @@ from werkzeug.security import generate_password_hash
 from system.db.database import db
 from system.db.decorators import ModelRegistry
 
+logger = logging.getLogger(__name__)
 
 @ModelRegistry.register
 class User(db.Model, UserMixin):
@@ -35,6 +37,9 @@ class User(db.Model, UserMixin):
     is_active = db.Column(db.Boolean, default=True)
     is_admin = db.Column(db.Boolean, default=False)
     is_sample = db.Column(db.Boolean, default=False)
+
+    # One-to-one relationship with Employee
+    employee_profile = db.relationship('Employee', backref=db.backref('user', uselist=False), uselist=False)
 
     @property
     def password(self):

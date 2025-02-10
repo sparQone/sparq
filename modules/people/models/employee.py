@@ -86,7 +86,6 @@ class Employee(db.Model):
     social_media = db.Column(db.String(100))
 
     # Existing relationships
-    user = db.relationship("User", backref=db.backref("employee_profile", uselist=False))
     manager_id = db.Column(db.Integer, db.ForeignKey("employee.id"))
     reports = db.relationship("Employee", backref=db.backref("manager", remote_side=[id]))
 
