@@ -1,3 +1,15 @@
+# -----------------------------------------------------------------------------
+# sparQ
+#
+# Description:
+#     People module controllers for hiring functionality.
+#
+# Copyright (c) 2025 remarQable LLC
+#
+# This software is released under an open-source license.
+# See the LICENSE file for details.
+# -----------------------------------------------------------------------------
+
 from flask import render_template
 from flask_login import login_required
 

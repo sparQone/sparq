@@ -14,6 +14,10 @@ body {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     background-color: #f8f9fa;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    padding: 0 1.5rem;  /* Add horizontal padding */
 }
 
 /* Base Layout Styles */
@@ -28,6 +32,11 @@ body {
     padding: 1rem 0;
     margin-bottom: 2rem;
     border-bottom-color: var(--module-color, #6c757d);
+    position: sticky;
+    top: 0;
+    z-index: 1030;
+    margin-left: -1.5rem;  /* Compensate for body padding */
+    margin-right: -1.5rem; /* Compensate for body padding */
 }
 
 /* Core app specific */
@@ -85,7 +94,7 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0 1.5rem;  /* Changed from padding-left to padding on both sides */
+    padding: 0 1.5rem;  /* Keep header content aligned */
     width: 100%;        /* Ensure full width */
 }
 
@@ -309,4 +318,63 @@ body {
         padding: 1rem;
         margin: 0 1rem;
     }
+}
+
+.flash-messages-container {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    z-index: 1040;
+    max-width: 300px;
+    pointer-events: none;
+}
+
+.alert {
+    margin-bottom: 0.5rem;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    opacity: 0.98;
+    pointer-events: auto;
+    background: #fff;
+    border-left: 4px solid;
+    padding: 0.75rem 1rem;
+}
+
+.alert-success {
+    border-left-color: var(--bs-success);
+}
+
+.alert-error {
+    border-left-color: var(--bs-danger);
+}
+
+.alert-warning {
+    border-left-color: var(--bs-warning);
+}
+
+.alert-info {
+    border-left-color: var(--bs-info);
+}
+
+/* Animation for alerts */
+.alert.fade.show {
+    animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 0.98;
+    }
+}
+
+/* Typography */
+h1 {
+    font-size: 1.25rem;  /* Changed from 1rem (16px) to 1.25rem (20px) */
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    color: #212529;
 } 

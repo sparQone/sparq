@@ -1,3 +1,15 @@
+# -----------------------------------------------------------------------------
+# sparQ
+#
+# Description:
+#     People module controllers.
+#
+# Copyright (c) 2025 remarQable LLC
+#
+# This software is released under an open-source license.
+# See the LICENSE file for details.
+# -----------------------------------------------------------------------------
+
 from flask import Blueprint
 
 from ..utils.filters import init_filters
@@ -10,15 +22,14 @@ blueprint = Blueprint(
 # Register filters with the blueprint
 init_filters(blueprint)
 
-# Import routes to register them with blueprint
-from . import employee
+# Import routes after blueprint creation
+from . import employee  # Changed from employee_routes to employee
 from . import update
-from . import docs
-from . import forms
 from . import hiring
 from . import onboarding
 from . import scheduling
+from . import forms
 from . import reimbursement
+from . import docs
 from . import knowledge
 from . import time_tracking
-from . import dashboard

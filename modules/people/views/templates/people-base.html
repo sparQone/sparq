@@ -6,14 +6,14 @@
 <link rel="stylesheet" href="{{ url_for('people_bp.static', filename='css/people.css') }}">
 {% endblock %}
 
-{% block additional_scripts %}
-{% endblock %}
-
 {% block content %}
-<div class="people-layout">
+<div class="d-flex">
+    <!-- Side Navigation -->
     {% include 'people_nav.html' with context %}
-    <main class="main-content">
+    
+    <!-- Main Content Area -->
+    <div class="content-wrapper flex-grow-1">
         {% block people_content %}{% endblock %}
-    </main>
+    </div>
 </div>
 {% endblock %} 

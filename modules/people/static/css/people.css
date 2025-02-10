@@ -1,0 +1,163 @@
+/* Layout styles */
+.content-wrapper {
+    padding: 1.5rem;
+    width: 100%;
+    height: 100vh;
+    overflow-y: auto;
+}
+
+/* Ensure content aligns with nav */
+.d-flex {
+    align-items: flex-start;
+    min-height: 100vh;
+}
+
+/* Side Navigation */
+.side-nav {
+    width: 250px;
+    min-width: 250px;
+    background: white;
+    border-right: 1px solid #e9ecef;
+    padding: 1.5rem 1rem;
+    height: calc(100vh - 80px);
+}
+
+.nav-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.nav-item {
+    margin-bottom: 0.5rem;
+}
+
+.nav-link {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    color: #495057;
+    text-decoration: none;
+    border-radius: 0.375rem;
+    transition: all 0.2s;
+}
+
+.nav-link:hover {
+    background-color: #f8f9fa;
+    color: var(--bs-primary);
+}
+
+.nav-link.active {
+    background-color: var(--bs-primary);
+    color: white;
+}
+
+.nav-link i {
+    width: 1.25rem;
+    text-align: center;
+}
+
+/* Content card styles */
+.content-card {
+    background: white;
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Employee details page */
+.employee-header {
+    padding: 0 1rem;
+}
+
+.employee-name {
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+}
+
+.employee-position {
+    color: #6c757d;
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+.employee-actions {
+    padding-top: 0.75rem;
+}
+
+/* Flash messages */
+.flash-messages-container {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    z-index: 2000; /* Above Bootstrap's navbar z-index */
+    max-width: 300px;
+    pointer-events: none;
+}
+
+.alert {
+    margin-bottom: 0.5rem;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    opacity: 0.98;
+    pointer-events: auto;
+    background: #fff;
+    border-left: 4px solid;
+    padding: 0.75rem 1rem;
+}
+
+.alert-success {
+    border-left-color: var(--bs-success);
+}
+
+.alert-error {
+    border-left-color: var(--bs-danger);
+}
+
+.alert-warning {
+    border-left-color: var(--bs-warning);
+}
+
+.alert-info {
+    border-left-color: var(--bs-info);
+}
+
+/* Animation for alerts */
+.alert.fade.show {
+    animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 0.98;
+    }
+}
+
+/* Action button styles */
+.employee-actions .btn.btn-outline-primary,
+.employee-actions .btn.btn-outline-danger {
+    border: none !important;
+    background: none !important;
+    color: #adb5bd !important;  /* Lighter gray for default state */
+    padding: 0.375rem 0.5rem;
+    transition: color 0.2s;
+    box-shadow: none !important;
+}
+
+.employee-actions .btn.btn-outline-primary:hover {
+    background: none !important;
+    color: var(--bs-primary) !important;  /* Blue on hover */
+}
+
+.employee-actions .btn.btn-outline-danger:hover {
+    background: none !important;
+    color: var(--bs-danger) !important;  /* Red on hover */
+}
+
+.employee-actions .btn i {
+    margin-right: 0;
+} 

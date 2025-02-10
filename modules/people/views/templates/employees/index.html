@@ -7,26 +7,34 @@
     <!-- Header with actions -->
     <div class="updates-header">
         <h2>Employees</h2>
-        <button class="btn btn-primary" 
-                hx-get="{{ url_for('people_bp.employee_add_modal') }}"
-                hx-target="#modal-container">
+        <a href="{{ url_for('people_bp.new_employee') }}" class="btn btn-primary">
             <i class="fas fa-plus"></i> Add Employee
-        </button>
+        </a>
     </div>
 
     <!-- Table content -->
-    <div id="employees-table-content" 
-         hx-get="{{ url_for('people_bp.employees_table') }}" 
-         hx-trigger="load, employeeChanged from:#employees-table-content"
-         hx-swap="innerHTML">
-        <div class="d-flex justify-content-center">
-            <div class="spinner-border" role="status">
-                <span class="visually-hidden">Loading...</span>
-            </div>
-        </div>
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Position</th>
+                    <th>Department</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                <tr style="cursor: pointer" 
+                    onclick="window.location.href='{{ url_for('people_bp.employee_detail', employee_id=user.employee_profile.id) }}'">
+                    <td>{{ user.first_name }} {{ user.last_name }}</td>
+                    <td>{{ user.email }}</td>
+                    <td>{{ user.employee_profile.position or 'N/A' }}</td>
+                    <td>{{ user.employee_profile.department or 'N/A' }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
 </div>
-
-<!-- Modal Container -->
-<div id="modal-container"></div>
 {% endblock %} 
