@@ -4,7 +4,7 @@
             <a href="{{ url_for('people_bp.dashboard') }}" 
                class="nav-link {% if active_page == 'dashboard' %}active{% endif %}">
                 <i class="fas fa-chart-line"></i>
-                Dashboard
+                {{ _("Dashboard") }}
             </a>
         </li>
 
@@ -12,7 +12,7 @@
             <a href="{{ url_for('people_bp.updates') }}" 
                class="nav-link {% if active_page == 'updates' %}active{% endif %}">
                 <i class="fas fa-bell"></i>
-                Updates
+                {{ _("Updates") }}
             </a>
         </li>
         <li class="nav-item">
@@ -32,7 +32,7 @@
             <a href="{{ url_for('people_bp.employees') }}" 
                class="nav-link {% if active_page == 'employees' %}active{% endif %}">
                 <i class="fas fa-users"></i>
-                <span>Employees</span>
+                {{ _("Employees") }}
             </a>
         </li>
         <li class="nav-item">
@@ -54,16 +54,17 @@
             </a>
         </li>
         <li class="nav-item">
-            <a href="{{ url_for('people_bp.docs') }}" class="nav-link {% if active_page == 'docs' %}active{% endif %}">
+            <a href="{{ url_for('people_bp.docs') }}" 
+               class="nav-link {% if active_page == 'docs' %}active{% endif %}">
                 <i class="fas fa-folder"></i>
-                <span>Documents</span>
+                {{ _("Documents") }}
             </a>
         </li>
         <li class="nav-item">
             <a href="{{ url_for('people_bp.knowledge') }}" 
                class="nav-link {% if active_page == 'knowledge' %}active{% endif %}">
                 <i class="fas fa-book"></i>
-                <span>Knowledge Base</span>
+                {{ _("Knowledge Base") }}
             </a>
         </li>
     </ul>

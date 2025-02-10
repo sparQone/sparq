@@ -1,14 +1,14 @@
 {% extends "people-base.html" %}
 
-{% block title %}Employees{% endblock %}
+{% block title %}{{ _("Employees") }}{% endblock %}
 
 {% block people_content %}
 <div class="content-card">
     <!-- Header with actions -->
     <div class="updates-header">
-        <h2>Employees</h2>
+        <h2>{{ _("Employees") }}</h2>
         <a href="{{ url_for('people_bp.new_employee') }}" class="btn btn-primary">
-            <i class="fas fa-plus"></i> Add Employee
+            <i class="fas fa-plus"></i> {{ _("Add Employee") }}
         </a>
     </div>
 
@@ -17,10 +17,10 @@
         <table class="table table-hover">
             <thead>
                 <tr>
-                    <th>Name</th>
-                    <th>Email</th>
-                    <th>Position</th>
-                    <th>Department</th>
+                    <th>{{ _("Name") }}</th>
+                    <th>{{ _("Email") }}</th>
+                    <th>{{ _("Position") }}</th>
+                    <th>{{ _("Department") }}</th>
                 </tr>
             </thead>
             <tbody>
@@ -29,8 +29,8 @@
                     onclick="window.location.href='{{ url_for('people_bp.employee_detail', employee_id=user.employee_profile.id) }}'">
                     <td>{{ user.first_name }} {{ user.last_name }}</td>
                     <td>{{ user.email }}</td>
-                    <td>{{ user.employee_profile.position or 'N/A' }}</td>
-                    <td>{{ user.employee_profile.department or 'N/A' }}</td>
+                    <td>{{ user.employee_profile.position or _("N/A") }}</td>
+                    <td>{{ user.employee_profile.department or _("N/A") }}</td>
                 </tr>
                 {% endfor %}
             </tbody>

@@ -139,6 +139,12 @@ def edit_employee(employee_id):
             employee.phone = request.form.get("phone")
             employee.salary = float(request.form.get("salary")) if request.form.get("salary") else None
             
+            # Update address information
+            employee.address = request.form.get("address")
+            employee.city = request.form.get("city")
+            employee.state = request.form.get("state")
+            employee.zip_code = request.form.get("zip_code")
+            
             # Handle dates
             start_date = request.form.get("start_date")
             if start_date:
@@ -157,7 +163,6 @@ def edit_employee(employee_id):
                 employee.gender = Gender[request.form.get("gender")]
             
             # Update other fields
-            employee.address = request.form.get("address")
             employee.emergency_contact_name = request.form.get("emergency_contact_name")
             employee.emergency_contact_phone = request.form.get("emergency_contact_phone")
             employee.emergency_contact_relationship = request.form.get("emergency_contact_relationship")

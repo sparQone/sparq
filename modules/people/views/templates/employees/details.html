@@ -53,7 +53,7 @@
                 {{ employee.user.first_name }} {{ employee.user.last_name }}
             </h1>
             <p class="employee-position">
-                {{ employee.position or "Owner" }}
+                {{ employee.position or _("Owner") }}
             </p>
         </div>
         <div class="employee-actions">
@@ -74,12 +74,13 @@
                 }
             </style>
             <a href="{{ url_for('people_bp.edit_employee', employee_id=employee.id) }}" 
-               class="btn me-2">
+               class="btn me-2" title="{{ _('Edit') }}">
                 <i class="fas fa-edit"></i>
             </a>
             <button class="btn delete-btn"
                     data-bs-toggle="modal" 
-                    data-bs-target="#deleteEmployeeModal">
+                    data-bs-target="#deleteEmployeeModal"
+                    title="{{ _('Delete') }}">
                 <i class="fas fa-trash"></i>
             </button>
         </div>
@@ -88,7 +89,7 @@
     <div class="contact-info">
         <div class="contact-item">
             <i class="fas fa-phone text-muted"></i>
-            <span>{{ employee.phone }}</span>
+            <span>{{ employee.phone or _('Not provided') }}</span>
         </div>
         <div class="contact-item">
             <i class="fas fa-envelope text-muted"></i>
@@ -97,8 +98,8 @@
     </div>
 
     <div class="detail-tabs mt-4">
-        <button class="tab-btn active" data-tab="main">Main</button>
-        <button class="tab-btn" data-tab="personal">Personal</button>
+        <button class="tab-btn active" data-tab="main">{{ _("Main") }}</button>
+        <button class="tab-btn" data-tab="personal">{{ _("Personal") }}</button>
     </div>
 
     <div class="detail-sections mt-4">
@@ -107,18 +108,18 @@
             <div class="row">
                 <div class="col-md-4">
                     <div class="info-section">
-                        <h3>Employment</h3>
+                        <h3>{{ _("Employment") }}</h3>
                         <div class="info-item">
-                            <label>Hire Date</label>
-                            <div>{{ employee.start_date|format_date if employee.start_date }}</div>
+                            <label>{{ _("Hire Date") }}</label>
+                            <div>{{ employee.start_date|format_date if employee.start_date else _('Not set') }}</div>
                         </div>
                         <div class="info-item">
-                            <label>Employment Type</label>
-                            <div>{{ employee.type.value if employee.type }}</div>
+                            <label>{{ _("Employment Type") }}</label>
+                            <div>{{ employee.type.value if employee.type else _('Not set') }}</div>
                         </div>
                         <div class="info-item">
-                            <label>Compensation</label>
-                            <div>{{ employee.formatted_salary if employee.salary }}</div>
+                            <label>{{ _("Compensation") }}</label>
+                            <div>{{ employee.formatted_salary if employee.salary else _('Not set') }}</div>
                         </div>
                     </div>
                 </div>
@@ -126,14 +127,16 @@
                 <div class="col-md-4">
                     <div class="info-section">
                         <div class="section-header">
-                            <h3>Notes</h3>
-                            <button class="btn btn-sm btn-link"><i class="fas fa-plus"></i></button>
+                            <h3>{{ _("Notes") }}</h3>
+                            <button class="btn btn-sm btn-link" title="{{ _('Add Note') }}">
+                                <i class="fas fa-plus"></i>
+                            </button>
                         </div>
                         <div class="note-item">
                             <i class="fas fa-sticky-note"></i>
                             <div>
-                                <div class="note-title">Asim does a great...</div>
-                                <div class="note-date">01/22/2025</div>
+                                <div class="note-title">{{ _("Notes coming soon...") }}</div>
+                                <div class="note-date">{{ _("Coming Soon") }}</div>
                             </div>
                         </div>
                     </div>
@@ -142,15 +145,13 @@
                 <div class="col-md-4">
                     <div class="info-section">
                         <div class="section-header">
-                            <h3>Documents</h3>
-                            <button class="btn btn-sm btn-link"><i class="fas fa-upload"></i></button>
-                        </div>
-                        <div class="document-item">
-                            <i class="fas fa-file-pdf"></i>
-                            <span>Resume.pdf</span>
+                            <h3>{{ _("Documents") }}</h3>
+                            <button class="btn btn-sm btn-link" title="{{ _('Upload Document') }}">
+                                <i class="fas fa-upload"></i>
+                            </button>
                         </div>
                         <div class="documents-coming-soon">
-                            Coming Soon
+                            {{ _("Coming Soon") }}
                         </div>
                     </div>
                 </div>
@@ -158,28 +159,28 @@
 
             <div class="row mt-4">
                 <div class="col-12">
-                    <h3>Shortcuts</h3>
+                    <h3>{{ _("Shortcuts") }}</h3>
                     <div class="shortcuts-grid">
                         <div class="shortcut-card">
                             <div class="shortcut-icon onboarding">
                                 <i class="fas fa-clipboard-list"></i>
                             </div>
-                            <h4>Onboarding</h4>
-                            <p>Sarah has 0 tasks to complete onboarding.</p>
+                            <h4>{{ _("Onboarding") }}</h4>
+                            <p>{{ _("%(first_name)s has %(task_count)s tasks to complete onboarding") % {'first_name': employee.user.first_name, 'task_count': 0} }}</p>
                         </div>
                         <div class="shortcut-card">
                             <div class="shortcut-icon time">
                                 <i class="fas fa-clock"></i>
                             </div>
-                            <h4>Time Tracking</h4>
-                            <p>0 Time Sheets Ready for approval.</p>
+                            <h4>{{ _("Time Tracking") }}</h4>
+                            <p>{{ _("%(count)s Time Sheets Ready for approval") % {'count': 0} }}</p>
                         </div>
                         <div class="shortcut-card">
                             <div class="shortcut-icon reimbursement">
                                 <i class="fas fa-receipt"></i>
                             </div>
-                            <h4>Reimbursements</h4>
-                            <p>0 outstanding reimbursements.</p>
+                            <h4>{{ _("Reimbursements") }}</h4>
+                            <p>{{ _("%(count)s outstanding reimbursements") % {'count': 0} }}</p>
                         </div>
                     </div>
                 </div>
@@ -191,19 +192,19 @@
             <div class="row">
                 <div class="col-md-4">
                     <div class="info-section">
-                        <h3>Personal Information</h3>
+                        <h3>{{ _("Personal Information") }}</h3>
                         <div class="info-item">
-                            <label>Birthday</label>
-                            <div>{{ employee.birthday|format_date if employee.birthday }}</div>
+                            <label>{{ _("Birthday") }}</label>
+                            <div>{{ employee.birthday|format_date if employee.birthday else _('Not set') }}</div>
                         </div>
                         <div class="info-item">
-                            <label>Gender</label>
-                            <div>{{ employee.gender.value if employee.gender }}</div>
+                            <label>{{ _("Gender") }}</label>
+                            <div>{{ employee.gender.value if employee.gender else _('Not set') }}</div>
                         </div>
                         <div class="info-item">
-                            <label>Address</label>
+                            <label>{{ _("Address") }}</label>
                             <div>
-                                {{ employee.full_address if employee.address }}
+                                {{ employee.full_address if employee.address else _('Not set') }}
                             </div>
                         </div>
                     </div>
@@ -211,29 +212,27 @@
 
                 <div class="col-md-4">
                     <div class="info-section">
-                        <h3>Emergency Contact</h3>
+                        <h3>{{ _("Emergency Contact") }}</h3>
                         <div class="info-item">
-                            <label>Name</label>
-                            <div>{{ employee.emergency_contact_name }}</div>
+                            <label>{{ _("Name") }}</label>
+                            <div>{{ employee.emergency_contact_name or _('Not set') }}</div>
                         </div>
                         <div class="info-item">
-                            <label>Phone</label>
-                            <div>{{ employee.emergency_contact_phone }}</div>
+                            <label>{{ _("Phone") }}</label>
+                            <div>{{ employee.emergency_contact_phone or _('Not set') }}</div>
                         </div>
-                        {% if employee.emergency_contact_relationship %}
                         <div class="info-item">
-                            <label>Relationship</label>
-                            <div>{{ employee.emergency_contact_relationship }}</div>
+                            <label>{{ _("Relationship") }}</label>
+                            <div>{{ employee.emergency_contact_relationship or _('Not set') }}</div>
                         </div>
-                        {% endif %}
                     </div>
                 </div>
 
                 <div class="col-md-4">
                     <div class="info-section">
-                        <h3>Social</h3>
+                        <h3>{{ _("Social") }}</h3>
                         <div class="info-item">
-                            <label>Social Media</label>
+                            <label>{{ _("Social Media") }}</label>
                             <div>hashed_social_1</div>
                         </div>
                     </div>
@@ -243,28 +242,20 @@
     </div>
 
     <!-- Delete Modal -->
-    <div class="modal fade" 
-         id="deleteEmployeeModal"
-         tabindex="-1" 
-         aria-labelledby="deleteEmployeeModalLabel"
-         aria-hidden="true">
+    <div class="modal fade" id="deleteEmployeeModal" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="deleteEmployeeModalLabel">Delete Employee</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <h5 class="modal-title">{{ _("Confirm Delete") }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <p>Are you sure you want to delete {{ employee.user.first_name }} {{ employee.user.last_name }}? This action cannot be undone.</p>
+                    {{ _("Are you sure you want to delete this employee?") }}
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <form method="POST" 
-                          action="{{ url_for('people_bp.delete_employee', employee_id=employee.id) }}"
-                          class="d-inline">
-                        <button type="submit" class="btn btn-danger">
-                            <i class="fas fa-trash"></i> Delete
-                        </button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ _("Cancel") }}</button>
+                    <form action="{{ url_for('people_bp.delete_employee', employee_id=employee.id) }}" method="POST" class="d-inline">
+                        <button type="submit" class="btn btn-danger">{{ _("Delete") }}</button>
                     </form>
                 </div>
             </div>
