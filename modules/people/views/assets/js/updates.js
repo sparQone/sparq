@@ -55,19 +55,17 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Combined function to apply both search and type filters
     function applyFilters() {
-        const searchTerm = searchInput.value.toLowerCase();
+        const searchText = document.getElementById('updateSearch').value.toLowerCase();
         const activeFilter = document.querySelector('.filter-buttons .btn.active').dataset.filter;
-        const updates = document.querySelectorAll('.update-card');
         
-        updates.forEach(update => {
-            const content = update.querySelector('.update-content').textContent.toLowerCase();
-            const author = update.querySelector('.author-name').textContent.toLowerCase();
-            const updateType = update.dataset.type;
+        document.querySelectorAll('.update-card').forEach(card => {
+            const content = card.querySelector('.update-content').textContent.toLowerCase();
+            const type = card.querySelector('.update-type').dataset.type; // Make sure this matches the data-type attribute
             
-            const matchesSearch = content.includes(searchTerm) || author.includes(searchTerm);
-            const matchesFilter = activeFilter === 'all' || updateType === activeFilter;
-
-            update.style.display = (matchesSearch && matchesFilter) ? '' : 'none';
+            const matchesSearch = content.includes(searchText);
+            const matchesFilter = activeFilter === 'all' || type === activeFilter;
+            
+            card.style.display = matchesSearch && matchesFilter ? 'block' : 'none';
         });
     }
 

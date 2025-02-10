@@ -12,9 +12,9 @@
 <div class="content-card">
     <!-- Header with actions -->
     <div class="updates-header">
-        <h2>Company Updates</h2>
+        <h2>{{ _('Company Updates') }}</h2>
         <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newUpdateModal">
-            <i class="fas fa-plus"></i> New Update
+            <i class="fas fa-plus"></i> {{ _('New Update') }}   
         </button>
     </div>
 
@@ -22,12 +22,12 @@
     <div class="updates-filters">
         <div class="search-box">
             <i class="fas fa-search"></i>
-            <input type="text" id="updateSearch" placeholder="Search updates..." class="form-control">
+            <input type="text" id="updateSearch" placeholder="{{ _('Search updates...') }}" class="form-control">
         </div>
         <div class="filter-buttons">
-            <button class="btn btn-outline-secondary active" data-filter="all">All</button>
+            <button class="btn btn-outline-secondary active" data-filter="all">{{ _('All') }}</button>
             {% for type in update_types %}
-            <button class="btn btn-outline-secondary" data-filter="{{ type.value }}">{{ type.value }}</button>
+            <button class="btn btn-outline-secondary" data-filter="{{ type.name }}">{{ type }}</button>
             {% endfor %}
         </div>
     </div>
@@ -82,7 +82,7 @@
                             {% for type in update_types %}
                             <input type="radio" class="btn-check" name="type" id="type{{ type.name }}" 
                                    value="{{ type.name }}" {{ 'checked' if type == update_types.GENERAL }} required>
-                            <label class="btn btn-outline-primary" for="type{{ type.name }}">{{ type.value }}</label>
+                            <label class="btn btn-outline-primary" for="type{{ type.name }}">{{ type }}</label>
                             {% endfor %}
                         </div>
                     </div>

@@ -10,16 +10,30 @@
 
 from datetime import datetime
 from enum import Enum
+from flask import current_app
 
 from system.db.database import db
 from system.db.decorators import ModelRegistry
-
+from system.i18n.translation import translate as _
 
 class UpdateType(Enum):
+    # Store untranslated strings as values
     GENERAL = "General"
     ANNOUNCEMENT = "Announcement"
     NEWS = "News"
     EVENT = "Event"
+
+    def __str__(self):
+        # Translate the value when the enum is displayed
+        return _(self.value)
+
+    def __repr__(self):
+        return f"{self.__class__.__name__}.{self.name}"
+
+    @property
+    def translated(self):
+        # Convenience property to get translated value
+        return _(self.value)
 
 
 @ModelRegistry.register

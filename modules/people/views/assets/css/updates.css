@@ -160,62 +160,62 @@
 }
 
 /* Update type badges */
-.update-type-general {
+.update-type-GENERAL {
     background-color: #0dcaf0 !important;  /* Original teal */
 }
 
-.update-type-announcement {
+.update-type-ANNOUNCEMENT {
     background-color: #dc3545 !important;  /* Red */
 }
 
-.update-type-news {
+.update-type-NEWS {
     background-color: #198754 !important;  /* Green */
 }
 
-.update-type-event {
+.update-type-EVENT {
     background-color: #6f42c1 !important;  /* Purple */
 }
 
 /* Also update the filter buttons to match */
-.filter-buttons .btn[data-filter="General"] {
+.filter-buttons .btn[data-filter="GENERAL"] {
     color: #0dcaf0;
     border-color: #0dcaf0;
 }
-.filter-buttons .btn[data-filter="General"]:hover,
-.filter-buttons .btn[data-filter="General"].active {
+.filter-buttons .btn[data-filter="GENERAL"]:hover,
+.filter-buttons .btn[data-filter="GENERAL"].active {
     background-color: #0dcaf0;
     border-color: #0dcaf0;
     color: white;
 }
 
-.filter-buttons .btn[data-filter="Announcement"] {
+.filter-buttons .btn[data-filter="ANNOUNCEMENT"] {
     color: #dc3545;
     border-color: #dc3545;
 }
-.filter-buttons .btn[data-filter="Announcement"]:hover,
-.filter-buttons .btn[data-filter="Announcement"].active {
+.filter-buttons .btn[data-filter="ANNOUNCEMENT"]:hover,
+.filter-buttons .btn[data-filter="ANNOUNCEMENT"].active {
     background-color: #dc3545;
     border-color: #dc3545;
     color: white;
 }
 
-.filter-buttons .btn[data-filter="News"] {
+.filter-buttons .btn[data-filter="NEWS"] {
     color: #198754;
     border-color: #198754;
 }
-.filter-buttons .btn[data-filter="News"]:hover,
-.filter-buttons .btn[data-filter="News"].active {
+.filter-buttons .btn[data-filter="NEWS"]:hover,
+.filter-buttons .btn[data-filter="NEWS"].active {
     background-color: #198754;
     border-color: #198754;
     color: white;
 }
 
-.filter-buttons .btn[data-filter="Event"] {
+.filter-buttons .btn[data-filter="EVENT"] {
     color: #6f42c1;
     border-color: #6f42c1;
 }
-.filter-buttons .btn[data-filter="Event"]:hover,
-.filter-buttons .btn[data-filter="Event"].active {
+.filter-buttons .btn[data-filter="EVENT"]:hover,
+.filter-buttons .btn[data-filter="EVENT"].active {
     background-color: #6f42c1;
     border-color: #6f42c1;
     color: white;

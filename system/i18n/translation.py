@@ -68,6 +68,13 @@ def translate(text):
     return text
 
 
+# Create alias for translate function
+_ = translate
+
+# Export both names
+__all__ = ['translate', '_', 'preload_translations', 'format_date', 'format_number', 'get_format_patterns']
+
+
 def get_format_patterns(lang=None):
     """Get formatting patterns for the current language"""
     if not lang:

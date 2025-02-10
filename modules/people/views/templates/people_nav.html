@@ -18,14 +18,14 @@
         <li class="nav-item">
             <a href="{{ url_for('people_bp.hiring') }}" class="nav-link {% if active_page == 'hiring' %}active{% endif %}">
                 <i class="fas fa-user-plus"></i>
-                <span>Hiring</span>
+                {{ _("Hiring") }}
             </a>
         </li>
         <li class="nav-item">
             <a href="{{ url_for('people_bp.onboarding') }}" 
                class="nav-link {% if active_page == 'onboarding' %}active{% endif %}">
                 <i class="fas fa-handshake"></i>
-                Onboarding
+                {{ _("Onboarding") }}
             </a>
         </li>
         <li class="nav-item">
@@ -38,19 +38,19 @@
         <li class="nav-item">
             <a href="{{ url_for('people_bp.time_tracking') }}" class="nav-link {% if active_page == 'time_tracking' %}active{% endif %}">
                 <i class="fas fa-clock"></i>
-                <span>Time Tracking</span>
+                {{ _("Time Tracking") }}
             </a>
         </li>
         <li class="nav-item">
             <a href="{{ url_for('people_bp.scheduling') }}" class="nav-link {% if active_page == 'scheduling' %}active{% endif %}">
                 <i class="fas fa-calendar-alt"></i>
-                <span>Shift Scheduling</span>
+                {{ _("Shift Scheduling") }}
             </a>
         </li>
         <li class="nav-item">
             <a href="{{ url_for('people_bp.forms') }}" class="nav-link {% if active_page == 'forms' %}active{% endif %}">
                 <i class="fas fa-file-alt"></i>
-                <span>Forms</span>
+                {{ _("Forms") }}
             </a>
         </li>
         <li class="nav-item">

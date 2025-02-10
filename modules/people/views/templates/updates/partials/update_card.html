@@ -1,4 +1,4 @@
-<div class="update-card {% if update.pinned %}pinned{% endif %}" data-type="{{ update.type.value }}">
+<div class="update-card {% if update.pinned %}pinned{% endif %}" data-type="{{ update.type.name }}">
     <div class="update-header">
         <div class="update-author">
             <div class="author-avatar">{{ update.user.first_name[0] }}{{ update.user.last_name[0] }}</div>
@@ -8,7 +8,10 @@
                     {% if update.pinned %}
                     <span class="badge bg-warning">Pinned</span>
                     {% endif %}
-                    <span class="badge update-type-{{ update.type.name.lower() }}">{{ update.type.value }}</span>
+                    <span class="badge update-type update-type-{{ update.type.name }}" 
+                          data-type="{{ update.type.name }}">
+                        {{ update.type }}
+                    </span>
                     <span class="update-time">{{ update.created_at|timeago }}</span>
                 </div>
             </div>
@@ -48,7 +51,7 @@
         </button>
         <button class="btn btn-link not-implemented"
                 data-bs-toggle="tooltip" title="Sharing coming soon">
-            <i class="fas fa-share"></i> Share
+            <i class="fas fa-share"></i> {{ _('Share') }}
         </button>
     </div>
 </div> 
