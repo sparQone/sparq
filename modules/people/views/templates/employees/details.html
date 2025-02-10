@@ -118,6 +118,32 @@
                             <div>{{ employee.type.value if employee.type else _('Not set') }}</div>
                         </div>
                         <div class="info-item">
+                            <label>{{ _("Manager") }}</label>
+                            <div>
+                                {% if employee.manager %}
+                                    <a href="{{ url_for('people_bp.employee_detail', employee_id=employee.manager.id) }}" class="text-decoration-none">
+                                        {{ employee.manager.user.first_name }} {{ employee.manager.user.last_name }}
+                                    </a>
+                                {% else %}
+                                    <span class="text-muted">{{ _('Not assigned') }}</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% if employee.reports %}
+                        <div class="info-item">
+                            <label>{{ _("Direct Reports") }}</label>
+                            <div>
+                                {% for report in employee.reports %}
+                                <div class="mb-1">
+                                    <a href="{{ url_for('people_bp.employee_detail', employee_id=report.id) }}" class="text-decoration-none">
+                                        {{ report.user.first_name }} {{ report.user.last_name }}
+                                    </a>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endif %}
+                        <div class="info-item">
                             <label>{{ _("Compensation") }}</label>
                             <div>{{ employee.formatted_salary if employee.salary else _('Not set') }}</div>
                         </div>

@@ -62,6 +62,18 @@
                                value="{{ employee.position if employee else '' }}">
                     </div>
                     <div class="mb-3">
+                        <label for="manager_id" class="form-label">{{ _("Manager") }}</label>
+                        <select class="form-select" id="manager_id" name="manager_id">
+                            <option value="">{{ _("Select Manager") }}</option>
+                            {% for potential_manager in potential_managers %}
+                            <option value="{{ potential_manager.id }}" 
+                                    {% if employee and employee.manager_id == potential_manager.id %}selected{% endif %}>
+                                {{ potential_manager.user.first_name }} {{ potential_manager.user.last_name }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
                         <label for="type" class="form-label">{{ _("Employee Type") }}</label>
                         <select class="form-select" id="type" name="type">
                             {% for type in employee_types %}

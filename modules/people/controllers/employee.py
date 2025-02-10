@@ -60,11 +60,15 @@ def employees():
 @login_required
 def new_employee():
     """Show new employee form"""
+    # Get all employees as potential managers
+    potential_managers = Employee.query.join(User).order_by(User.first_name).all()
+    
     return render_template(
         "employees/form.html",
         title="New Employee",
         employee=None,
         employee_types=EmployeeType,
+        potential_managers=potential_managers,
         module_home="people_bp.people_home",
     )
 
@@ -102,6 +106,12 @@ def create_employee():
             type=EmployeeType[request.form.get("type", "FULL_TIME")],
             status=EmployeeStatus.ACTIVE,
         )
+        
+        # Add manager if selected
+        manager_id = request.form.get("manager_id")
+        if manager_id:
+            employee.manager_id = int(manager_id)
+            
         db.session.add(employee)
         db.session.commit()
 
@@ -167,6 +177,13 @@ def edit_employee(employee_id):
             employee.emergency_contact_phone = request.form.get("emergency_contact_phone")
             employee.emergency_contact_relationship = request.form.get("emergency_contact_relationship")
             
+            # Update manager
+            manager_id = request.form.get("manager_id")
+            if manager_id:
+                employee.manager_id = int(manager_id)
+            else:
+                employee.manager_id = None
+            
             db.session.commit()
             flash("Employee updated successfully", "success")
             return redirect(url_for("people_bp.employee_detail", employee_id=employee.id))
@@ -176,11 +193,15 @@ def edit_employee(employee_id):
             flash(f"Error updating employee: {str(e)}", "error")
             return redirect(url_for("people_bp.edit_employee", employee_id=employee_id))
             
+    # Get all employees except current one as potential managers
+    potential_managers = Employee.query.filter(Employee.id != employee_id).join(User).order_by(User.first_name).all()
+            
     return render_template(
         "employees/form.html",
         title="Edit Employee",
         employee=employee,
         employee_types=EmployeeType,
+        potential_managers=potential_managers,
         module_home="people_bp.people_home",
     )
 
