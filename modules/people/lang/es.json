@@ -10,6 +10,8 @@
     "Status": "Estado",
     "Joined": "Fecha de Ingreso",
     "Last Updated": "Última Actualización",
+    "Administrator": "Administrador",
+    "Leave blank to keep current password": "Dejar en blanco para mantener la contraseña actual",
     
     "Main": "Principal",
     "First Name": "Nombre",
@@ -29,6 +31,7 @@
 
     "Phone": "Teléfono",
     "Address": "Dirección",
+    "Street Address": "Dirección",
     "City": "Ciudad",
     "State": "Estado",
     "ZIP Code": "Código Postal",
@@ -43,6 +46,7 @@
     "Other": "Otro",
     
     "Emergency Contact": "Contacto de Emergencia",
+    "Emergency Contact Relationship": "Relación con el Contacto",
     "Emergency Contact Name": "Nombre del Contacto",
     "Emergency Contact Phone": "Teléfono del Contacto",
     "Relationship": "Relación con el Contacto",

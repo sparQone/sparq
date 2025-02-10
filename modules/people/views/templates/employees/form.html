@@ -37,14 +37,14 @@
                         <input type="password" class="form-control" id="password" name="password" 
                                {{ '' if employee else 'required' }}>
                         {% if employee %}
-                        <div class="form-text">Leave blank to keep current password</div>
+                        <div class="form-text">{{ _("Leave blank to keep current password") }}</div>
                         {% endif %}
                     </div>
                     <div class="mb-3">
                         <div class="form-check">
                             <input type="checkbox" class="form-check-input" id="is_admin" name="is_admin" 
                                    {{ 'checked' if employee and employee.user.is_admin else '' }}>
-                            <label class="form-check-label" for="is_admin">Administrator</label>
+                            <label class="form-check-label" for="is_admin">{{ _("Administrator") }}</label>
                         </div>
                     </div>
                 </div>
@@ -93,7 +93,7 @@
                                value="{{ employee.address if employee else '' }}">
                     </div>
                     <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-md-5">
                             <div class="mb-3">
                                 <label for="city" class="form-label">{{ _("City") }}</label>
                                 <input type="text" class="form-control" id="city" name="city" 
@@ -101,13 +101,13 @@
                             </div>
                         </div>
                         <div class="col-md-3">
-                            <div class="mb-3">
+                            <div class="mb-4">
                                 <label for="state" class="form-label">{{ _("State") }}</label>
                                 <input type="text" class="form-control" id="state" name="state" 
                                        value="{{ employee.state if employee else '' }}">
                             </div>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-4">
                             <div class="mb-3">
                                 <label for="zip_code" class="form-label">{{ _("ZIP Code") }}</label>
                                 <input type="text" class="form-control" id="zip_code" name="zip_code" 
@@ -131,10 +131,10 @@
                     <div class="mb-3">
                         <label for="gender" class="form-label">{{ _("Gender") }}</label>
                         <select class="form-select" id="gender" name="gender">
-                            <option value="">Select Gender</option>
-                            <option value="MALE" {% if employee and employee.gender and employee.gender.name == 'MALE' %}selected{% endif %}>Male</option>
-                            <option value="FEMALE" {% if employee and employee.gender and employee.gender.name == 'FEMALE' %}selected{% endif %}>Female</option>
-                            <option value="OTHER" {% if employee and employee.gender and employee.gender.name == 'OTHER' %}selected{% endif %}>Other</option>
+                            <option value="">{{ _("Select Gender") }}</option>
+                            <option value="MALE" {% if employee and employee.gender and employee.gender.name == 'MALE' %}selected{% endif %}>{{ _("Male") }}</option>
+                            <option value="FEMALE" {% if employee and employee.gender and employee.gender.name == 'FEMALE' %}selected{% endif %}>{{ _("Female") }}</option>
+                            <option value="OTHER" {% if employee and employee.gender and employee.gender.name == 'OTHER' %}selected{% endif %}>{{ _("Other") }}</option>
                         </select>
                     </div>
                 </div>
