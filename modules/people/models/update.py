@@ -15,6 +15,7 @@ from flask import current_app
 from system.db.database import db
 from system.db.decorators import ModelRegistry
 from system.i18n.translation import translate as _
+from modules.people.models.update_like import UpdateLike
 
 class UpdateType(Enum):
     # Store untranslated strings as values
@@ -68,13 +69,19 @@ class Update(db.Model):
 
     # Use backref instead of back_populates
     user = db.relationship("User", backref="updates")
-    likes = db.relationship("User", secondary="update_like", backref=db.backref("liked_updates"))
+    
+    # Direct access to like records
+    likes = db.relationship(UpdateLike, backref="update", cascade="all, delete-orphan")
+    
+    # Define the users who liked through the UpdateLike model
+    liked_by = db.relationship(
+        "User",
+        secondary="update_like",
+        primaryjoin="Update.id == UpdateLike.update_id",
+        secondaryjoin="UpdateLike.user_id == User.id",
+        backref=db.backref("liked_updates", lazy="dynamic"),
+        viewonly=True
+    )
 
-
-# Association table for likes
-update_like = db.Table(
-    "update_like",
-    db.Column("user_id", db.Integer, db.ForeignKey("user.id"), primary_key=True),
-    db.Column("update_id", db.Integer, db.ForeignKey("update.id"), primary_key=True),
-    db.Column("created_at", db.DateTime, default=datetime.utcnow),
-)
+# Register the association table
+ModelRegistry.register_table(UpdateLike.__table__, "people")

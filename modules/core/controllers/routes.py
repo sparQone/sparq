@@ -36,6 +36,7 @@ from system.db.database import db
 
 from ..models.user import User
 from ..models.user_setting import UserSetting
+from ..models.group import Group
 
 # Create blueprint
 blueprint = Blueprint(
@@ -318,3 +319,74 @@ def change_language(lang_code):
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": str(e)}), 500
+
+
+@blueprint.route("/settings/groups")
+@login_required
+@admin_required
+def manage_groups():
+    """Group management page"""
+    users = User.query.filter(User.email != "admin").all()
+    groups = Group.query.all()
+    return render_template(
+        "settings/groups.html",
+        users=users,
+        groups=groups,
+        module_name="Settings",
+        module_icon="fa-solid fa-cog",
+        module_home="core_bp.settings",
+    )
+
+
+@blueprint.route("/settings/groups/<int:user_id>")
+@login_required
+@admin_required
+def get_user_groups(user_id):
+    """Get user's current group IDs"""
+    user = User.query.get_or_404(user_id)
+    return jsonify({
+        "groups": [group.id for group in user.groups]
+    })
+
+
+@blueprint.route("/settings/groups/<int:user_id>", methods=["POST"])
+@login_required
+@admin_required
+def update_user_groups(user_id):
+    """Update user's group memberships"""
+    try:
+        print("Received group update request for user:", user_id)  # Debug log
+        user = User.query.get_or_404(user_id)
+        
+        # Get selected group IDs
+        group_ids = request.form.getlist('groups')
+        print("Received group IDs:", group_ids)  # Debug log
+        
+        groups = Group.query.filter(Group.id.in_(group_ids)).all()
+        
+        # Get ALL group
+        all_group = Group.get_all_group()
+        if all_group not in groups:
+            groups.append(all_group)
+        
+        # Check admin group changes
+        admin_group = Group.get_admin_group()
+        if admin_group in user.groups and admin_group not in groups:
+            # Count other admin users
+            admin_count = User.query.filter(
+                User.groups.any(id=admin_group.id)
+            ).count()
+            if admin_count <= 1:
+                raise ValueError("Cannot remove last admin user")
+        
+        # Update user's groups
+        user.groups = groups
+        db.session.commit()
+        
+        return jsonify({"success": True})
+    except ValueError as e:
+        return jsonify({"success": False, "error": str(e)})
+    except Exception as e:
+        db.session.rollback()
+        print("Error updating groups:", str(e))  # Debug log
+        return jsonify({"success": False, "error": str(e)})

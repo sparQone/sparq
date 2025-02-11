@@ -44,6 +44,19 @@ class ModelRegistry:
         return model_class
 
     @classmethod
+    def register_table(cls, table, module_name="core"):
+        """Register a plain table (like association tables)"""
+        cls.models.append(
+            {
+                "module": module_name,
+                "model": table.name,
+                "table": table.name,
+                "order": cls.registration_order,
+            }
+        )
+        cls.registration_order += 1
+
+    @classmethod
     def _get_module_order(cls, module_name):
         """Helper to determine module sort order"""
         try:

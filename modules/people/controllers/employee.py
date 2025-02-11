@@ -10,7 +10,7 @@
 # See the LICENSE file for details.
 # -----------------------------------------------------------------------------
 
-from flask import current_app, g, render_template, request, redirect, url_for, flash
+from flask import current_app, g, render_template, request, redirect, url_for, flash, jsonify
 from flask_login import login_required, current_user
 from datetime import datetime
 import logging
@@ -20,6 +20,7 @@ from modules.people.models.employee import Employee, EmployeeType, EmployeeStatu
 from modules.people.decorators import admin_required
 from system.db.database import db
 from . import blueprint
+from modules.core.models.group import Group
 
 logger = logging.getLogger(__name__)
 
@@ -129,120 +130,69 @@ def create_employee():
         return redirect(url_for("people_bp.new_employee"))
 
 
-@blueprint.route("/employees/<int:employee_id>/edit", methods=["GET", "POST"])
+@blueprint.route("/employees/<int:employee_id>/edit", methods=["GET"])
 @login_required
+@admin_required
 def edit_employee(employee_id):
-    """Edit an employee"""
+    """Show edit employee form"""
     employee = Employee.query.get_or_404(employee_id)
+    potential_managers = Employee.query.join(User).order_by(User.first_name).all()
     
-    # Check if user is admin or editing their own profile
-    if not current_user.is_admin and current_user.employee_profile.id != employee_id:
-        flash("You can only edit your own profile", "error")
-        return redirect(url_for("people_bp.employees"))
+    # Get admin count if the employee is an admin
+    admin_count = 0
+    if employee.user.is_admin:
+        admin_count = User.query.filter(
+            User.groups.any(name="ADMIN")
+        ).count()
     
-    if request.method == "POST":
-        try:
-            # For regular users, only allow editing certain fields
-            if not current_user.is_admin:
-                # Update basic user info
-                employee.user.first_name = request.form.get("first_name")
-                employee.user.last_name = request.form.get("last_name")
-                employee.user.email = request.form.get("email")
-                
-                # Update password if provided
-                password = request.form.get("password")
-                if password and password.strip():
-                    employee.user.set_password(password)
-                
-                # Update personal info
-                employee.phone = request.form.get("phone")
-                employee.address = request.form.get("address")
-                employee.city = request.form.get("city")
-                employee.state = request.form.get("state")
-                employee.zip_code = request.form.get("zip_code")
-                employee.birthday = datetime.strptime(request.form.get("birthday"), '%Y-%m-%d').date() if request.form.get("birthday") else None
-                employee.gender = Gender[request.form.get("gender")] if request.form.get("gender") else None
-                
-                # Update emergency contact info
-                employee.emergency_contact_name = request.form.get("emergency_contact_name")
-                employee.emergency_contact_phone = request.form.get("emergency_contact_phone")
-                employee.emergency_contact_relationship = request.form.get("emergency_contact_relationship")
-            else:
-                # Admin can update all fields
-                # Update user info
-                employee.user.email = request.form.get("email")
-                employee.user.first_name = request.form.get("first_name")
-                employee.user.last_name = request.form.get("last_name")
-                employee.user.is_admin = bool(request.form.get("is_admin"))
-                
-                # Update password if provided
-                password = request.form.get("password")
-                if password and password.strip():
-                    employee.user.set_password(password)
-                
-                # Update employee info
-                employee.position = request.form.get("position")
-                employee.department = request.form.get("department")
-                employee.phone = request.form.get("phone")
-                employee.salary = float(request.form.get("salary")) if request.form.get("salary") else None
-                
-                # Update address information
-                employee.address = request.form.get("address")
-                employee.city = request.form.get("city")
-                employee.state = request.form.get("state")
-                employee.zip_code = request.form.get("zip_code")
-                
-                # Handle dates
-                start_date = request.form.get("start_date")
-                if start_date:
-                    employee.start_date = datetime.strptime(start_date, '%Y-%m-%d').date()
-                
-                birthday = request.form.get("birthday")
-                if birthday:
-                    employee.birthday = datetime.strptime(birthday, '%Y-%m-%d').date()
-                
-                # Update type if provided
-                if request.form.get("type"):
-                    employee.type = EmployeeType[request.form.get("type")]
-                
-                # Update gender if provided
-                if request.form.get("gender"):
-                    employee.gender = Gender[request.form.get("gender")]
-                
-                # Update other fields
-                employee.emergency_contact_name = request.form.get("emergency_contact_name")
-                employee.emergency_contact_phone = request.form.get("emergency_contact_phone")
-                employee.emergency_contact_relationship = request.form.get("emergency_contact_relationship")
-                
-                # Update manager
-                manager_id = request.form.get("manager_id")
-                if manager_id:
-                    employee.manager_id = int(manager_id)
-                else:
-                    employee.manager_id = None
-            
-            db.session.commit()
-            flash("Profile updated successfully", "success")
-            return redirect(url_for("people_bp.employee_detail", employee_id=employee.id))
-
-        except Exception as e:
-            db.session.rollback()
-            flash(f"Error updating profile: {str(e)}", "error")
-            return redirect(url_for("people_bp.edit_employee", employee_id=employee_id))
-            
-    # Get all employees except current one as potential managers (only for admin)
-    potential_managers = []
-    if current_user.is_admin:
-        potential_managers = Employee.query.filter(Employee.id != employee_id).join(User).order_by(User.first_name).all()
-            
     return render_template(
         "employees/form.html",
-        title="Edit Profile" if not current_user.is_admin else "Edit Employee",
+        title="Edit Employee",
         employee=employee,
         employee_types=EmployeeType,
         potential_managers=potential_managers,
+        admin_count=admin_count,
         module_home="people_bp.people_home",
     )
+
+@blueprint.route("/employees/<int:employee_id>", methods=["POST"])
+@login_required
+@admin_required
+def update_employee(employee_id):
+    """Update an employee"""
+    try:
+        employee = Employee.query.get_or_404(employee_id)
+        user = employee.user
+        
+        # Handle admin status changes
+        is_admin = request.form.get("is_admin") == "on"
+        if user.is_admin and not is_admin:
+            # Count other admin users
+            admin_count = User.query.filter(
+                User.groups.any(name="ADMIN")
+            ).count()
+            if admin_count <= 1:
+                flash("Cannot remove admin status from the only administrator", "error")
+                return redirect(url_for("people_bp.edit_employee", employee_id=employee_id))
+        
+        # Update admin status if changed
+        if is_admin != user.is_admin:
+            admin_group = Group.get_admin_group()
+            if is_admin:
+                user.add_to_group(admin_group)
+            else:
+                user.remove_from_group(admin_group)
+        
+        # Update other fields...
+        
+        db.session.commit()
+        flash("Employee updated successfully", "success")
+        return redirect(url_for("people_bp.employee_detail", employee_id=employee_id))
+        
+    except Exception as e:
+        db.session.rollback()
+        flash(f"Error updating employee: {str(e)}", "error")
+        return redirect(url_for("people_bp.edit_employee", employee_id=employee_id))
 
 
 @blueprint.route("/employees/<int:employee_id>/delete", methods=["POST"])
@@ -301,3 +251,57 @@ def employee_detail(employee_id):
         employee=employee,
         module_home="people_bp.people_home"
     )
+
+@blueprint.route("/employee/<int:user_id>/groups")
+@login_required
+@admin_required
+def get_user_groups(user_id):
+    """Get user's groups and all available groups"""
+    user = User.query.get_or_404(user_id)
+    all_groups = Group.query.all()
+    
+    return jsonify({
+        "groups": [{
+            "id": group.id,
+            "name": group.name,
+            "is_member": group in user.groups
+        } for group in all_groups]
+    })
+
+@blueprint.route("/employee/<int:user_id>/groups", methods=["POST"])
+@login_required
+@admin_required
+def update_user_groups(user_id):
+    """Update user's group memberships"""
+    try:
+        user = User.query.get_or_404(user_id)
+        
+        # Get selected group IDs
+        group_ids = request.form.getlist("groups")
+        groups = Group.query.filter(Group.id.in_(group_ids)).all()
+        
+        # Get ALL group
+        all_group = Group.get_all_group()
+        if all_group not in groups:
+            groups.append(all_group)
+        
+        # Check admin group changes
+        admin_group = Group.get_admin_group()
+        if admin_group in user.groups and admin_group not in groups:
+            # Count other admin users
+            admin_count = User.query.filter(
+                User.groups.any(id=admin_group.id)
+            ).count()
+            if admin_count <= 1:
+                raise ValueError("Cannot remove last admin user")
+        
+        # Update user's groups
+        user.groups = groups
+        db.session.commit()
+        
+        return jsonify({"success": True})
+    except ValueError as e:
+        return jsonify({"success": False, "error": str(e)})
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"success": False, "error": str(e)})

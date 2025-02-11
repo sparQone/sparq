@@ -1,0 +1,224 @@
+{% extends "base.html" %}
+
+{% block title %}{{ _("Group Management") }}{% endblock %}
+
+{% block content %}
+<div class="content-card">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="{{ url_for('core_bp.settings') }}">
+                    <i class="fas fa-cog"></i> {{ _("Settings") }}
+                </a>
+            </li>
+            <li class="breadcrumb-item active">
+                <i class="fas fa-users"></i> {{ _("Group Management") }}
+            </li>
+        </ol>
+    </nav>
+
+    <div class="settings-header">
+        <h2>{{ _("Group Management") }}</h2>
+        <p class="text-muted">{{ _("Manage user group memberships") }}</p>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>{{ _("User") }}</th>
+                    <th>{{ _("Email") }}</th>
+                    <th>{{ _("Groups") }}</th>
+                    <th>{{ _("Actions") }}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                <tr>
+                    <td>{{ user.first_name }} {{ user.last_name }}</td>
+                    <td>{{ user.email }}</td>
+                    <td>
+                        {% for group in user.groups %}
+                        <span class="badge bg-primary me-1">{{ group.name }}</span>
+                        {% endfor %}
+                    </td>
+                    <td>
+                        <button class="btn btn-sm btn-primary" 
+                                onclick="editGroups('{{ user.id }}', '{{ user.email }}')"
+                                {% if user.email == 'admin' %}disabled{% endif %}>
+                            {{ _("Edit Groups") }}
+                        </button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Edit Groups Modal -->
+<div class="modal fade" id="editGroupsModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">{{ _("Edit Groups") }} - <span id="userEmail"></span></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div id="errorContainer">
+                    <div class="alert alert-danger mt-3" id="editGroupsError" style="display: none;"></div>
+                </div>
+                
+                <form id="editGroupsForm" name="groupsForm">
+                    <div id="groupsList">
+                        {% for group in groups %}
+                        <div class="form-check mb-2">
+                            <input class="form-check-input group-checkbox" 
+                                   type="checkbox" 
+                                   value="{{ group.id }}" 
+                                   id="group{{ group.id }}"
+                                   name="groups"
+                                   {% if group.name == 'ALL' %}disabled checked{% endif %}>
+                            <label class="form-check-label" for="group{{ group.id }}">
+                                {{ group.name }}
+                            </label>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ _("Close") }}</button>
+                <button type="button" class="btn btn-primary">{{ _("Save") }}</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+let currentUserId = null;
+let groupsModal = null;
+let modalElement = null;
+
+document.addEventListener('DOMContentLoaded', function() {
+    modalElement = document.getElementById('editGroupsModal');
+    if (!modalElement) {
+        console.error('Modal element not found during initialization');
+        return;
+    }
+    
+    groupsModal = new bootstrap.Modal(modalElement);
+    
+    const saveButton = modalElement.querySelector('.btn-primary');
+    if (saveButton) {
+        saveButton.addEventListener('click', saveGroups);
+    }
+    
+    modalElement.addEventListener('hidden.bs.modal', clearError);
+});
+
+function showError(message) {
+    const errorContainer = document.getElementById('errorContainer');
+    if (!errorContainer) return;
+    
+    let errorDiv = document.getElementById('editGroupsError');
+    if (!errorDiv) {
+        errorDiv = document.createElement('div');
+        errorDiv.id = 'editGroupsError';
+        errorDiv.className = 'alert alert-danger mt-3';
+        errorContainer.appendChild(errorDiv);
+    }
+    
+    errorDiv.textContent = message;
+    errorDiv.style.display = 'block';
+}
+
+function clearError() {
+    const errorDiv = document.getElementById('editGroupsError');
+    if (errorDiv) {
+        errorDiv.style.display = 'none';
+        errorDiv.textContent = '';
+    }
+}
+
+function editGroups(userId, userEmail) {
+    if (!modalElement) {
+        console.error('Modal element not found in editGroups');
+        return;
+    }
+    
+    currentUserId = userId;
+    
+    const emailSpan = document.getElementById('userEmail');
+    if (emailSpan) emailSpan.textContent = userEmail;
+    
+    clearError();
+    
+    fetch(`/settings/groups/${userId}`)
+        .then(response => response.json())
+        .then(data => {
+            data.groups.forEach(groupId => {
+                const checkbox = document.getElementById(`group${groupId}`);
+                if (checkbox && !checkbox.disabled) {
+                    checkbox.checked = true;
+                }
+            });
+            
+            if (groupsModal) {
+                groupsModal.show();
+            }
+        });
+}
+
+function saveGroups() {
+    console.log('Starting saveGroups function');
+    
+    const form = document.getElementById('editGroupsForm');
+    if (!form) {
+        console.error('Form not found');
+        showError('An error occurred while saving groups');
+        return;
+    }
+    
+    const checkedGroups = form.querySelectorAll('input[name="groups"]:checked');
+    console.log('Found checked groups:', checkedGroups.length);
+    
+    const formData = new FormData();
+    
+    checkedGroups.forEach(checkbox => {
+        console.log('Adding group:', checkbox.value);
+        formData.append('groups', checkbox.value);
+    });
+    
+    console.log('FormData contents:', Array.from(formData.entries()));
+    
+    fetch(`/settings/groups/${currentUserId}`, {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'Accept': 'application/json',
+        },
+        credentials: 'same-origin'
+    })
+    .then(response => {
+        console.log('Response status:', response.status);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log('Response data:', data);
+        if (data.success) {
+            location.reload();
+        } else {
+            showError(data.error || 'An error occurred');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showError('An error occurred while saving groups');
+    });
+}
+</script>
+{% endblock %} 

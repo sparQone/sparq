@@ -44,8 +44,14 @@
                     <div class="mb-3">
                         <div class="form-check">
                             <input type="checkbox" class="form-check-input" id="is_admin" name="is_admin" 
-                                   {{ 'checked' if employee and employee.user.is_admin else '' }}>
+                                   {{ 'checked' if employee and employee.user.is_admin else '' }}
+                                   {{ 'disabled' if employee and employee.user.is_admin and admin_count == 1 }}>
                             <label class="form-check-label" for="is_admin">{{ _("Administrator") }}</label>
+                            {% if employee and employee.user.is_admin and admin_count == 1 %}
+                            <div class="form-text text-warning">
+                                {{ _("Cannot remove admin status as you are the only administrator") }}
+                            </div>
+                            {% endif %}
                         </div>
                     </div>
                     {% endif %}

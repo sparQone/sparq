@@ -31,6 +31,7 @@ from system.i18n.translation import format_number
 from system.i18n.translation import preload_translations
 from system.i18n.translation import translate
 from system.module.utils import initialize_modules
+from modules.core.models.group import Group
 
 
 def get_locale():
@@ -83,18 +84,15 @@ def create_app():
     with app.app_context():
         db.create_all()
 
+        # Create default groups if they don't exist
+        Group.get_or_create("ALL", "Default group for all users", True)
+        Group.get_or_create("ADMIN", "Administrators group", True)
+
         # Call init_database hooks for all modules
         module_loader.pm.hook.init_database()
 
         # Print model registry after all models are loaded
         ModelRegistry.print_summary()
-
-        # Then check for admin user
-        if not User.get_by_email("admin"):
-            User.create(
-                email="admin", password="admin", first_name="Admin", last_name="User", is_admin=True
-            )
-            print("Created default admin user")
 
     # Add translation function to globals and formatting functions as filters
     app.jinja_env.globals["_"] = translate
