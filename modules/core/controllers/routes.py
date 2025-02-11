@@ -60,30 +60,6 @@ def admin_required(f):
     return decorated_function
 
 
-@blueprint.before_app_request
-def before_request():
-    """Make installed modules available to all templates and set current module"""
-    g.installed_modules = current_app.config.get("INSTALLED_MODULES", {}).values()
-
-    # Get current module from request path
-    path = request.path.split("/")[1] or "core"  # Default to core if root path
-
-    # First try to find the current module
-    current_module = next(
-        (m for m in g.installed_modules if m.get("name", "").lower() == path.lower()), None
-    )
-
-    # If not found, try to find core module
-    if not current_module:
-        current_module = next(
-            (m for m in g.installed_modules if m.get("name", "").lower() == "core"),
-            {"name": "Core", "type": "App"}  # Minimal default if core not found
-        )
-
-    # Always ensure g.current_module exists
-    g.current_module = current_module or {"name": "Core", "type": "App"}
-
-
 @blueprint.route("/")
 @login_required
 def index():
@@ -511,20 +487,6 @@ def update_group(group_id):
     except Exception as e:
         db.session.rollback()
         return jsonify({"success": False, "error": str(e)}), 400
-
-
-# Add a before_request handler to ensure g.current_module always exists
-@blueprint.before_app_request
-def setup_module_context():
-    """Ensure module context exists"""
-    if not hasattr(g, 'current_module'):
-        g.current_module = {
-            'name': 'Core',
-            'color': '#6c757d',
-            'icon_class': 'fas fa-cog'
-        }
-    if not hasattr(g, 'installed_modules'):
-        g.installed_modules = []
 
 
 @blueprint.route("/settings/groups/clear-modal")

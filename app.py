@@ -13,11 +13,13 @@
 # -----------------------------------------------------------------------------
 
 import os
+import logging
 
 from flask import Flask
 from flask import g
 from flask import request
 from flask import session
+from flask import current_app
 from flask_login import LoginManager
 from flask_login import current_user
 from flask_socketio import SocketIO
@@ -46,6 +48,17 @@ def create_app():
         static_folder="modules/core/views/assets",
         static_url_path="/assets",
     )
+
+    # Configure logging
+    logging.basicConfig(level=logging.DEBUG)
+    app.logger.setLevel(logging.DEBUG)
+    
+    # Log handler to show debug messages in console
+    console_handler = logging.StreamHandler()
+    console_handler.setLevel(logging.DEBUG)
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    console_handler.setFormatter(formatter)
+    app.logger.addHandler(console_handler)
 
     # Initialize SocketIO
     socketio = SocketIO(app)
@@ -101,15 +114,35 @@ def create_app():
 
     @app.before_request
     def before_request():
-        # Set current module based on URL path
+        """Global request setup and initialization"""
+        # 1. User Group Handling
+        if current_user.is_authenticated:
+            from modules.core.models.group import Group
+            all_group = Group.get_or_create("ALL", "Default group for all users", True)
+            if all_group not in current_user.groups:
+                current_user.add_to_group(all_group)
+        
+        # 2. Module Context Setup
+        g.installed_modules = current_app.config.get("INSTALLED_MODULES", {}).values()
         path = request.path.split("/")[1] or "core"
-        g.current_module["name"] = path.lower()
-
-        # Language selection priority:
-        # 1. URL parameter
-        # 2. Session
-        # 3. User setting (if authenticated)
-        # 4. Default language
+        
+        # Find current module from installed modules
+        current_module = next(
+            (m for m in g.installed_modules if m.get("name", "").lower() == path.lower()),
+            next(
+                (m for m in g.installed_modules if m.get("name", "").lower() == "core"),
+                None  # If neither path nor core module found, will be None
+            )
+        )
+        
+        if current_module is None:
+            # Log warning that module wasn't found
+            app.logger.warning(f"Module not found for path: {path}")
+            # Let the route handler deal with 404 if needed
+        
+        g.current_module = current_module
+        
+        # 3. Language Handling
         g.lang = (
             request.args.get("lang")
             or session.get("lang")
@@ -120,8 +153,8 @@ def create_app():
             )
             or app.config.get("DEFAULT_LANGUAGE", "en")
         )
-
-        # Store in session if not already there
+        
+        # Store language in session if changed
         if "lang" not in session or session["lang"] != g.lang:
             session["lang"] = g.lang
 
