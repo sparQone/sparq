@@ -20,3 +20,6 @@ build/
 
 # Database
 *.db
+
+# Cursor editor
+.cursor/
