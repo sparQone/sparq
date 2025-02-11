@@ -3,6 +3,7 @@
 {% block title %}{{ _("Group Management") }}{% endblock %}
 
 {% block content %}
+
 <div class="content-card">
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
@@ -18,207 +19,111 @@
     </nav>
 
     <div class="settings-header">
-        <h2>{{ _("Group Management") }}</h2>
-        <p class="text-muted">{{ _("Manage user group memberships") }}</p>
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h2>{{ _("Group Management") }}</h2>
+                <p class="text-muted">{{ _("Manage user group memberships and groups") }}</p>
+            </div>
+            <button class="btn btn-primary" 
+                    hx-get="{{ url_for('core_bp.create_group_modal') }}"
+                    hx-target="#modals"
+                    hx-swap="innerHTML"
+                    hx-trigger="click">
+                <i class="fas fa-plus"></i> {{ _("New Group") }}
+            </button>
+        </div>
     </div>
 
-    <div class="table-responsive">
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>{{ _("User") }}</th>
-                    <th>{{ _("Email") }}</th>
-                    <th>{{ _("Groups") }}</th>
-                    <th>{{ _("Actions") }}</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for user in users %}
-                <tr>
-                    <td>{{ user.first_name }} {{ user.last_name }}</td>
-                    <td>{{ user.email }}</td>
-                    <td>
-                        {% for group in user.groups %}
-                        <span class="badge bg-primary me-1">{{ group.name }}</span>
-                        {% endfor %}
-                    </td>
-                    <td>
-                        <button class="btn btn-sm btn-primary" 
-                                onclick="editGroups('{{ user.id }}', '{{ user.email }}')"
-                                {% if user.email == 'admin' %}disabled{% endif %}>
-                            {{ _("Edit Groups") }}
-                        </button>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+    <!-- Groups List Tab -->
+    <div class="mb-4" id="groupsList">
+        <h3>{{ _("Groups") }}</h3>
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>{{ _("Name") }}</th>
+                        <th>{{ _("Description") }}</th>
+                        <th>{{ _("Members") }}</th>
+                        <th>{{ _("Actions") }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for group in groups %}
+                    <tr>
+                        <td>{{ group.name }}</td>
+                        <td>{{ group.description }}</td>
+                        <td>{{ group.users.count() }}</td>
+                        <td>
+                            {% if not group.is_system %}
+                            <button class="btn btn-sm btn-primary me-2" 
+                                    hx-get="{{ url_for('core_bp.edit_group_modal', group_id=group.id) }}"
+                                    hx-target="#modals"
+                                    hx-swap="innerHTML">
+                                <i class="fas fa-edit"></i> {{ _("Edit") }}
+                            </button>
+                            <button class="btn btn-sm btn-danger"
+                                    hx-delete="{{ url_for('core_bp.delete_group', group_id=group.id) }}"
+                                    hx-on::after-request="if(event.detail.successful) { window.location.reload(); }"
+                                    hx-confirm="{{ _('Are you sure you want to delete this group?') }}">
+                                <i class="fas fa-trash"></i> {{ _("Delete") }}
+                            </button>
+                            {% else %}
+                            <span class="badge bg-secondary">{{ _("System Group") }}</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
-</div>
 
-<!-- Edit Groups Modal -->
-<div class="modal fade" id="editGroupsModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">{{ _("Edit Groups") }} - <span id="userEmail"></span></h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <div id="errorContainer">
-                    <div class="alert alert-danger mt-3" id="editGroupsError" style="display: none;"></div>
-                </div>
-                
-                <form id="editGroupsForm" name="groupsForm">
-                    <div id="groupsList">
-                        {% for group in groups %}
-                        <div class="form-check mb-2">
-                            <input class="form-check-input group-checkbox" 
-                                   type="checkbox" 
-                                   value="{{ group.id }}" 
-                                   id="group{{ group.id }}"
-                                   name="groups"
-                                   {% if group.name == 'ALL' %}disabled checked{% endif %}>
-                            <label class="form-check-label" for="group{{ group.id }}">
-                                {{ group.name }}
-                            </label>
-                        </div>
-                        {% endfor %}
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ _("Close") }}</button>
-                <button type="button" class="btn btn-primary">{{ _("Save") }}</button>
-            </div>
+    <!-- User-Group Assignments Tab -->
+    <div class="mt-5">
+        <h3>{{ _("User Group Memberships") }}</h3>
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>{{ _("User") }}</th>
+                        <th>{{ _("Email") }}</th>
+                        <th style="width: 200px">{{ _("Groups") }}</th>
+                        <th>{{ _("Actions") }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                    <tr>
+                        <td>{{ user.first_name }} {{ user.last_name }}</td>
+                        <td>{{ user.email }}</td>
+                        <td style="width: 200px; max-width: 200px">
+                            <div style="display: flex; flex-wrap: wrap; gap: 0.25rem">
+                                {% for group in user.groups %}
+                                <span class="badge bg-primary me-1">{{ group.name }}</span>
+                                {% endfor %}
+                            </div>
+                        </td>
+                        <td>
+                            <button class="btn btn-sm btn-primary" 
+                                    hx-get="{{ url_for('core_bp.edit_user_groups_modal', user_id=user.id) }}"
+                                    hx-target="#modals"
+                                    hx-swap="innerHTML"
+                                    hx-trigger="click"
+                                    {% if user.email == 'admin' %}disabled{% endif %}>
+                                    <i class="fas fa-edit"></i> {{ _("Edit") }}
+                            </button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
 
-<script>
-let currentUserId = null;
-let groupsModal = null;
-let modalElement = null;
+<!-- Add a container for modals -->
+<div id="modals"></div>
 
-document.addEventListener('DOMContentLoaded', function() {
-    modalElement = document.getElementById('editGroupsModal');
-    if (!modalElement) {
-        console.error('Modal element not found during initialization');
-        return;
-    }
-    
-    groupsModal = new bootstrap.Modal(modalElement);
-    
-    const saveButton = modalElement.querySelector('.btn-primary');
-    if (saveButton) {
-        saveButton.addEventListener('click', saveGroups);
-    }
-    
-    modalElement.addEventListener('hidden.bs.modal', clearError);
-});
+<div class="mb-5"></div>
 
-function showError(message) {
-    const errorContainer = document.getElementById('errorContainer');
-    if (!errorContainer) return;
-    
-    let errorDiv = document.getElementById('editGroupsError');
-    if (!errorDiv) {
-        errorDiv = document.createElement('div');
-        errorDiv.id = 'editGroupsError';
-        errorDiv.className = 'alert alert-danger mt-3';
-        errorContainer.appendChild(errorDiv);
-    }
-    
-    errorDiv.textContent = message;
-    errorDiv.style.display = 'block';
-}
-
-function clearError() {
-    const errorDiv = document.getElementById('editGroupsError');
-    if (errorDiv) {
-        errorDiv.style.display = 'none';
-        errorDiv.textContent = '';
-    }
-}
-
-function editGroups(userId, userEmail) {
-    if (!modalElement) {
-        console.error('Modal element not found in editGroups');
-        return;
-    }
-    
-    currentUserId = userId;
-    
-    const emailSpan = document.getElementById('userEmail');
-    if (emailSpan) emailSpan.textContent = userEmail;
-    
-    clearError();
-    
-    fetch(`/settings/groups/${userId}`)
-        .then(response => response.json())
-        .then(data => {
-            data.groups.forEach(groupId => {
-                const checkbox = document.getElementById(`group${groupId}`);
-                if (checkbox && !checkbox.disabled) {
-                    checkbox.checked = true;
-                }
-            });
-            
-            if (groupsModal) {
-                groupsModal.show();
-            }
-        });
-}
-
-function saveGroups() {
-    console.log('Starting saveGroups function');
-    
-    const form = document.getElementById('editGroupsForm');
-    if (!form) {
-        console.error('Form not found');
-        showError('An error occurred while saving groups');
-        return;
-    }
-    
-    const checkedGroups = form.querySelectorAll('input[name="groups"]:checked');
-    console.log('Found checked groups:', checkedGroups.length);
-    
-    const formData = new FormData();
-    
-    checkedGroups.forEach(checkbox => {
-        console.log('Adding group:', checkbox.value);
-        formData.append('groups', checkbox.value);
-    });
-    
-    console.log('FormData contents:', Array.from(formData.entries()));
-    
-    fetch(`/settings/groups/${currentUserId}`, {
-        method: 'POST',
-        body: formData,
-        headers: {
-            'Accept': 'application/json',
-        },
-        credentials: 'same-origin'
-    })
-    .then(response => {
-        console.log('Response status:', response.status);
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return response.json();
-    })
-    .then(data => {
-        console.log('Response data:', data);
-        if (data.success) {
-            location.reload();
-        } else {
-            showError(data.error || 'An error occurred');
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        showError('An error occurred while saving groups');
-    });
-}
-</script>
 {% endblock %} 

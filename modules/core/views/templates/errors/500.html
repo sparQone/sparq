@@ -1,23 +1,17 @@
 {% extends "base.html" %}
 
-{% block title %}{{ _("Application Error") }}{% endblock %}
+{% block title %}{{ _("Error") }}{% endblock %}
+
+{% block app_class %}error-page{% endblock %}
 
 {% block content %}
 <div class="error-container">
     <div class="error-content">
-        <img src="{{ url_for('core_bp.static', filename='images/sparq-logo.png') }}" alt="SparqOne" class="error-logo">
         <h1>{{ _("Oops! Something went wrong") }}</h1>
-        <p>{{ _("An unexpected error has occurred. Our team has been notified and we're looking into it.") }}</p>
-        <div class="error-actions">
-            <a href="{{ url_for('core_bp.index') }}" class="btn btn-primary">
-                <i class="fas fa-home"></i> {{ _("Return Home") }}
-            </a>
-            <button onclick="window.location.reload()" class="btn btn-outline-secondary">
-                <i class="fas fa-redo"></i> {{ _("Try Again") }}
-            </button>
-        </div>
-        
+        <p>{{ error }}</p>
+        <a href="{{ url_for(module_home) }}" class="btn btn-primary">
+            <i class="fas fa-home"></i> {{ _("Return Home") }}
+        </a>
     </div>
 </div>
-
 {% endblock %} 

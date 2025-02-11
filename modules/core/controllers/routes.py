@@ -15,6 +15,7 @@ import importlib
 import os
 import signal
 import sys
+import re
 from functools import wraps
 
 from flask import Blueprint
@@ -22,6 +23,7 @@ from flask import current_app
 from flask import flash
 from flask import g
 from flask import jsonify
+from flask import make_response
 from flask import redirect
 from flask import render_template
 from flask import request
@@ -31,6 +33,7 @@ from flask_login import current_user
 from flask_login import login_required
 from flask_login import login_user
 from flask_login import logout_user
+from system.i18n.translation import _  # Use our existing translation module
 
 from system.db.database import db
 
@@ -264,42 +267,43 @@ def test_exception():
     raise Exception("This is a test exception to verify the 500 error page functionality")
 
 
-# Add these error handlers to the routes.py file
-@blueprint.errorhandler(Exception)
-def handle_exception(error):
-    """Handle all exceptions"""
-
-    return render_template(
-        "errors/500.html",
-        error=error,
-        module_name="Error",
-        module_icon="fa-solid fa-exclamation-triangle",
-        module_home="core_bp.index",
-    ), 500
-
-
 @blueprint.app_errorhandler(500)
-def internal_error(error):
+def handle_500_error(e):
     """Handle internal server errors"""
-
+    # Set up error context
+    g.current_module = {
+        'name': 'Error',
+        'color': '#dc3545',  # Bootstrap danger color
+        'icon_class': 'fas fa-exclamation-triangle'
+    }
+    g.installed_modules = []
+    
     return render_template(
         "errors/500.html",
-        error=error,
+        error=str(e),
         module_name="Error",
-        module_icon="fa-solid fa-exclamation-triangle",
-        module_home="core_bp.index",
+        module_icon="fas fa-exclamation-triangle",
+        module_home="core_bp.index"
     ), 500
 
 
 @blueprint.app_errorhandler(404)
-def not_found_error(error):
+def handle_404_error(e):
     """Handle 404 errors"""
+    # Set up error context
+    g.current_module = {
+        'name': 'Error',
+        'color': '#dc3545',
+        'icon_class': 'fas fa-exclamation-triangle'
+    }
+    g.installed_modules = []
+    
     return render_template(
         "errors/404.html",
-        error=error,
+        error=str(e),
         module_name="Error",
-        module_icon="fa-solid fa-exclamation-triangle",
-        module_home="core_bp.index",
+        module_icon="fas fa-exclamation-triangle",
+        module_home="core_bp.index"
     ), 404
 
 
@@ -349,25 +353,26 @@ def get_user_groups(user_id):
     })
 
 
-@blueprint.route("/settings/groups/<int:user_id>", methods=["POST"])
+@blueprint.route("/settings/groups/users/<int:user_id>", methods=["POST"])
 @login_required
 @admin_required
 def update_user_groups(user_id):
     """Update user's group memberships"""
     try:
-        print("Received group update request for user:", user_id)  # Debug log
         user = User.query.get_or_404(user_id)
         
         # Get selected group IDs
-        group_ids = request.form.getlist('groups')
-        print("Received group IDs:", group_ids)  # Debug log
+        group_ids = request.form.getlist("groups[]")
         
+        # Validate group IDs
+        if not group_ids:
+            return jsonify({"success": False, "error": _("Please select at least one group")})
+            
         groups = Group.query.filter(Group.id.in_(group_ids)).all()
         
-        # Get ALL group
-        all_group = Group.get_all_group()
-        if all_group not in groups:
-            groups.append(all_group)
+        # Verify all groups exist
+        if len(groups) != len(group_ids):
+            return jsonify({"success": False, "error": _("One or more invalid groups selected")})
         
         # Check admin group changes
         admin_group = Group.get_admin_group()
@@ -377,16 +382,153 @@ def update_user_groups(user_id):
                 User.groups.any(id=admin_group.id)
             ).count()
             if admin_count <= 1:
-                raise ValueError("Cannot remove last admin user")
+                return jsonify({"success": False, "error": _("Cannot remove last admin user")})
         
         # Update user's groups
         user.groups = groups
         db.session.commit()
         
-        return jsonify({"success": True})
-    except ValueError as e:
-        return jsonify({"success": False, "error": str(e)})
+        response = make_response()
+        response.headers["HX-Redirect"] = url_for('core_bp.manage_groups')
+        return response
+        
     except Exception as e:
         db.session.rollback()
-        print("Error updating groups:", str(e))  # Debug log
         return jsonify({"success": False, "error": str(e)})
+
+
+@blueprint.route("/settings/groups/<int:group_id>/details")
+@login_required
+@admin_required
+def get_group_details(group_id):
+    """Get group details for editing"""
+    group = Group.query.get_or_404(group_id)
+    return jsonify({
+        "name": group.name,
+        "description": group.description
+    })
+
+
+@blueprint.route("/settings/groups/modal/new")
+@login_required
+@admin_required
+def create_group_modal():
+    return render_template(
+        "settings/_group_modal.html",
+        title=_("New Group"),
+        url=url_for('core_bp.save_group'),
+        group=None
+    )
+
+@blueprint.route("/settings/groups/modal/<int:group_id>")
+@login_required
+@admin_required
+def edit_group_modal(group_id):
+    group = Group.query.get_or_404(group_id)
+    return render_template(
+        "settings/_group_modal.html",
+        title=_("Edit Group"),
+        url=url_for('core_bp.update_group', group_id=group_id),
+        group=group
+    )
+
+@blueprint.route("/settings/groups/users/<int:user_id>/modal")
+@login_required
+@admin_required
+def edit_user_groups_modal(user_id):
+    user = User.query.get_or_404(user_id)
+    groups = Group.query.all()
+    return render_template(
+        "settings/_edit_user_groups_modal.html",
+        user=user,
+        groups=groups
+    )
+
+@blueprint.route("/settings/groups/manage/new", methods=['POST'])
+@login_required
+@admin_required
+def save_group():
+    try:
+        name = request.form.get('name')
+        description = request.form.get('description')
+        
+        if not name:
+            return jsonify({"success": False, "error": _("Name is required")})
+            
+        # Create new group
+        group = Group(name=name, description=description)
+        db.session.add(group)
+        db.session.commit()
+        
+        response = make_response()
+        response.headers["HX-Redirect"] = url_for('core_bp.manage_groups')
+        return response
+        
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"success": False, "error": str(e)}), 400
+
+
+@blueprint.route("/settings/groups/<int:group_id>", methods=["DELETE"])
+@login_required
+@admin_required
+def delete_group(group_id):
+    """Delete group"""
+    try:
+        group = Group.query.get_or_404(group_id)
+        if group.is_system:
+            raise ValueError("Cannot delete system groups")
+        
+        db.session.delete(group)
+        db.session.commit()
+        response = make_response()
+        response.headers["HX-Redirect"] = url_for('core_bp.manage_groups')
+        return response
+    except ValueError as e:
+        return jsonify({"success": False, "error": str(e)})
+
+
+@blueprint.route("/settings/groups/manage/<int:group_id>", methods=['POST'])
+@login_required
+@admin_required
+def update_group(group_id):
+    try:
+        group = Group.query.get_or_404(group_id)
+        name = request.form.get('name')
+        description = request.form.get('description')
+        
+        if not name:
+            return jsonify({"success": False, "error": _("Name is required")})
+            
+        group.name = name
+        group.description = description
+        db.session.commit()
+        
+        response = make_response()
+        response.headers["HX-Redirect"] = url_for('core_bp.manage_groups')
+        return response
+        
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"success": False, "error": str(e)}), 400
+
+
+# Add a before_request handler to ensure g.current_module always exists
+@blueprint.before_app_request
+def setup_module_context():
+    """Ensure module context exists"""
+    if not hasattr(g, 'current_module'):
+        g.current_module = {
+            'name': 'Core',
+            'color': '#6c757d',
+            'icon_class': 'fas fa-cog'
+        }
+    if not hasattr(g, 'installed_modules'):
+        g.installed_modules = []
+
+
+@blueprint.route("/settings/groups/clear-modal")
+@login_required
+@admin_required
+def clear_modal():
+    return ""
