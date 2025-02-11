@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}{{ title }}{% endblock %}
+{% block title %}{{ _("Settings") }}{% endblock %}
 
 {% block app_class %}settings-app{% endblock %}
 
@@ -8,7 +8,13 @@
 <div class="content-card">
     <div class="settings-header">
         <h2>{{ _("Settings") }}</h2>
-        <p class="text-muted">{{ _("Configure user and system-wide settings") }}</p>
+        <p class="text-muted">
+            {% if current_user.is_admin %}
+                {{ _("Configure user and system-wide settings") }}
+            {% else %}
+                {{ _("Configure settings") }}
+            {% endif %}
+        </p>
     </div>
 
     <div class="settings-grid">
@@ -34,7 +40,19 @@
                     </form>
                 </div>
             </div>
-            <!-- Add more user settings cards here -->
+            
+            <!-- Profile Settings Card -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <i class="fas fa-user"></i> {{ _("Profile Settings") }}
+                </div>
+                <div class="card-body">
+                    <p>{{ _("Update your personal information and preferences") }}</p>
+                    <a href="{{ url_for('people_bp.edit_employee', employee_id=current_user.employee_profile.id) }}" class="btn btn-primary">
+                        {{ _("Edit Profile") }}
+                    </a>
+                </div>
+            </div>
         </div>
 
         <!-- Right Column: System Settings -->

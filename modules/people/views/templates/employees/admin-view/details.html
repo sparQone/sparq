@@ -60,7 +60,7 @@
             <style>
                 .employee-actions .btn {
                     color: #adb5bd;
-                    padding: 0.375rem;  /* Reduce padding */
+                    padding: 0.375rem;
                 }
                 .employee-actions .btn:hover {
                     color: var(--bs-primary);
@@ -68,21 +68,22 @@
                 .employee-actions .btn.delete-btn:hover {
                     color: var(--bs-danger);
                 }
-                /* Add spacing between icons */
                 .employee-actions .btn.me-2 {
-                    margin-right: 0.25rem !important;  /* Reduce from 0.5rem to 0.25rem */
+                    margin-right: 0.25rem !important;
                 }
             </style>
             <a href="{{ url_for('people_bp.edit_employee', employee_id=employee.id) }}" 
                class="btn me-2" title="{{ _('Edit') }}">
                 <i class="fas fa-edit"></i>
             </a>
+            {% if current_user.is_admin and current_user.employee_profile.id != employee.id %}
             <button class="btn delete-btn"
                     data-bs-toggle="modal" 
                     data-bs-target="#deleteEmployeeModal"
                     title="{{ _('Delete') }}">
                 <i class="fas fa-trash"></i>
             </button>
+            {% endif %}
         </div>
     </div>
 

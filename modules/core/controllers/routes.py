@@ -159,18 +159,15 @@ def update_language():
 @blueprint.route("/settings")
 @login_required
 def settings():
-    user_lang = None
-    if current_user.is_authenticated:
-        user_lang = UserSetting.get(current_user.id, "language")
-
+    """Settings page"""
     return render_template(
-        "settings/settings-index.html",
+        "settings/index.html",
+        title="Settings",
         languages=SUPPORTED_LANGUAGES,
-        current_language=user_lang or session.get("lang", "en"),
+        current_language=session.get("lang", "en"),
         module_name="Settings",
         module_icon="fa-solid fa-cog",
         module_home="core_bp.settings",
-        installed_modules=g.installed_modules,
     )
 
 

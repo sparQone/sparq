@@ -50,13 +50,6 @@ def dashboard():
 @login_required
 def employees():
     """Employees list page"""
-    print(f"\nDEBUG: Current user: {current_user.id} - {current_user.email}")
-    print(f"DEBUG: Is admin: {current_user.is_admin}")
-    print(f"DEBUG: Has employee profile: {current_user.employee_profile is not None}")
-    print(f"DEBUG: Template variables:")
-    print(f"DEBUG: - current_user.is_admin: {current_user.is_admin}")
-    print(f"DEBUG: - employee_id value: {current_user.employee_profile.id if current_user.employee_profile else 'None'}")
-    print(f"DEBUG: - url: {url_for('people_bp.employee_detail', employee_id=current_user.employee_profile.id)}\n")
     users = User.query.join(Employee).filter(User.email != "admin").all()
     return render_template(
         "employees/index.html",
@@ -138,80 +131,113 @@ def create_employee():
 
 @blueprint.route("/employees/<int:employee_id>/edit", methods=["GET", "POST"])
 @login_required
-@admin_required
 def edit_employee(employee_id):
     """Edit an employee"""
     employee = Employee.query.get_or_404(employee_id)
     
+    # Check if user is admin or editing their own profile
+    if not current_user.is_admin and current_user.employee_profile.id != employee_id:
+        flash("You can only edit your own profile", "error")
+        return redirect(url_for("people_bp.employees"))
+    
     if request.method == "POST":
         try:
-            # Update user info
-            employee.user.email = request.form.get("email")
-            employee.user.first_name = request.form.get("first_name")
-            employee.user.last_name = request.form.get("last_name")
-            employee.user.is_admin = bool(request.form.get("is_admin"))
-            
-            # Update password if provided
-            password = request.form.get("password")
-            if password and password.strip():
-                employee.user.set_password(password)
-            
-            # Update employee info
-            employee.position = request.form.get("position")
-            employee.department = request.form.get("department")
-            employee.phone = request.form.get("phone")
-            employee.salary = float(request.form.get("salary")) if request.form.get("salary") else None
-            
-            # Update address information
-            employee.address = request.form.get("address")
-            employee.city = request.form.get("city")
-            employee.state = request.form.get("state")
-            employee.zip_code = request.form.get("zip_code")
-            
-            # Handle dates
-            start_date = request.form.get("start_date")
-            if start_date:
-                employee.start_date = datetime.strptime(start_date, '%Y-%m-%d').date()
-            
-            birthday = request.form.get("birthday")
-            if birthday:
-                employee.birthday = datetime.strptime(birthday, '%Y-%m-%d').date()
-            
-            # Update type if provided
-            if request.form.get("type"):
-                employee.type = EmployeeType[request.form.get("type")]
-            
-            # Update gender if provided
-            if request.form.get("gender"):
-                employee.gender = Gender[request.form.get("gender")]
-            
-            # Update other fields
-            employee.emergency_contact_name = request.form.get("emergency_contact_name")
-            employee.emergency_contact_phone = request.form.get("emergency_contact_phone")
-            employee.emergency_contact_relationship = request.form.get("emergency_contact_relationship")
-            
-            # Update manager
-            manager_id = request.form.get("manager_id")
-            if manager_id:
-                employee.manager_id = int(manager_id)
+            # For regular users, only allow editing certain fields
+            if not current_user.is_admin:
+                # Update basic user info
+                employee.user.first_name = request.form.get("first_name")
+                employee.user.last_name = request.form.get("last_name")
+                employee.user.email = request.form.get("email")
+                
+                # Update password if provided
+                password = request.form.get("password")
+                if password and password.strip():
+                    employee.user.set_password(password)
+                
+                # Update personal info
+                employee.phone = request.form.get("phone")
+                employee.address = request.form.get("address")
+                employee.city = request.form.get("city")
+                employee.state = request.form.get("state")
+                employee.zip_code = request.form.get("zip_code")
+                employee.birthday = datetime.strptime(request.form.get("birthday"), '%Y-%m-%d').date() if request.form.get("birthday") else None
+                employee.gender = Gender[request.form.get("gender")] if request.form.get("gender") else None
+                
+                # Update emergency contact info
+                employee.emergency_contact_name = request.form.get("emergency_contact_name")
+                employee.emergency_contact_phone = request.form.get("emergency_contact_phone")
+                employee.emergency_contact_relationship = request.form.get("emergency_contact_relationship")
             else:
-                employee.manager_id = None
+                # Admin can update all fields
+                # Update user info
+                employee.user.email = request.form.get("email")
+                employee.user.first_name = request.form.get("first_name")
+                employee.user.last_name = request.form.get("last_name")
+                employee.user.is_admin = bool(request.form.get("is_admin"))
+                
+                # Update password if provided
+                password = request.form.get("password")
+                if password and password.strip():
+                    employee.user.set_password(password)
+                
+                # Update employee info
+                employee.position = request.form.get("position")
+                employee.department = request.form.get("department")
+                employee.phone = request.form.get("phone")
+                employee.salary = float(request.form.get("salary")) if request.form.get("salary") else None
+                
+                # Update address information
+                employee.address = request.form.get("address")
+                employee.city = request.form.get("city")
+                employee.state = request.form.get("state")
+                employee.zip_code = request.form.get("zip_code")
+                
+                # Handle dates
+                start_date = request.form.get("start_date")
+                if start_date:
+                    employee.start_date = datetime.strptime(start_date, '%Y-%m-%d').date()
+                
+                birthday = request.form.get("birthday")
+                if birthday:
+                    employee.birthday = datetime.strptime(birthday, '%Y-%m-%d').date()
+                
+                # Update type if provided
+                if request.form.get("type"):
+                    employee.type = EmployeeType[request.form.get("type")]
+                
+                # Update gender if provided
+                if request.form.get("gender"):
+                    employee.gender = Gender[request.form.get("gender")]
+                
+                # Update other fields
+                employee.emergency_contact_name = request.form.get("emergency_contact_name")
+                employee.emergency_contact_phone = request.form.get("emergency_contact_phone")
+                employee.emergency_contact_relationship = request.form.get("emergency_contact_relationship")
+                
+                # Update manager
+                manager_id = request.form.get("manager_id")
+                if manager_id:
+                    employee.manager_id = int(manager_id)
+                else:
+                    employee.manager_id = None
             
             db.session.commit()
-            flash("Employee updated successfully", "success")
+            flash("Profile updated successfully", "success")
             return redirect(url_for("people_bp.employee_detail", employee_id=employee.id))
 
         except Exception as e:
             db.session.rollback()
-            flash(f"Error updating employee: {str(e)}", "error")
+            flash(f"Error updating profile: {str(e)}", "error")
             return redirect(url_for("people_bp.edit_employee", employee_id=employee_id))
             
-    # Get all employees except current one as potential managers
-    potential_managers = Employee.query.filter(Employee.id != employee_id).join(User).order_by(User.first_name).all()
+    # Get all employees except current one as potential managers (only for admin)
+    potential_managers = []
+    if current_user.is_admin:
+        potential_managers = Employee.query.filter(Employee.id != employee_id).join(User).order_by(User.first_name).all()
             
     return render_template(
         "employees/form.html",
-        title="Edit Employee",
+        title="Edit Profile" if not current_user.is_admin else "Edit Employee",
         employee=employee,
         employee_types=EmployeeType,
         potential_managers=potential_managers,

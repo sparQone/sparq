@@ -40,6 +40,7 @@
                         <div class="form-text">{{ _("Leave blank to keep current password") }}</div>
                         {% endif %}
                     </div>
+                    {% if current_user.is_admin %}
                     <div class="mb-3">
                         <div class="form-check">
                             <input type="checkbox" class="form-check-input" id="is_admin" name="is_admin" 
@@ -47,10 +48,12 @@
                             <label class="form-check-label" for="is_admin">{{ _("Administrator") }}</label>
                         </div>
                     </div>
+                    {% endif %}
                 </div>
 
                 <div class="col-md-6">
                     <h3>{{ _("Employee Information") }}</h3>
+                    {% if current_user.is_admin %}
                     <div class="mb-3">
                         <label for="department" class="form-label">{{ _("Department") }}</label>
                         <input type="text" class="form-control" id="department" name="department" 
@@ -84,11 +87,13 @@
                             {% endfor %}
                         </select>
                     </div>
+                    {% endif %}
                     <div class="mb-3">
                         <label for="phone" class="form-label">{{ _("Phone") }}</label>
                         <input type="tel" class="form-control" id="phone" name="phone" 
                                value="{{ employee.phone if employee else '' }}">
                     </div>
+                    {% if current_user.is_admin %}
                     <div class="mb-3">
                         <label for="start_date" class="form-label">{{ _("Hire Date") }}</label>
                         <input type="date" class="form-control" id="start_date" name="start_date" 
@@ -99,6 +104,7 @@
                         <input type="number" class="form-control" id="salary" name="salary" 
                                value="{{ employee.salary if employee else '' }}" step="0.01">
                     </div>
+                    {% endif %}
                     <div class="mb-3">
                         <label for="address" class="form-label">{{ _("Street Address") }}</label>
                         <input type="text" class="form-control" id="address" name="address" 
@@ -171,13 +177,20 @@
             </div>
 
             <div class="mt-4 d-flex justify-content-between">
-                <a href="{{ url_for('people_bp.employee_detail', employee_id=employee.id) if employee else url_for('people_bp.employees') }}" 
-                   class="btn btn-secondary">
-                    <i class="fas fa-times"></i> {{ _("Cancel") }}
-                </a>
-                <button type="submit" class="btn btn-primary">
-                    <i class="fas fa-save"></i> {{ _("Save") }}
-                </button>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary me-2">
+                        {{ _("Save Changes") }}
+                    </button>
+                    <a href="{{ url_for('people_bp.employee_detail', employee_id=employee.id) if employee else url_for('people_bp.employees') }}" 
+                       class="btn btn-secondary">
+                        {{ _("Cancel") }}
+                    </a>
+                    {% if current_user.is_admin and employee and current_user.employee_profile.id != employee.id %}
+                    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                        {{ _("Delete Employee") }}
+                    </button>
+                    {% endif %}
+                </div>
             </div>
         </form>
     </div>
