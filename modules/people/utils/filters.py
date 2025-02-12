@@ -11,8 +11,9 @@
 # -----------------------------------------------------------------------------
 
 from datetime import datetime
-from flask import Blueprint
+
 import humanize
+from flask import Blueprint
 
 
 def timeago_filter(value):

@@ -11,6 +11,7 @@
 # -----------------------------------------------------------------------------
 
 from flask import Blueprint
+
 from ..utils.filters import init_filters
 
 # Create blueprint

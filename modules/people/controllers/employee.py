@@ -11,6 +11,7 @@
 # -----------------------------------------------------------------------------
 
 import logging
+
 from flask import flash
 from flask import g
 from flask import jsonify

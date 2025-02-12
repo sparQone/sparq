@@ -15,11 +15,10 @@
 from system.db.database import db
 from system.module.hooks import hookimpl
 
-# from flask_socketio import SocketIO
 from .controllers import blueprint
 from .hooks import PeopleHookSpecs
-from .models.chat import Channel
-from .models.employee import Employee
+from .models import Channel
+from .models import Employee
 
 
 class PeopleModule:

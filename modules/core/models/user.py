@@ -21,9 +21,9 @@ from werkzeug.security import generate_password_hash
 
 from modules.core.models.group import Group
 from modules.core.models.user_group import user_group
+from modules.core.models.user_setting import UserSetting
 from system.db.database import db
 from system.db.decorators import ModelRegistry
-from modules.core.models.user_setting import UserSetting
 
 logger = logging.getLogger(__name__)
 

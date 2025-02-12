@@ -1,3 +1,16 @@
+# -----------------------------------------------------------------------------
+# sparQ
+#
+# Description:
+#     Chat and Channel models for the team communication system.
+#
+# Copyright (c) 2025 remarQable LLC
+#
+# This software is released under an open-source license.
+# See the LICENSE file for details.
+# -----------------------------------------------------------------------------
+
+
 import re
 
 from flask import current_app
@@ -77,30 +90,29 @@ class Chat(db.Model):
     )
 
     @property
-    def created_at_formatted(self):
+    def created_at_formatted(self) -> str:
         """Format the creation date for display"""
         return self.created_at.strftime("%B %d, %Y %I:%M %p")
 
     @property
-    def is_author(self):
+    def is_author(self) -> bool:
         """Check if current user is the author"""
         return current_user.is_authenticated and self.author_id == current_user.id
 
     @property
-    def is_liked(self):
+    def is_liked(self) -> bool:
         """Check if current user has liked this chat"""
         return current_user.is_authenticated and current_user in self.liked_by
 
-    def toggle_pin(self):
+    def toggle_pin(self) -> bool:
         """Toggle pinned status"""
         self.pinned = not self.pinned
         db.session.commit()
         return self.pinned
 
     @property
-    def formatted_content(self):
+    def formatted_content(self) -> Markup:
         """Format message content with clickable links"""
-        # URL pattern that matches http, https, and www URLs
         url_pattern = r'(https?://[^\s<>"]+|www\.[^\s<>"]+)'
 
         def replace_url(match):
@@ -109,10 +121,7 @@ class Chat(db.Model):
             full_url = url if url.startswith(("http://", "https://")) else f"https://{url}"
             return f'<a href="{full_url}" target="_blank" rel="noopener noreferrer" class="chat-link">{display_url}</a>'
 
-        # Replace URLs with clickable links and escape HTML
         content = re.sub(url_pattern, replace_url, self.content)
-
-        # Convert newlines to <br> tags
         content = content.replace("\n", "<br>")
 
         return Markup(content)
