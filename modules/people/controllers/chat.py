@@ -52,12 +52,13 @@ def get_channel_messages(channel_name):
 def create_channel():
     """Create a new channel"""
     try:
-        name = request.form.get("name").lower().replace(" ", "-")
-        description = request.form.get("description")
-        is_private = bool(request.form.get("is_private", False))
-
+        name = request.form.get("name")
         if not name:
             return "Channel name is required", 400
+            
+        name = name.lower().replace(" ", "-")
+        description = request.form.get("description")
+        is_private = bool(request.form.get("is_private", False))
 
         # Check if channel already exists
         existing = Channel.query.filter_by(name=name).first()

@@ -11,22 +11,25 @@
 # -----------------------------------------------------------------------------
 
 import os
+from typing import List, Type, TypeVar, Any
+from flask_sqlalchemy import Model
 
+T = TypeVar('T', bound=Model)
 
 class ModelRegistry:
     """Simple registry to track SQLAlchemy models across modules"""
 
-    models = []
+    models = []  # type: ignore[var-annotated]
     registration_order = 1  # Track registration order
 
     # Define module loading order
     MODULE_ORDER = ["core", "people"]  # Core first, people second, rest alphabetically
 
     @classmethod
-    def register(cls, model_class):
+    def register(cls, model: Type[T]) -> Type[T]:
         """Decorator to register a model"""
         # Get proper module name from full path
-        module_path = model_class.__module__.split(".")
+        module_path = model.__module__.split(".")
         if "modules" in module_path:
             module_name = module_path[module_path.index("modules") + 1]
         else:
@@ -35,13 +38,13 @@ class ModelRegistry:
         cls.models.append(
             {
                 "module": module_name,
-                "model": model_class.__name__,
-                "table": model_class.__tablename__,
+                "model": model.__name__,
+                "table": model.__tablename__,
                 "order": cls.registration_order,
             }
         )
         cls.registration_order += 1
-        return model_class
+        return model
 
     @classmethod
     def register_table(cls, table, module_name="core"):
@@ -65,7 +68,7 @@ class ModelRegistry:
             return len(cls.MODULE_ORDER)  # Put non-core/people modules last
 
     @classmethod
-    def print_summary(cls):
+    def print_summary(cls) -> None:
         """Print a summary of all registered models"""
         # Only print in main process (not reloader)
         if os.environ.get("WERKZEUG_RUN_MAIN") == "true":
