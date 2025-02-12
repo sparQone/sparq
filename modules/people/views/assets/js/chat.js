@@ -38,6 +38,11 @@ document.addEventListener('DOMContentLoaded', function() {
         socket.emit('join', { channel: channelName });
         
         // Load channel messages
+        loadChannelMessages(channelName);
+    };
+
+    // Function to load channel messages
+    function loadChannelMessages(channelName) {
         const chatMessages = document.querySelector('.chat-messages');
         const url = `/people/chat/channels/${channelName}/messages`;
         htmx.ajax('GET', url, { 
@@ -52,7 +57,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             }
         });
-    };
+    }
     
     // New Channel Modal
     const channelModal = document.getElementById('newChannelModal');
@@ -114,9 +119,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // WebSocket event handling
     socket.on('chat_changed', function(data) {
         if (data.channel === currentChannel) {
-            htmx.trigger('.chat-messages', 'chat-refresh');
-            // Scroll to bottom after messages are updated
-            setTimeout(scrollToBottom, 100);
+            loadChannelMessages(currentChannel);
         }
     });
     
