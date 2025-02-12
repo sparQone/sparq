@@ -103,21 +103,6 @@
     opacity: 0.9;
 }
 
-/* Common Content Header */
-.updates-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1.5rem;
-}
-
-.updates-header h2 {
-    margin: 0;
-    font-size: 1.5rem;
-    color: #212529;
-    font-weight: 500;
-}
-
 /* Content Card */
 .content-card {
     background: white;

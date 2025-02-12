@@ -1,0 +1,161 @@
+{% extends "people-base.html" %}
+
+{% block additional_styles %}
+{{ super() }}
+<link rel="stylesheet" href="{{ url_for('people_bp.static', filename='css/chat.css') }}">
+{% endblock %}
+
+{% block title %}{{ _('Company Chat') }}{% endblock %}
+
+{% block people_content %}
+<div class="content-card">
+    <div class="chat-layout">
+        <!-- Channel Sidebar -->
+        <div class="chat-sidebar">
+            <!-- Channel Header -->
+            <div class="sidebar-header">
+                <h3>{{ _('Channels') }}</h3>
+                <button class="btn btn-sm btn-link" data-bs-toggle="modal" data-bs-target="#newChatModal">
+                    <i class="fas fa-plus"></i>
+                </button>
+            </div>
+
+            <!-- Channel List -->
+            <div class="channel-list">
+                <div class="channel">
+                    <span class="channel-prefix">#</span> {{ _('announcements') }}
+                </div>
+                <div class="channel active">
+                    <span class="channel-prefix">#</span> {{ _('events') }}
+                </div>
+                <div class="channel">
+                    <span class="channel-prefix">#</span> {{ _('general') }}
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Chat Area -->
+        <div class="chat-main">
+            <!-- Chat Header -->
+            <div class="chat-header">
+                <div class="chat-header-info">
+                    
+                    <h2><span class="channel-prefix">#</span>{{ _('general') }}</h2>
+                </div>
+                <div class="chat-header-actions">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" 
+                               id="chatSearch" 
+                               placeholder="{{ _('Search messages...') }}" 
+                               class="form-control">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chat Messages -->
+            <div class="chat-messages"
+                 hx-get="{{ url_for('people_bp.get_chats') }}"
+                 hx-trigger="load, chat-refresh from:body"
+                 hx-swap="innerHTML"
+                 class="chat-feed">
+            </div>
+
+            <!-- Message Input Area -->
+            <div class="message-input-area">
+                <!-- Message Form -->
+                <form class="message-form" id="quickMessageForm">
+                    <!-- Formatting Toolbar -->
+                    <div class="format-toolbar">
+                        <button type="button" class="btn btn-sm btn-link" title="{{ _('Bold') }}">
+                            <i class="fas fa-bold"></i>
+                        </button>
+                        <button type="button" class="btn btn-sm btn-link" title="{{ _('Italic') }}">
+                            <i class="fas fa-italic"></i>
+                        </button>
+                        <button type="button" class="btn btn-sm btn-link" title="{{ _('Strikethrough') }}">
+                            <i class="fas fa-strikethrough"></i>
+                        </button>
+                        <button type="button" class="btn btn-sm btn-link" title="{{ _('Code') }}">
+                            <i class="fas fa-code"></i>
+                        </button>
+                        <button type="button" class="btn btn-sm btn-link" title="{{ _('Link') }}">
+                            <i class="fas fa-link"></i>
+                        </button>
+                        <button type="button" class="btn btn-sm btn-link" title="{{ _('List') }}">
+                            <i class="fas fa-list-ul"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="input-group">
+                        <textarea class="form-control" 
+                                 placeholder="{{ _('Message in #general') }}"
+                                 name="content"
+                                 rows="1"></textarea>
+                        <button type="submit" class="btn btn-link send-button" title="{{ _('Send message') }}">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                    <div class="message-footer">
+                        <div class="message-actions">
+                            <button type="button" class="btn btn-link" title="{{ _('Add attachment') }}">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                            <button type="button" class="btn btn-link" title="{{ _('Add emoji') }}">
+                                <i class="far fa-smile"></i>
+                            </button>
+                            <button type="button" class="btn btn-link" title="{{ _('Mention someone') }}">
+                                <i class="fas fa-at"></i>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- New Message Modal -->
+<div class="modal fade" id="newChatModal" tabindex="-1" aria-labelledby="newChatModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="newChatModalLabel">{{ _('New Message') }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="newChatForm" action="{{ url_for('people_bp.create_chat') }}" method="POST">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="type" class="form-label">{{ _('Channel') }}</label>
+                        <select class="form-select" name="type" id="type" required>
+                            {% for type in chat_types %}
+                            <option value="{{ type.name }}">{{ type.value }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="content" class="form-label">{{ _('Message') }}</label>
+                        <textarea class="form-control" name="content" id="content" rows="3" required></textarea>
+                    </div>
+                    {% if current_user.is_admin %}
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" name="pin" id="pin">
+                        <label class="form-check-label" for="pin">{{ _('Pin this message') }}</label>
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ _('Cancel') }}</button>
+                    <button type="submit" class="btn btn-primary">{{ _('Send') }}</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.4/socket.io.js"></script>
+<script src="{{ url_for('people_bp.static', filename='js/chat.js') }}"></script>
+{% endblock %} 

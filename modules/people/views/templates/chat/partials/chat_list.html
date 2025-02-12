@@ -1,0 +1,40 @@
+{% for chat in chats %}
+<div class="message" data-type="{{ chat.type.name }}">
+    <div class="message-avatar" 
+         style="background-color: {{ chat.author.avatar_color }}">
+        <i class="fas fa-user"></i>
+    </div>
+    <div class="message-body">
+        <div class="message-meta">
+            <span class="author">{{ chat.author.first_name }} {{ chat.author.last_name }}</span>
+            <span class="timestamp" data-bs-toggle="tooltip" title="{{ chat.created_at_formatted }}">
+                {{ chat.created_at_formatted }}
+            </span>
+            {% if chat.pinned %}
+            <span class="badge bg-warning">
+                <i class="fas fa-thumbtack"></i> {{ _('Pinned') }}
+            </span>
+            {% endif %}
+        </div>
+        <div class="message-content">
+            {{ chat.content }}
+        </div>
+        {% if current_user.is_admin or chat.is_author %}
+        <div class="message-actions">
+            <button class="btn btn-sm btn-link" 
+                    onclick="togglePin({{ chat.id }})"
+                    data-bs-toggle="tooltip" 
+                    title="{{ _('Pin/Unpin') }}">
+                <i class="fas fa-thumbtack {% if chat.pinned %}text-warning{% endif %}"></i>
+            </button>
+            <button class="btn btn-sm btn-link text-danger" 
+                    onclick="deleteChat({{ chat.id }})"
+                    data-bs-toggle="tooltip" 
+                    title="{{ _('Delete') }}">
+                <i class="fas fa-trash"></i>
+            </button>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endfor %} 

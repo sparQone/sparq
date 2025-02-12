@@ -23,8 +23,9 @@ blueprint = Blueprint(
 init_filters(blueprint)
 
 # Import routes after blueprint creation
-from . import employee  # Changed from employee_routes to employee
-from . import update
+from . import chat
+from . import routes
+from . import employee
 from . import hiring
 from . import onboarding
 from . import scheduling

@@ -16,6 +16,7 @@ import logging
 from flask_login import UserMixin
 from werkzeug.security import check_password_hash
 from werkzeug.security import generate_password_hash
+import random
 
 from system.db.database import db
 from system.db.decorators import ModelRegistry
@@ -23,6 +24,15 @@ from modules.core.models.group import Group
 from modules.core.models.user_group import user_group
 
 logger = logging.getLogger(__name__)
+
+def generate_avatar_color():
+    """Generate a random color for user avatars"""
+    colors = [
+        '#2563EB', '#7C3AED', '#DB2777', '#DC2626', '#EA580C',
+        '#65A30D', '#0D9488', '#0284C7', '#6366F1', '#9333EA',
+        '#C026D3', '#E11D48', '#F97316', '#84CC16', '#14B8A6'
+    ]
+    return random.choice(colors)
 
 @ModelRegistry.register
 class User(db.Model, UserMixin):
@@ -35,6 +45,7 @@ class User(db.Model, UserMixin):
     password_hash = db.Column(db.String(200), nullable=False)
     first_name = db.Column(db.String(50))
     last_name = db.Column(db.String(50))
+    avatar_color = db.Column(db.String(7), default=generate_avatar_color)
     created_at = db.Column(db.DateTime, default=db.func.now())
     is_active = db.Column(db.Boolean, default=True)
     is_sample = db.Column(db.Boolean, default=False)
@@ -151,3 +162,10 @@ class User(db.Model, UserMixin):
             
             self.groups.remove(group)
             db.session.commit()
+
+    @property
+    def avatar_initials(self):
+        """Get user's initials for avatar"""
+        if self.first_name and self.last_name:
+            return (self.first_name[0] + self.last_name[0]).upper()
+        return self.email[:2].upper()
