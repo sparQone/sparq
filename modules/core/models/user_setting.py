@@ -1,6 +1,5 @@
 from datetime import datetime
 
-from modules.core.models.user import User
 from system.db.database import db
 from system.db.decorators import ModelRegistry
 

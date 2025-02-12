@@ -19,7 +19,6 @@ from system.module.hooks import hookimpl
 from .controllers import blueprint
 from .hooks import PeopleHookSpecs
 from .models.chat import Channel
-from .models.chat import Chat
 from .models.employee import Employee
 
 

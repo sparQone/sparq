@@ -11,8 +11,6 @@
 # See the LICENSE file for details.
 # -----------------------------------------------------------------------------
 
-from flask import Blueprint
-
 from .controllers.routes import blueprint as books_blueprint
 from .module import BooksModule
 

@@ -12,12 +12,6 @@
 # See the LICENSE file for details.
 # -----------------------------------------------------------------------------
 
-import logging
-
-from flask import Blueprint
-from flask import Flask
-from flask_login import current_user
-
 from .controllers.api_routes import blueprint as api_blueprint
 from .controllers.routes import blueprint as core_blueprint
 from .module import CoreModule

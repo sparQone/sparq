@@ -11,9 +11,6 @@
 # -----------------------------------------------------------------------------
 
 import logging
-from datetime import datetime
-
-from flask import current_app
 from flask import flash
 from flask import g
 from flask import jsonify
@@ -30,7 +27,6 @@ from modules.people.decorators import admin_required
 from modules.people.models.employee import Employee
 from modules.people.models.employee import EmployeeStatus
 from modules.people.models.employee import EmployeeType
-from modules.people.models.employee import Gender
 from system.db.database import db
 
 from . import blueprint

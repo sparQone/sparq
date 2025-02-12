@@ -7,8 +7,6 @@
 #
 # Copyright (c) 2025 remarQable LLC
 
-from flask import current_app
-
 from system.db.database import db
 from system.module.hooks import hookimpl
 
