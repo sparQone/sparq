@@ -13,7 +13,6 @@
 
 from .utils.filters import init_filters
 from .module import PeopleModule
-from .utils.filters import init_filters
 
 # Create module instance
 module_instance = PeopleModule()
@@ -23,7 +22,7 @@ def init_module(app):
     """Initialize the people module"""
     # Initialize filters first - register with app
     init_filters(app)
-    
+
     # Import models in the correct order
     from .models.associations import chat_likes  # noqa: F401
     from .models.chat import Chat  # noqa: F401
