@@ -15,22 +15,21 @@
             <!-- Channel Header -->
             <div class="sidebar-header">
                 <h3>{{ _('Channels') }}</h3>
-                <button class="btn btn-sm btn-link" data-bs-toggle="modal" data-bs-target="#newChatModal">
+                <button class="btn btn-sm btn-link" data-bs-toggle="modal" data-bs-target="#newChannelModal">
                     <i class="fas fa-plus"></i>
                 </button>
             </div>
 
             <!-- Channel List -->
             <div class="channel-list">
-                <div class="channel">
-                    <span class="channel-prefix">#</span> {{ _('announcements') }}
+                {% for channel in channels %}
+                <div class="channel {% if channel.name == default_channel.name %}active{% endif %}" 
+                     data-channel="{{ channel.name }}"
+                     data-description="{{ channel.description }}"
+                     onclick="switchChannel('{{ channel.name }}')">
+                    <span class="channel-prefix">#</span> {{ channel.name }}
                 </div>
-                <div class="channel active">
-                    <span class="channel-prefix">#</span> {{ _('events') }}
-                </div>
-                <div class="channel">
-                    <span class="channel-prefix">#</span> {{ _('general') }}
-                </div>
+                {% endfor %}
             </div>
         </div>
 
@@ -39,8 +38,8 @@
             <!-- Chat Header -->
             <div class="chat-header">
                 <div class="chat-header-info">
-                    
-                    <h2><span class="channel-prefix">#</span>{{ _('general') }}</h2>
+                    <h2><span class="channel-prefix">#</span><span id="current-channel">{{ default_channel.name }}</span></h2>
+                    <p class="channel-description" id="channel-description">{{ default_channel.description }}</p>
                 </div>
                 <div class="chat-header-actions">
                     <div class="search-box">
@@ -55,7 +54,7 @@
 
             <!-- Chat Messages -->
             <div class="chat-messages"
-                 hx-get="{{ url_for('people_bp.get_chats') }}"
+                 hx-get="{{ url_for('people_bp.get_channel_messages', channel_name=default_channel.name) }}"
                  hx-trigger="load, chat-refresh from:body"
                  hx-swap="innerHTML"
                  class="chat-feed">
@@ -89,7 +88,7 @@
                     
                     <div class="input-group">
                         <textarea class="form-control" 
-                                 placeholder="{{ _('Message in #general') }}"
+                                 placeholder="{{ _('Message in #') }}{{ default_channel.name }}"
                                  name="content"
                                  rows="1"></textarea>
                         <button type="submit" class="btn btn-link send-button" title="{{ _('Send message') }}">
@@ -115,43 +114,41 @@
     </div>
 </div>
 
-<!-- New Message Modal -->
-<div class="modal fade" id="newChatModal" tabindex="-1" aria-labelledby="newChatModalLabel" aria-hidden="true">
+<!-- New Channel Modal -->
+<div class="modal fade" id="newChannelModal" tabindex="-1" aria-labelledby="newChannelModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="newChatModalLabel">{{ _('New Message') }}</h5>
+                <h5 class="modal-title" id="newChannelModalLabel">{{ _('Create New Channel') }}</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form id="newChatForm" action="{{ url_for('people_bp.create_chat') }}" method="POST">
+            <form id="newChannelForm" action="{{ url_for('people_bp.create_channel') }}" method="POST">
                 <div class="modal-body">
                     <div class="mb-3">
-                        <label for="type" class="form-label">{{ _('Channel') }}</label>
-                        <select class="form-select" name="type" id="type" required>
-                            {% for type in chat_types %}
-                            <option value="{{ type.name }}">{{ type.value }}</option>
-                            {% endfor %}
-                        </select>
+                        <label for="name" class="form-label">{{ _('Channel Name') }}</label>
+                        <input type="text" class="form-control" name="name" id="name" required>
+                        <small class="form-text text-muted">{{ _('Channel names can only contain lowercase letters, numbers, and hyphens.') }}</small>
                     </div>
                     <div class="mb-3">
-                        <label for="content" class="form-label">{{ _('Message') }}</label>
-                        <textarea class="form-control" name="content" id="content" rows="3" required></textarea>
+                        <label for="description" class="form-label">{{ _('Description') }}</label>
+                        <textarea class="form-control" name="description" id="description" rows="2"></textarea>
                     </div>
                     {% if current_user.is_admin %}
                     <div class="mb-3 form-check">
-                        <input type="checkbox" class="form-check-input" name="pin" id="pin">
-                        <label class="form-check-label" for="pin">{{ _('Pin this message') }}</label>
+                        <input type="checkbox" class="form-check-input" name="is_private" id="is_private">
+                        <label class="form-check-label" for="is_private">{{ _('Private Channel') }}</label>
                     </div>
                     {% endif %}
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ _('Cancel') }}</button>
-                    <button type="submit" class="btn btn-primary">{{ _('Send') }}</button>
+                    <button type="submit" class="btn btn-primary">{{ _('Create Channel') }}</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
+
 {% endblock %}
 
 {% block scripts %}

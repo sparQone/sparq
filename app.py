@@ -83,18 +83,19 @@ def create_app():
     def load_user(user_id):
         return db.session.get(User, int(user_id))
 
-    # Initialize and validate modules
-    module_loader = initialize_modules()
-    app.module_loader = module_loader  # Store module_loader in app instance
-
-    # Store manifests in app config
-    app.config["INSTALLED_MODULES"] = module_loader.manifests
-
-    # Register routes
-    module_loader.register_routes(app)
-
-    # Create/update database tables AFTER loading all modules
+    # Create/update database tables and initialize modules within app context
     with app.app_context():
+        # Initialize and validate modules first
+        module_loader = initialize_modules()
+        app.module_loader = module_loader  # Store module_loader in app instance
+
+        # Store manifests in app config
+        app.config["INSTALLED_MODULES"] = module_loader.manifests
+
+        # Register routes
+        module_loader.register_routes(app)
+
+        # Create all database tables
         db.create_all()
 
         # Create default groups if they don't exist

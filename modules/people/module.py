@@ -14,10 +14,12 @@
 
 from system.db.database import db
 from system.module.hooks import hookimpl
+# from flask_socketio import SocketIO
 
 from .controllers import blueprint
 from .hooks import PeopleHookSpecs
 from .models.employee import Employee
+from .models.chat import Channel, Chat
 
 
 class PeopleModule:
@@ -36,10 +38,20 @@ class PeopleModule:
         # Create sample employees
         Employee.create_sample_employees()
 
+        # Create default channels
+        Channel.create_default_channels()
+
     def register_specs(self, plugin_manager):
         """Register hook specifications and implementations"""
         plugin_manager.add_hookspecs(PeopleHookSpecs)
         plugin_manager.register(self)
+
+    def replace_url(self, match):
+        url = match.group(0)
+        display_url = url[:50] + '...' if len(url) > 50 else url
+        full_url = url if url.startswith(('http://', 'https://')) else f'https://{url}'
+        return f'<a href="{full_url}" target="_blank" rel="noopener noreferrer" class="chat-link">{display_url}</a>'
+
 
 
 # Create module instance

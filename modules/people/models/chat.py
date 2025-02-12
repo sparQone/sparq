@@ -5,20 +5,71 @@ from datetime import datetime
 from system.db.database import db
 from system.db.decorators import ModelRegistry
 from .associations import chat_likes
+from flask import current_app
+from markupsafe import Markup
+import re
 
-class ChatType(Enum):
-    GENERAL = "General"
-    ANNOUNCEMENT = "Announcement"
-    EVENT = "Event"
+@ModelRegistry.register
+class Channel(db.Model):
+    __tablename__ = 'channel'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(50), nullable=False, unique=True)
+    description = db.Column(db.String(200))
+    created_at = db.Column(db.DateTime, default=db.func.now())
+    created_by_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    is_private = db.Column(db.Boolean, default=False)
+    
+    # Relationships
+    created_by = db.relationship('User', foreign_keys=[created_by_id])
+    messages = db.relationship('Chat', backref='channel', lazy='dynamic')
+
+    def __init__(self, name, description=None, created_by_id=None, is_private=False):
+        self.name = name
+        self.description = description
+        self.created_by_id = created_by_id
+        self.is_private = is_private
+
+    @classmethod
+    def create_default_channels(cls):
+        """Create default channels if they don't exist"""
+        default_channels = [
+            {
+                'name': 'general',
+                'description': 'General discussion channel'
+            },
+            {
+                'name': 'announcements',
+                'description': 'Important company announcements'
+            },
+            {
+                'name': 'events',
+                'description': 'Company events and activities'
+            }
+        ]
+
+        for channel_data in default_channels:
+            channel = cls.query.filter_by(name=channel_data['name']).first()
+            if not channel:
+                channel = cls(
+                    name=channel_data['name'],
+                    description=channel_data['description']
+                )
+                db.session.add(channel)
+        
+        try:
+            db.session.commit()
+        except Exception as e:
+            db.session.rollback()
+            current_app.logger.error(f"Error creating default channels: {str(e)}")
 
 @ModelRegistry.register
 class Chat(db.Model):
     __tablename__ = 'chat'
     id = db.Column(db.Integer, primary_key=True)
     content = db.Column(db.Text, nullable=False)
-    type = db.Column(db.Enum(ChatType), nullable=False)
     created_at = db.Column(db.DateTime, default=db.func.now())
     author_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    channel_id = db.Column(db.Integer, db.ForeignKey('channel.id'), nullable=False)
     pinned = db.Column(db.Boolean, default=False)
     
     # Define relationships with backrefs here
@@ -50,4 +101,24 @@ class Chat(db.Model):
         """Toggle pinned status"""
         self.pinned = not self.pinned
         db.session.commit()
-        return self.pinned 
+        return self.pinned
+
+    @property
+    def formatted_content(self):
+        """Format message content with clickable links"""
+        # URL pattern that matches http, https, and www URLs
+        url_pattern = r'(https?://[^\s<>"]+|www\.[^\s<>"]+)'
+        
+        def replace_url(match):
+            url = match.group(0)
+            display_url = url[:50] + '...' if len(url) > 50 else url
+            full_url = url if url.startswith(('http://', 'https://')) else f'https://{url}'
+            return f'<a href="{full_url}" target="_blank" rel="noopener noreferrer" class="chat-link">{display_url}</a>'
+        
+        # Replace URLs with clickable links and escape HTML
+        content = re.sub(url_pattern, replace_url, self.content)
+        
+        # Convert newlines to <br> tags
+        content = content.replace('\n', '<br>')
+        
+        return Markup(content) 

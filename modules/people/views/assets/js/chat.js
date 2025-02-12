@@ -1,62 +1,95 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Initialize WebSocket connection with namespace
+    // Initialize WebSocket connection
     const socket = io.connect(window.location.origin);
+    let currentChannel = document.getElementById('current-channel').textContent;
     
-    // Modal handling
-    const chatModal = document.getElementById('newChatModal');
-    if (chatModal) {
-        chatModal.addEventListener('shown.bs.modal', function() {
-            document.querySelector('#content').focus();
-        });
-        
-        chatModal.addEventListener('hidden.bs.modal', function() {
-            const form = chatModal.querySelector('form');
-            if (form) form.reset();
-            document.querySelector('[data-bs-target="#newChatModal"]').focus();
-        });
+    // Function to scroll chat to bottom
+    function scrollToBottom() {
+        const chatMessages = document.querySelector('.chat-messages');
+        chatMessages.scrollTop = chatMessages.scrollHeight;
     }
     
-    // Search functionality
-    const searchInput = document.getElementById('chatSearch');
-    if (searchInput) {
-        searchInput.addEventListener('input', function() {
-            applyChatFilters();
-        });
-    }
+    // Join default channel
+    socket.emit('join', { channel: currentChannel });
     
-    // Filter buttons
-    const filterButtons = document.querySelectorAll('.filter-buttons button');
-    filterButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            filterButtons.forEach(btn => btn.classList.remove('active'));
-            this.classList.add('active');
-            applyChatFilters();
-        });
-    });
-    
-    // Filter function
-    window.applyChatFilters = function() {
-        const searchTerm = searchInput.value.toLowerCase();
-        const activeFilter = document.querySelector('.filter-buttons button.active').dataset.filter;
+    // Channel switching
+    window.switchChannel = function(channelName) {
+        // Leave current channel
+        socket.emit('leave', { channel: currentChannel });
         
-        document.querySelectorAll('.chat-card').forEach(card => {
-            const content = card.querySelector('.chat-content').textContent.toLowerCase();
-            const type = card.dataset.type;
-            
-            const matchesSearch = content.includes(searchTerm);
-            const matchesFilter = activeFilter === 'all' || type === activeFilter;
-            
-            card.style.display = matchesSearch && matchesFilter ? 'block' : 'none';
+        // Update UI
+        document.querySelectorAll('.channel').forEach(ch => {
+            ch.classList.remove('active');
+            if (ch.dataset.channel === channelName) {
+                ch.classList.add('active');
+                // Update channel description if available
+                if (ch.dataset.description) {
+                    document.getElementById('channel-description').textContent = ch.dataset.description;
+                }
+            }
+        });
+        
+        // Update current channel
+        currentChannel = channelName;
+        document.getElementById('current-channel').textContent = channelName;
+        document.querySelector('.message-form textarea').placeholder = `Message in #${channelName}`;
+        
+        // Join new channel
+        socket.emit('join', { channel: channelName });
+        
+        // Load channel messages
+        const chatMessages = document.querySelector('.chat-messages');
+        const url = `/people/chat/channels/${channelName}/messages`;
+        htmx.ajax('GET', url, { 
+            target: chatMessages,
+            swap: 'innerHTML',
+            afterSwap: function(evt) {
+                scrollToBottom();
+                // Update description from response if available
+                const description = evt.detail.xhr.getResponseHeader('X-Channel-Description');
+                if (description) {
+                    document.getElementById('channel-description').textContent = decodeURIComponent(description);
+                }
+            }
         });
     };
     
-    // Handle quick message form submission
+    // New Channel Modal
+    const channelModal = document.getElementById('newChannelModal');
+    if (channelModal) {
+        const form = channelModal.querySelector('form');
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            
+            fetch(this.action, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Close modal and clear form
+                bootstrap.Modal.getInstance(channelModal).hide();
+                this.reset();
+                
+                // Switch to new channel
+                switchChannel(data.name);
+            })
+            .catch(error => {
+                alert('Error creating channel: ' + error);
+            });
+        });
+    }
+    
+    // Quick Message Form
     const quickMessageForm = document.getElementById('quickMessageForm');
     if (quickMessageForm) {
         quickMessageForm.addEventListener('submit', function(e) {
             e.preventDefault();
             
             const formData = new FormData(this);
+            formData.append('channel', currentChannel);
             
             fetch('/people/chat/create', {
                 method: 'POST',
@@ -73,17 +106,46 @@ document.addEventListener('DOMContentLoaded', function() {
                 this.reset();
             })
             .catch(error => {
-                // Show error message
                 alert('Error sending message: ' + error.message);
             });
         });
     }
     
     // WebSocket event handling
-    socket.on('chat_changed', function() {
-        // Refresh the chat list using HTMX
-        htmx.trigger('.chat-messages', 'chat-refresh');
+    socket.on('chat_changed', function(data) {
+        if (data.channel === currentChannel) {
+            htmx.trigger('.chat-messages', 'chat-refresh');
+            // Scroll to bottom after messages are updated
+            setTimeout(scrollToBottom, 100);
+        }
     });
+    
+    socket.on('channel_created', function(data) {
+        const channelList = document.querySelector('.channel-list');
+        const newChannel = document.createElement('div');
+        newChannel.className = 'channel';
+        newChannel.dataset.channel = data.name;
+        newChannel.onclick = () => switchChannel(data.name);
+        newChannel.innerHTML = `<span class="channel-prefix">#</span> ${data.name}`;
+        channelList.appendChild(newChannel);
+    });
+    
+    socket.on('status', function(data) {
+        // You can show join/leave messages if desired
+        console.log(data.msg);
+    });
+    
+    // Search functionality
+    const searchInput = document.getElementById('chatSearch');
+    if (searchInput) {
+        searchInput.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            document.querySelectorAll('.message').forEach(message => {
+                const content = message.querySelector('.message-content').textContent.toLowerCase();
+                message.style.display = content.includes(searchTerm) ? 'flex' : 'none';
+            });
+        });
+    }
     
     // Initialize tooltips
     const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
@@ -91,31 +153,11 @@ document.addEventListener('DOMContentLoaded', function() {
         return new bootstrap.Tooltip(tooltipTriggerEl);
     });
 
-    const newChatForm = document.getElementById('newChatForm');
-    
-    newChatForm.addEventListener('submit', function(e) {
-        e.preventDefault();
-        
-        const formData = new FormData(this);
-        
-        fetch(this.action, {
-            method: 'POST',
-            body: formData
-        })
-        .then(response => {
-            if (!response.ok) {
-                return response.text().then(text => { throw new Error(text) });
-            }
-            return response.text();
-        })
-        .then(() => {
-            // Success - close modal and clear form
-            bootstrap.Modal.getInstance(document.getElementById('newChatModal')).hide();
-            this.reset();
-        })
-        .catch(error => {
-            // Show error message
-            alert('Error creating message: ' + error.message);
-        });
+    // Initial scroll to bottom
+    scrollToBottom();
+
+    // Add event listener for when messages are loaded
+    document.querySelector('.chat-messages').addEventListener('htmx:afterSwap', function() {
+        scrollToBottom();
     });
 }); 

@@ -1,5 +1,5 @@
 {% for chat in chats %}
-<div class="message" data-type="{{ chat.type.name }}">
+<div class="message">
     <div class="message-avatar" 
          style="background-color: {{ chat.author.avatar_color }}">
         <i class="fas fa-user"></i>
@@ -17,7 +17,7 @@
             {% endif %}
         </div>
         <div class="message-content">
-            {{ chat.content }}
+            {{ chat.formatted_content }}
         </div>
         {% if current_user.is_admin or chat.is_author %}
         <div class="message-actions">
@@ -37,4 +37,10 @@
         {% endif %}
     </div>
 </div>
-{% endfor %} 
+{% endfor %}
+
+{% if channel_description %}
+<script>
+    document.getElementById('channel-description').textContent = {{ channel_description|tojson }};
+</script>
+{% endif %} 

@@ -25,7 +25,7 @@ def init_module(app):
 
     # Import models in the correct order
     from .models.associations import chat_likes
-    from .models.chat import Chat
+    from .models.chat import Chat, Channel
     from .models.employee import Employee
 
     # Import and register blueprint with routes
