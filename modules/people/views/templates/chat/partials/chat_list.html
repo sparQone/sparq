@@ -8,7 +8,7 @@
         <div class="message-meta">
             <span class="author">{{ chat.author.first_name }} {{ chat.author.last_name }}</span>
             <span class="timestamp" data-bs-toggle="tooltip" title="{{ chat.created_at_formatted }}">
-                {{ chat.created_at_formatted }}
+                {{ chat.created_at|timeago }}
             </span>
             {% if chat.pinned %}
             <span class="badge bg-warning">

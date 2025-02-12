@@ -11,20 +11,23 @@
 # -----------------------------------------------------------------------------
 
 from flask import Blueprint
-
 from ..utils.filters import init_filters
 
 # Create blueprint
 blueprint = Blueprint(
-    "people_bp", __name__, template_folder="../views/templates", static_folder="../views/assets"
+    "people_bp",
+    __name__,
+    template_folder="../views/templates",
+    static_folder="../views/assets",
+    static_url_path="/assets",
 )
 
-# Register filters with the blueprint
+# Initialize filters with blueprint
 init_filters(blueprint)
 
-# Import routes after blueprint creation
-from . import chat
+# Import routes after blueprint creation to avoid circular imports
 from . import routes
+from . import chat
 from . import employee
 from . import hiring
 from . import onboarding
