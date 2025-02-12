@@ -12,6 +12,8 @@ from system.db.database import db
 
 from ..models.chat import Channel
 from ..models.chat import Chat
+from ..models.chat import InteractionType
+from ..models.chat import ChatMessageState
 from . import blueprint
 
 
@@ -35,6 +37,7 @@ def chat():
         channels=channels,
         default_channel=default_channel,
         module_home="people_bp.people_home",
+        ChatMessageState=ChatMessageState
     )
 
 
@@ -43,16 +46,57 @@ def chat():
 def get_channel_messages(channel_name):
     """Get messages for a specific channel"""
     try:
-        channel = Channel.query.filter_by(name=channel_name).first_or_404()
-        messages = channel.messages.order_by(Chat.created_at.asc()).all()
-        return render_template(
-            "chat/partials/chat_list.html",
-            chats=messages,
-            current_user=current_user,
-            channel_description=channel.description,
-        )
+        current_app.logger.info(f"Getting messages for channel: {channel_name}")
+        
+        # Get channel
+        channel = Channel.query.filter_by(name=channel_name).first()
+        if not channel:
+            current_app.logger.error(f"Channel not found: {channel_name}")
+            return f"Channel {channel_name} not found", 404
+            
+        current_app.logger.info(f"Found channel with id: {channel.id}")
+        
+        # Get messages
+        try:
+            messages = channel.messages.order_by(Chat.created_at.asc()).all()
+            current_app.logger.info(f"Found {len(messages)} messages")
+        except Exception as msg_error:
+            current_app.logger.error(f"Error getting messages: {str(msg_error)}")
+            current_app.logger.exception(msg_error)
+            messages = []
+        
+        # Handle read status
+        try:
+            # Debug: Log unread count for this channel
+            unread_count = ChatMessageState.get_unread_count(current_user.id, channel.id)
+            current_app.logger.info(f"Unread messages in {channel_name}: {unread_count}")
+            
+            # Mark channel as read when viewing
+            ChatMessageState.mark_channel_read(current_user.id, channel.id)
+            current_app.logger.info(f"Marked channel {channel_name} as read for user {current_user.id}")
+        except Exception as read_error:
+            # Log the error but don't fail the request
+            current_app.logger.error(f"Error handling read status: {str(read_error)}")
+            current_app.logger.exception(read_error)
+            unread_count = 0
+        
+        # Render template
+        try:
+            return render_template(
+                "chat/partials/chat_list.html",
+                chats=messages,
+                current_user=current_user,
+                channel_description=channel.description,
+                ChatMessageState=ChatMessageState
+            )
+        except Exception as template_error:
+            current_app.logger.error(f"Error rendering template: {str(template_error)}")
+            current_app.logger.exception(template_error)
+            return str(template_error), 500
+            
     except Exception as e:
         current_app.logger.error(f"Error getting channel messages: {str(e)}")
+        current_app.logger.exception(e)  # This will log the full traceback
         return str(e), 500
 
 
@@ -81,9 +125,10 @@ def create_channel():
         db.session.commit()
 
         # Emit WebSocket event for new channel
-        current_app.socketio.emit(
-            "channel_created", {"name": channel.name, "description": channel.description}
-        )
+        current_app.socketio.emit("channel_created", {
+            "name": channel.name, 
+            "description": channel.description
+        })  # No 'to' needed since this should go to everyone
 
         return jsonify({"id": channel.id, "name": channel.name})
     except Exception as e:
@@ -116,8 +161,24 @@ def create_chat():
         db.session.add(chat)
         db.session.commit()
 
-        # Emit WebSocket event with channel info
-        current_app.socketio.emit("chat_changed", {"channel": channel_name}, room=channel_name)
+        # Debug: Log message creation
+        current_app.logger.info(f"New message created in {channel_name} by user {current_user.id}")
+
+        # Emit two events:
+        # 1. To users in the channel to refresh their messages
+        current_app.socketio.emit("chat_changed", {
+            "channel": channel_name,
+            "message_id": chat.id,
+            "author_id": current_user.id,
+            "type": "refresh"
+        }, to=channel_name)
+
+        # 2. To all users to update unread badges
+        current_app.socketio.emit("message_created", {
+            "channel": channel_name,
+            "message_id": chat.id,
+            "author_id": current_user.id
+        })  # No 'to' means broadcast to everyone
 
         return ""
     except Exception as e:
@@ -136,9 +197,12 @@ def toggle_pin(chat_id):
             return jsonify({"error": "Unauthorized"}), 403
 
         is_pinned = chat.toggle_pin()
-        current_app.socketio.emit(
-            "chat_changed", {"channel": chat.channel.name}, room=chat.channel.name
-        )
+        current_app.socketio.emit("chat_changed", {
+            "channel": chat.channel.name,
+            "message_id": chat.id,
+            "author_id": current_user.id,
+            "pinned": is_pinned
+        }, to=chat.channel.name)
         return jsonify({"pinned": is_pinned})
     except Exception as e:
         return jsonify({"error": str(e)}), 400
@@ -154,12 +218,18 @@ def delete_chat(chat_id):
             return jsonify({"error": "Unauthorized"}), 403
 
         channel_name = chat.channel.name
+        
+        # First delete all associated message states
+        ChatMessageState.query.filter_by(message_id=chat_id).delete()
+        
+        # Then delete the message
         db.session.delete(chat)
         db.session.commit()
 
         current_app.socketio.emit("chat_changed", {"channel": channel_name}, room=channel_name)
         return "", 204
     except Exception as e:
+        db.session.rollback()
         return jsonify({"error": str(e)}), 400
 
 

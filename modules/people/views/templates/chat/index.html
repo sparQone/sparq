@@ -8,6 +8,9 @@
 {% block title %}{{ _('Company Chat') }}{% endblock %}
 
 {% block people_content %}
+<!-- Add user ID meta tag -->
+<meta name="user-id" content="{{ current_user.id }}">
+
 <div class="content-card">
     <div class="chat-layout">
         <!-- Channel Sidebar -->
@@ -28,6 +31,12 @@
                      data-description="{{ channel.description }}"
                      onclick="switchChannel('{{ channel.name }}')">
                     <span class="channel-prefix">#</span> {{ channel.name }}
+                    {% if ChatMessageState is defined %}
+                        {% set unread_count = ChatMessageState.get_unread_count(current_user.id, channel.id) %}
+                        {% if unread_count > 0 %}
+                        <span class="unread-badge">{{ unread_count }}</span>
+                        {% endif %}
+                    {% endif %}
                 </div>
                 {% endfor %}
             </div>
@@ -53,11 +62,10 @@
             </div>
 
             <!-- Chat Messages -->
-            <div class="chat-messages"
-                 hx-get="{{ url_for('people_bp.get_channel_messages', channel_name=default_channel.name) }}"
-                 hx-trigger="load, chat-refresh from:body"
-                 hx-swap="innerHTML"
-                 class="chat-feed">
+            <div class="chat-messages chat-feed">
+                <div class="loading-indicator text-center p-4">
+                    <i class="fas fa-spinner fa-spin"></i> Loading messages...
+                </div>
             </div>
 
             <!-- Message Input Area -->

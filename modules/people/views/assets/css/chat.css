@@ -200,26 +200,50 @@
 }
 
 .channel {
-    padding: 4px 16px;
-    cursor: pointer;
+    position: relative;
     display: flex;
     align-items: center;
+    padding: 8px 16px;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    border-radius: 6px;
+    margin: 0 8px;
     color: #d1d5db;
 }
 
 .channel:hover {
-    background: #4b5563;
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
 }
 
 .channel.active {
-    background: #4b5563;
+    background-color: rgba(255, 255, 255, 0.15);
     color: #ffffff;
     font-weight: 500;
 }
 
 .channel-prefix {
-    color: #9ca3af;
+    color: inherit;
     margin-right: 4px;
+    opacity: 0.8;
+}
+
+.unread-badge {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: var(--primary-color);
+    color: white;
+    border-radius: 10px;
+    padding: 2px 8px;
+    font-size: 0.75rem;
+    min-width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 500;
 }
 
 .sidebar-header .btn-link {
@@ -341,38 +365,63 @@
 
 .message-actions {
     display: flex;
-    gap: 4px;
-    margin-top: 4px;
-}
-
-/* Message actions in message cards (hide by default, show on hover) */
-.message .message-actions {
+    justify-content: flex-end;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
     opacity: 0;
+    transition: opacity 0.2s ease-in-out;
 }
 
 .message:hover .message-actions {
     opacity: 1;
 }
 
-.message-actions .btn-link {
-    color: #64748b;
-    padding: 4px 8px;
-    font-size: 16px;
+/* Base style for action buttons */
+.message .message-actions .action-btn {
+    color: #666;
+    padding: 0.25rem 0.5rem;
+    transition: all 0.2s ease-in-out;
+    background: transparent;
+    border: none;
 }
 
-/* Message footer actions (always visible) */
+/* Default hover color (blue) for Reply and Edit */
+.message .message-actions .action-btn[title="Reply"]:hover,
+.message .message-actions .action-btn[title="Edit"]:hover {
+    color: var(--bs-primary);
+    background: transparent;
+}
+
+/* Red hover for Delete and Like */
+.message .message-actions .action-btn[title="Delete"]:hover,
+.message .message-actions .action-btn[title="Like"]:hover {
+    color: #dc3545;
+    background: transparent;
+}
+
+/* Orange hover for Pin */
+.message .message-actions .action-btn[title="Pin/Unpin"]:hover {
+    color: #fd7e14;
+    background: transparent;
+}
+
+/* Remove ALL other message-actions hover rules */
+.message-footer {
+    padding: 0 8px 8px 8px;
+    background: #fff;
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+}
+
 .message-footer .message-actions {
-    padding: 8px;
+    padding: 4px 0;
+    display: flex;
+    align-items: center;
+    gap: 4px;
 }
 
 .message-footer .message-actions .btn-link {
-    color: #4b5563;
-}
-
-.message-actions .btn-link:hover {
-    color: #0d6efd;
-    background: #f1f5f9;
-    border-radius: 4px;
+    color: #6B7280;
 }
 
 .message-content {
@@ -459,30 +508,6 @@
     color: #94a3b8;
 }
 
-.message-footer {
-    padding: 0 8px 8px 8px;
-    background: #fff;
-    border-bottom-left-radius: 8px;
-    border-bottom-right-radius: 8px;
-}
-
-.message-footer .message-actions {
-    padding: 4px 0;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-}
-
-.message-footer .message-actions .btn-link {
-    color: #6B7280;
-}
-
-.message-actions .btn-link:hover {
-    color: #2563EB;
-    background: #f1f5f9;
-    border-radius: 4px;
-}
-
 .format-toolbar {
     display: flex;
     gap: 4px;
@@ -504,4 +529,26 @@
     color: #2563EB;
     background: #e5e7eb;
     border-radius: 4px;
+}
+
+.message.pinned {
+    background-color: rgba(255, 193, 7, 0.05);
+    border-left: 3px solid var(--bs-warning);
+}
+
+.message.pinned:hover {
+    background-color: rgba(255, 193, 7, 0.1);
+}
+
+.badge.bg-warning {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 8px;
+    font-weight: 500;
+    font-size: 0.75rem;
+}
+
+.badge.bg-warning i {
+    font-size: 0.7rem;
 } 

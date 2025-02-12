@@ -4,3 +4,5 @@ playwright
 pytest
 ruff
 types-requests
+pip-tools
+mypy
