@@ -12,18 +12,19 @@
 # See the LICENSE file for details.
 # -----------------------------------------------------------------------------
 
-import os
 import logging
+import os
 
 from flask import Flask
+from flask import current_app
 from flask import g
 from flask import request
 from flask import session
-from flask import current_app
 from flask_login import LoginManager
 from flask_login import current_user
 from flask_socketio import SocketIO
 
+from modules.core.models.group import Group
 from modules.core.models.user import User
 from modules.core.models.user_setting import UserSetting
 from system.db.database import db
@@ -33,7 +34,6 @@ from system.i18n.translation import format_number
 from system.i18n.translation import preload_translations
 from system.i18n.translation import translate
 from system.module.utils import initialize_modules
-from modules.core.models.group import Group
 
 
 def get_locale():
@@ -52,11 +52,11 @@ def create_app():
     # Configure logging
     logging.basicConfig(level=logging.DEBUG)
     app.logger.setLevel(logging.DEBUG)
-    
+
     # Log handler to show debug messages in console
     console_handler = logging.StreamHandler()
     console_handler.setLevel(logging.DEBUG)
-    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
     console_handler.setFormatter(formatter)
     app.logger.addHandler(console_handler)
 
@@ -119,30 +119,31 @@ def create_app():
         # 1. User Group Handling
         if current_user.is_authenticated:
             from modules.core.models.group import Group
+
             all_group = Group.get_or_create("ALL", "Default group for all users", True)
             if all_group not in current_user.groups:
                 current_user.add_to_group(all_group)
-        
+
         # 2. Module Context Setup
         g.installed_modules = current_app.config.get("INSTALLED_MODULES", {}).values()
         path = request.path.split("/")[1] or "core"
-        
+
         # Find current module from installed modules
         current_module = next(
             (m for m in g.installed_modules if m.get("name", "").lower() == path.lower()),
             next(
                 (m for m in g.installed_modules if m.get("name", "").lower() == "core"),
-                None  # If neither path nor core module found, will be None
-            )
+                None,  # If neither path nor core module found, will be None
+            ),
         )
-        
+
         if current_module is None:
             # Log warning that module wasn't found
             app.logger.warning(f"Module not found for path: {path}")
             # Let the route handler deal with 404 if needed
-        
+
         g.current_module = current_module
-        
+
         # 3. Language Handling
         g.lang = (
             request.args.get("lang")
@@ -154,7 +155,7 @@ def create_app():
             )
             or app.config.get("DEFAULT_LANGUAGE", "en")
         )
-        
+
         # Store language in session if changed
         if "lang" not in session or session["lang"] != g.lang:
             session["lang"] = g.lang

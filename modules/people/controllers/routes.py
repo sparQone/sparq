@@ -11,7 +11,7 @@
 #                         chat_types=ChatType,
 #                         chats=chats,
 #                         module_home='people_bp.people_home')
-# 
+#
 # @blueprint.route("/chat/create", methods=["POST"])
 # @login_required
 # def create_chat():
@@ -20,7 +20,7 @@
 #         chat_type = ChatType[request.form.get("type")]
 #         content = request.form.get("content")
 #         pinned = bool(request.form.get("pin"))
-# 
+#
 #         chat = Chat(
 #             content=content,
 #             type=chat_type,
@@ -29,10 +29,10 @@
 #         )
 #         db.session.add(chat)
 #         db.session.commit()
-# 
+#
 #         # Emit WebSocket event
 #         socketio.emit("chat_changed")
-#         
+#
 #         return ""
 #     except Exception as e:
-#         return str(e), 400 
+#         return str(e), 400

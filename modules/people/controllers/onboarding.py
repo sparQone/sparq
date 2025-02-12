@@ -15,6 +15,7 @@ from flask_login import login_required
 
 from . import blueprint
 
+
 @blueprint.route("/onboarding")
 @login_required
 def onboarding():

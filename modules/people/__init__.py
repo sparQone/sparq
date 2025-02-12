@@ -12,11 +12,13 @@
 # -----------------------------------------------------------------------------
 
 from flask import Blueprint
-from .utils.filters import init_filters
+
 from .module import PeopleModule
+from .utils.filters import init_filters
 
 # Create module instance
 module_instance = PeopleModule()
+
 
 def init_module(app):
     """Initialize the people module"""
@@ -24,10 +26,11 @@ def init_module(app):
     init_filters(app)
     
     # Import models in the correct order
-    from .models.associations import chat_likes
-    from .models.chat import Chat, Channel
-    from .models.employee import Employee
-
     # Import and register blueprint with routes
     from .controllers import blueprint
+    from .models.associations import chat_likes
+    from .models.chat import Channel
+    from .models.chat import Chat
+    from .models.employee import Employee
+
     app.register_blueprint(blueprint, url_prefix="/people")

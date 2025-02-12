@@ -13,26 +13,41 @@
 # -----------------------------------------------------------------------------
 
 import logging
+import random
+
 from flask_login import UserMixin
 from werkzeug.security import check_password_hash
 from werkzeug.security import generate_password_hash
-import random
 
-from system.db.database import db
-from system.db.decorators import ModelRegistry
 from modules.core.models.group import Group
 from modules.core.models.user_group import user_group
+from system.db.database import db
+from system.db.decorators import ModelRegistry
 
 logger = logging.getLogger(__name__)
+
 
 def generate_avatar_color():
     """Generate a random color for user avatars"""
     colors = [
-        '#2563EB', '#7C3AED', '#DB2777', '#DC2626', '#EA580C',
-        '#65A30D', '#0D9488', '#0284C7', '#6366F1', '#9333EA',
-        '#C026D3', '#E11D48', '#F97316', '#84CC16', '#14B8A6'
+        "#2563EB",
+        "#7C3AED",
+        "#DB2777",
+        "#DC2626",
+        "#EA580C",
+        "#65A30D",
+        "#0D9488",
+        "#0284C7",
+        "#6366F1",
+        "#9333EA",
+        "#C026D3",
+        "#E11D48",
+        "#F97316",
+        "#84CC16",
+        "#14B8A6",
     ]
     return random.choice(colors)
+
 
 @ModelRegistry.register
 class User(db.Model, UserMixin):
@@ -51,10 +66,14 @@ class User(db.Model, UserMixin):
     is_sample = db.Column(db.Boolean, default=False)
 
     # One-to-one relationship with Employee
-    employee_profile = db.relationship('Employee', backref=db.backref('user', uselist=False), uselist=False)
+    employee_profile = db.relationship(
+        "Employee", backref=db.backref("user", uselist=False), uselist=False
+    )
 
     # Update the relationship to use the imported table
-    groups = db.relationship('Group', secondary=user_group, backref=db.backref('users', lazy='dynamic'))
+    groups = db.relationship(
+        "Group", secondary=user_group, backref=db.backref("users", lazy="dynamic")
+    )
 
     @property
     def is_admin(self):
@@ -66,10 +85,8 @@ class User(db.Model, UserMixin):
         """Check if user is the only administrator"""
         if not self.is_admin:
             return False
-        
-        admin_count = User.query.filter(
-            User.groups.any(name="ADMIN")
-        ).count()
+
+        admin_count = User.query.filter(User.groups.any(name="ADMIN")).count()
         return admin_count <= 1
 
     @property
@@ -99,25 +116,21 @@ class User(db.Model, UserMixin):
         # Check for duplicate admin
         if email == "admin" and User.get_by_email("admin"):
             raise ValueError("Cannot create duplicate admin user")
-        
+
         # Create new user instance
-        user = cls(
-            email=email,
-            first_name=first_name,
-            last_name=last_name
-        )
+        user = cls(email=email, first_name=first_name, last_name=last_name)
         user.password = password  # This will hash the password
         db.session.add(user)
-        
+
         # Add to ALL group
         all_group = Group.get_or_create("ALL", "Default group for all users", True)
         user.add_to_group(all_group)
-        
+
         # Add to ADMIN group if specified
         if is_admin:
             admin_group = Group.get_or_create("ADMIN", "Administrators group", True)
             user.add_to_group(admin_group)
-        
+
         db.session.commit()
         return user
 
@@ -148,18 +161,16 @@ class User(db.Model, UserMixin):
         if group not in self.groups:
             self.groups.append(group)
             db.session.commit()
-    
+
     def remove_from_group(self, group):
         """Remove user from group if not ALL group"""
         if group.name != "ALL" and group in self.groups:
             # Prevent removing last admin
             if group.name == "ADMIN":
-                admin_count = User.query.filter(
-                    User.groups.any(name="ADMIN")
-                ).count()
+                admin_count = User.query.filter(User.groups.any(name="ADMIN")).count()
                 if admin_count <= 1 and self.is_admin:
                     raise ValueError("Cannot remove last admin user")
-            
+
             self.groups.remove(group)
             db.session.commit()
 

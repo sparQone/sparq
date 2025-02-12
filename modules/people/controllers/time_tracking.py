@@ -15,6 +15,7 @@ from flask_login import login_required
 
 from . import blueprint
 
+
 @blueprint.route("/time_tracking")
 @login_required
 def time_tracking():

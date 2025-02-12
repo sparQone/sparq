@@ -26,14 +26,14 @@ blueprint = Blueprint(
 init_filters(blueprint)
 
 # Import routes after blueprint creation to avoid circular imports
-from . import routes
-from . import chat
-from . import employee
-from . import hiring
-from . import onboarding
-from . import scheduling
-from . import forms
-from . import reimbursement
-from . import docs
-from . import knowledge
-from . import time_tracking
+from . import chat  # noqa: F401, E402
+from . import docs  # noqa: F401, E402
+from . import employee  # noqa: F401, E402
+from . import forms  # noqa: F401, E402
+from . import hiring  # noqa: F401, E402
+from . import knowledge  # noqa: F401, E402
+from . import onboarding  # noqa: F401, E402
+from . import reimbursement  # noqa: F401, E402
+from . import routes  # noqa: F401, E402
+from . import scheduling  # noqa: F401, E402
+from . import time_tracking  # noqa: F401, E402
