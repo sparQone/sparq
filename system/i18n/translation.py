@@ -72,7 +72,14 @@ def translate(text):
 _ = translate
 
 # Export both names
-__all__ = ['translate', '_', 'preload_translations', 'format_date', 'format_number', 'get_format_patterns']
+__all__ = [
+    "translate",
+    "_",
+    "preload_translations",
+    "format_date",
+    "format_number",
+    "get_format_patterns",
+]
 
 
 def get_format_patterns(lang=None):

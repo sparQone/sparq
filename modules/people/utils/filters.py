@@ -11,8 +11,10 @@
 # -----------------------------------------------------------------------------
 
 from datetime import datetime
-from flask import Blueprint
+
 import humanize
+from flask import Blueprint
+
 
 def timeago_filter(value):
     """Convert datetime to '... time ago' text"""
@@ -30,12 +32,13 @@ def timeago_filter(value):
         print(f"Error in timeago filter: {e}")  # Add logging
         return ""
 
+
 def init_filters(app):
     """Initialize custom template filters"""
     # Register with both app and blueprint
     if isinstance(app, Blueprint):
-        app.add_app_template_filter(timeago_filter, 'timeago')
+        app.add_app_template_filter(timeago_filter, "timeago")
     else:
-        app.jinja_env.filters['timeago'] = timeago_filter
+        app.jinja_env.filters["timeago"] = timeago_filter
         # Also register as a template filter
-        app.template_filter('timeago')(timeago_filter)
+        app.template_filter("timeago")(timeago_filter)

@@ -13,6 +13,7 @@ from flask_login import login_required
 
 from . import blueprint
 
+
 @blueprint.route("/forms")
 @login_required
 def forms():

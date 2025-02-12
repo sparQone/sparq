@@ -12,7 +12,6 @@
 # -----------------------------------------------------------------------------
 
 from flask import Blueprint
-from flask import g
 from flask import render_template
 from flask_login import login_required
 

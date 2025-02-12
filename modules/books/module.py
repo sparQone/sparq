@@ -12,9 +12,6 @@
 # See the LICENSE file for details.
 # -----------------------------------------------------------------------------
 
-from system.db.database import db
-from system.module.hooks import hookimpl
-
 
 class BooksModule:
     def register_blueprint(self, blueprint, url_prefix):

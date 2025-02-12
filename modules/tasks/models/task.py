@@ -15,6 +15,7 @@
 from system.db.database import db
 from system.db.decorators import ModelRegistry
 
+
 @ModelRegistry.register
 class Task(db.Model):
     __tablename__ = "task"

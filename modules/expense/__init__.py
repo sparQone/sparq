@@ -12,8 +12,6 @@
 # See the LICENSE file for details.
 # -----------------------------------------------------------------------------
 
-from flask import Blueprint
-
 from .controllers.routes import blueprint as expense_blueprint
 from .module import ExpenseModule
 

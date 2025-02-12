@@ -11,6 +11,7 @@
 # -----------------------------------------------------------------------------
 
 from flask import Blueprint
+
 from ..utils.filters import init_filters
 
 # Create blueprint
@@ -25,15 +26,15 @@ blueprint = Blueprint(
 # Initialize filters with blueprint
 init_filters(blueprint)
 
-# Import routes after blueprint creation to avoid circular imports
-from . import routes
-from . import chat
-from . import employee
-from . import hiring
-from . import onboarding
-from . import scheduling
-from . import forms
-from . import reimbursement
-from . import docs
-from . import knowledge
-from . import time_tracking
+# Import routes after blueprint creation
+from . import chat  # noqa: E402, F401
+from . import docs  # noqa: E402, F401
+from . import employee  # noqa: E402, F401
+from . import forms  # noqa: E402, F401
+from . import hiring  # noqa: E402, F401
+from . import knowledge  # noqa: E402, F401
+from . import onboarding  # noqa: E402, F401
+from . import reimbursement  # noqa: E402, F401
+from . import routes  # noqa: E402, F401
+from . import scheduling  # noqa: E402, F401
+from . import time_tracking  # noqa: E402, F401

@@ -10,7 +10,8 @@
 # See the LICENSE file for details.
 # -----------------------------------------------------------------------------
 
-from .chat import Channel, Chat
+from .chat import Channel
+from .chat import Chat
 from .employee import Employee
 
-__all__ = ['Channel', 'Chat', 'Employee']
+__all__ = ["Channel", "Chat", "Employee"]
