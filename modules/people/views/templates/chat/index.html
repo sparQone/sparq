@@ -12,144 +12,138 @@
 <meta name="user-id" content="{{ current_user.id }}">
 
 <div class="content-card">
-    <div class="chat-layout">
-        <!-- Channel Sidebar -->
-        <div class="chat-sidebar">
-            <!-- Channel Header -->
-            <div class="sidebar-header">
-                <h3>{{ _('Channels') }}</h3>
-                <button class="btn btn-sm btn-link" data-bs-toggle="modal" data-bs-target="#newChannelModal">
-                    <i class="fas fa-plus"></i>
-                </button>
-            </div>
+    <div class="chat-container">
+        <div class="chat-layout">
+            <!-- Channel Sidebar -->
+            <aside class="chat-sidebar">
+                <div class="sidebar-header">
+                    <h3>{{ _('Channels') }}</h3>
+                    <button class="btn btn-sm btn-link" data-bs-toggle="modal" data-bs-target="#newChannelModal">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                </div>
 
-            <!-- Channel List -->
-            <div class="channel-list">
-                {% for channel in channels %}
-                <div class="channel {% if channel.name == default_channel.name %}active{% endif %}" 
-                     data-channel="{{ channel.name }}"
-                     data-description="{{ channel.description }}"
-                     onclick="switchChannel('{{ channel.name }}')">
-                    <div class="channel-content">
-                        <div class="channel-name">
-                            <span class="channel-prefix">#</span> {{ channel.name }}
-                        </div>
-                    </div>
-                    <div class="channel-meta">
-                        {% if ChatMessageState is defined %}
-                            {% set unread_count = ChatMessageState.get_unread_count(current_user.id, channel.id) %}
-                            {% if unread_count > 0 %}
-                            <span class="unread-badge">{{ unread_count }}</span>
-                            {% endif %}
-                        {% endif %}
-                        {% if current_user.is_admin %}
-                            <div class="channel-actions" onclick="event.stopPropagation();">
-                                <div class="dropdown">
-                                    <button class="btn btn-link btn-sm channel-options" data-bs-toggle="dropdown" aria-expanded="false">
-                                        <i class="fas fa-ellipsis-v"></i>
-                                    </button>
-                                    <ul class="dropdown-menu dropdown-menu-end">
-                                        <li><a class="dropdown-item" href="#" onclick="editChannel('{{ channel.name }}')">
-                                            <i class="fas fa-edit me-2"></i>{{ _('Edit Channel') }}
-                                        </a></li>
-                                        {% if channel.name != 'general' %}
-                                        <li><hr class="dropdown-divider"></li>
-                                        <li><a class="dropdown-item text-danger" href="#" onclick="confirmDeleteChannel('{{ channel.name }}')">
-                                            <i class="fas fa-trash-alt me-2"></i>{{ _('Delete Channel') }}
-                                        </a></li>
-                                        {% endif %}
-                                    </ul>
-                                </div>
+                <div class="channel-list">
+                    {% for channel in channels %}
+                    <div class="channel {% if channel.name == default_channel.name %}active{% endif %}" 
+                         data-channel="{{ channel.name }}"
+                         data-description="{{ channel.description }}"
+                         onclick="switchChannel('{{ channel.name }}')">
+                        <div class="channel-content">
+                            <div class="channel-name">
+                                <span class="channel-prefix">#</span> {{ channel.name }}
                             </div>
-                        {% endif %}
-                    </div>
-                </div>
-                {% endfor %}
-            </div>
-        </div>
-
-        <!-- Main Chat Area -->
-        <div class="chat-main">
-            <!-- Chat Header -->
-            <div class="chat-header">
-                <div class="chat-header-info">
-                    <h2><span class="channel-prefix">#</span><span id="current-channel">{{ default_channel.name }}</span></h2>
-                    <p class="channel-description" id="channel-description">{{ default_channel.description }}</p>
-                    <div class="channel-filters">
-                        <button class="btn btn-link pin-filter" id="pinFilter">
-                            <i class="fas fa-thumbtack"></i> {{ _('Pins') }}
-                            <span class="pin-count" id="pinCount"></span>
-                        </button>
-                    </div>
-                </div>
-                <div class="chat-header-actions">
-                    <div class="search-box">
-                        <i class="fas fa-search"></i>
-                        <input type="text" 
-                               id="chatSearch" 
-                               placeholder="{{ _('Search messages...') }}" 
-                               class="form-control">
-                    </div>
-                </div>
-            </div>
-
-            <!-- Chat Messages -->
-            <div class="chat-messages chat-feed">
-                <div class="loading-indicator text-center p-4">
-                    <i class="fas fa-spinner fa-spin"></i> Loading messages...
-                </div>
-            </div>
-
-            <!-- Message Input Area -->
-            <div class="message-input-area">
-                <!-- Message Form -->
-                <form class="message-form" id="quickMessageForm">
-                    <!-- Formatting Toolbar -->
-                    <div class="format-toolbar">
-                        <button type="button" class="btn btn-sm btn-link" title="{{ _('Bold') }}">
-                            <i class="fas fa-bold"></i>
-                        </button>
-                        <button type="button" class="btn btn-sm btn-link" title="{{ _('Italic') }}">
-                            <i class="fas fa-italic"></i>
-                        </button>
-                        <button type="button" class="btn btn-sm btn-link" title="{{ _('Strikethrough') }}">
-                            <i class="fas fa-strikethrough"></i>
-                        </button>
-                        <button type="button" class="btn btn-sm btn-link" title="{{ _('Code') }}">
-                            <i class="fas fa-code"></i>
-                        </button>
-                        <button type="button" class="btn btn-sm btn-link" title="{{ _('Link') }}">
-                            <i class="fas fa-link"></i>
-                        </button>
-                        <button type="button" class="btn btn-sm btn-link" title="{{ _('List') }}">
-                            <i class="fas fa-list-ul"></i>
-                        </button>
-                    </div>
-                    
-                    <div class="input-group">
-                        <textarea class="form-control" 
-                                 placeholder="{{ _('Message in #') }}{{ default_channel.name }}"
-                                 name="content"
-                                 rows="1"></textarea>
-                        <button type="submit" class="btn btn-link send-button" title="{{ _('Send message') }}">
-                            <i class="fas fa-paper-plane"></i>
-                        </button>
-                    </div>
-                    <div class="message-footer">
-                        <div class="message-actions">
-                            <button type="button" class="btn btn-link" title="{{ _('Add attachment') }}">
-                                <i class="fas fa-plus"></i>
-                            </button>
-                            <button type="button" class="btn btn-link" title="{{ _('Add emoji') }}">
-                                <i class="far fa-smile"></i>
-                            </button>
-                            <button type="button" class="btn btn-link" title="{{ _('Mention someone') }}">
-                                <i class="fas fa-at"></i>
-                            </button>
+                        </div>
+                        <div class="channel-meta">
+                            {% if ChatMessageState is defined %}
+                                {% set unread_count = ChatMessageState.get_unread_count(current_user.id, channel.id) %}
+                                {% if unread_count > 0 %}
+                                <span class="unread-badge">{{ unread_count }}</span>
+                                {% endif %}
+                            {% endif %}
+                            {% if current_user.is_admin %}
+                                <div class="channel-actions" onclick="event.stopPropagation();">
+                                    <div class="dropdown">
+                                        <button class="btn btn-link btn-sm channel-options" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="fas fa-ellipsis-v"></i>
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-end">
+                                            <li><a class="dropdown-item" href="#" onclick="editChannel('{{ channel.name }}')">
+                                                <i class="fas fa-edit me-2"></i>{{ _('Edit Channel') }}
+                                            </a></li>
+                                            {% if channel.name != 'general' %}
+                                            <li><hr class="dropdown-divider"></li>
+                                            <li><a class="dropdown-item text-danger" href="#" onclick="confirmDeleteChannel('{{ channel.name }}')">
+                                                <i class="fas fa-trash-alt me-2"></i>{{ _('Delete Channel') }}
+                                            </a></li>
+                                            {% endif %}
+                                        </ul>
+                                    </div>
+                                </div>
+                            {% endif %}
                         </div>
                     </div>
-                </form>
-            </div>
+                    {% endfor %}
+                </div>
+            </aside>
+
+            <!-- Main Chat Area -->
+            <main class="chat-main">
+                <header class="chat-header">
+                    <div class="chat-header-top">
+                        <div class="chat-header-info">
+                            <h2><span class="channel-prefix">#</span><span id="current-channel">{{ default_channel.name }}</span></h2>
+                        </div>
+                        <div class="chat-header-actions">
+                            <button class="btn btn-link pin-filter" id="pinFilter">
+                                <i class="fas fa-thumbtack"></i> {{ _('Pins') }}
+                                <span class="pin-count" id="pinCount"></span>
+                            </button>
+                            <div class="search-box">
+                                <i class="fas fa-search"></i>
+                                <input type="text" id="chatSearch" placeholder="{{ _('Search messages...') }}" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                    <p class="channel-description" id="channel-description">{{ default_channel.description }}</p>
+                </header>
+
+                <div class="chat-messages-container">
+                    <div class="chat-messages">
+                        <div class="loading-indicator text-center p-4">
+                            <i class="fas fa-spinner fa-spin"></i> Loading messages...
+                        </div>
+                    </div>
+                </div>
+
+                <footer class="message-input-area">
+                    <form class="message-form" id="quickMessageForm">
+                        <div class="format-toolbar">
+                            <button type="button" class="btn btn-sm btn-link" title="{{ _('Bold') }}">
+                                <i class="fas fa-bold"></i>
+                            </button>
+                            <button type="button" class="btn btn-sm btn-link" title="{{ _('Italic') }}">
+                                <i class="fas fa-italic"></i>
+                            </button>
+                            <button type="button" class="btn btn-sm btn-link" title="{{ _('Strikethrough') }}">
+                                <i class="fas fa-strikethrough"></i>
+                            </button>
+                            <button type="button" class="btn btn-sm btn-link" title="{{ _('Code') }}">
+                                <i class="fas fa-code"></i>
+                            </button>
+                            <button type="button" class="btn btn-sm btn-link" title="{{ _('Link') }}">
+                                <i class="fas fa-link"></i>
+                            </button>
+                            <button type="button" class="btn btn-sm btn-link" title="{{ _('List') }}">
+                                <i class="fas fa-list-ul"></i>
+                            </button>
+                        </div>
+                        
+                        <div class="input-group">
+                            <textarea class="form-control" 
+                                     placeholder="{{ _('Message in #') }}{{ default_channel.name }}"
+                                     name="content"
+                                     rows="1"></textarea>
+                            <button type="submit" class="btn btn-link send-button" title="{{ _('Send message') }}">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                        <div class="message-footer">
+                            <div class="message-actions">
+                                <button type="button" class="btn btn-link" title="{{ _('Add attachment') }}">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                                <button type="button" class="btn btn-link" title="{{ _('Add emoji') }}">
+                                    <i class="far fa-smile"></i>
+                                </button>
+                                <button type="button" class="btn btn-link" title="{{ _('Mention someone') }}">
+                                    <i class="fas fa-at"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </footer>
+            </main>
         </div>
     </div>
 </div>
