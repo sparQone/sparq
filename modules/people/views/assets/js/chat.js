@@ -2,6 +2,8 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialize WebSocket connection
     const socket = io.connect(window.location.origin);
     let currentChannel = document.getElementById('current-channel').textContent;
+    let showPinnedOnly = false;
+    let channelToDelete = null;
     
     // Get current user ID from meta tag
     const userIdMeta = document.querySelector('meta[name="user-id"]');
@@ -9,6 +11,61 @@ document.addEventListener('DOMContentLoaded', function() {
     
     console.log('Current user ID:', currentUserId);
     console.log('Initial channel:', currentChannel);
+    
+    // Initialize delete channel modal
+    const deleteChannelModal = new bootstrap.Modal(document.getElementById('deleteChannelModal'));
+    const confirmDeleteChannelBtn = document.getElementById('confirmDeleteChannelBtn');
+    
+    // Function to show delete channel confirmation
+    window.confirmDeleteChannel = function(channelName) {
+        channelToDelete = channelName;
+        deleteChannelModal.show();
+    }
+    
+    // Handle channel deletion
+    if (confirmDeleteChannelBtn) {
+        confirmDeleteChannelBtn.addEventListener('click', function() {
+            if (!channelToDelete) return;
+            
+            fetch(`/people/chat/channels/${channelToDelete}/delete`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(json => { throw new Error(json.error) });
+                }
+                return response.json();
+            })
+            .then(() => {
+                // Remove channel from UI
+                const channelElement = document.querySelector(`.channel[data-channel="${channelToDelete}"]`);
+                if (channelElement) {
+                    channelElement.remove();
+                }
+                
+                // If we're in the deleted channel, switch to general
+                if (currentChannel === channelToDelete) {
+                    switchChannel('general');
+                }
+                
+                // Close modal
+                deleteChannelModal.hide();
+                channelToDelete = null;
+            })
+            .catch(error => {
+                alert('Error deleting channel: ' + error.message);
+            });
+        });
+    }
+    
+    // Function to edit channel (placeholder for now)
+    window.editChannel = function(channelName) {
+        // TODO: Implement channel editing
+        console.log('Edit channel:', channelName);
+    }
     
     // Load initial messages
     loadChannelMessages(currentChannel);
@@ -19,6 +76,39 @@ document.addEventListener('DOMContentLoaded', function() {
         if (chatMessages) {
             chatMessages.scrollTop = chatMessages.scrollHeight;
         }
+    }
+    
+    // Function to update pin count
+    function updatePinCount() {
+        const pinCount = document.getElementById('pinCount');
+        const pinnedMessages = document.querySelectorAll('.message.pinned');
+        if (pinnedMessages.length > 0) {
+            pinCount.textContent = pinnedMessages.length;
+            pinCount.style.display = 'inline';
+        } else {
+            pinCount.style.display = 'none';
+        }
+    }
+
+    // Function to toggle pin filter
+    function togglePinFilter() {
+        const pinFilter = document.getElementById('pinFilter');
+        showPinnedOnly = !showPinnedOnly;
+        pinFilter.classList.toggle('active', showPinnedOnly);
+        
+        document.querySelectorAll('.message').forEach(message => {
+            if (showPinnedOnly) {
+                message.style.display = message.classList.contains('pinned') ? 'flex' : 'none';
+            } else {
+                message.style.display = 'flex';
+            }
+        });
+    }
+
+    // Initialize pin filter button
+    const pinFilter = document.getElementById('pinFilter');
+    if (pinFilter) {
+        pinFilter.addEventListener('click', togglePinFilter);
     }
     
     // Function to update unread badge
@@ -81,6 +171,13 @@ document.addEventListener('DOMContentLoaded', function() {
         // Remove unread badge from new channel
         updateUnreadBadge(channelName, false);
         
+        // Reset pin filter when switching channels
+        showPinnedOnly = false;
+        const pinFilter = document.getElementById('pinFilter');
+        if (pinFilter) {
+            pinFilter.classList.remove('active');
+        }
+        
         // Update current channel
         currentChannel = channelName;
         document.getElementById('current-channel').textContent = channelName;
@@ -113,8 +210,14 @@ document.addEventListener('DOMContentLoaded', function() {
             })
             .then(html => {
                 chatMessages.innerHTML = html;
-                scrollToBottom();
                 initializeMessageActions();
+                updatePinCount();
+                if (showPinnedOnly) {
+                    document.querySelectorAll('.message').forEach(message => {
+                        message.style.display = message.classList.contains('pinned') ? 'flex' : 'none';
+                    });
+                }
+                scrollToBottom();
                 
                 // Reinitialize tooltips
                 const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
@@ -176,8 +279,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 return response.text();
             })
             .then(() => {
-                // Clear the form
                 this.reset();
+                scrollToBottom();
             })
             .catch(error => {
                 alert('Error sending message: ' + error.message);
@@ -187,7 +290,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // WebSocket event handling
     socket.on('chat_changed', function(data) {
-        console.log('Received chat_changed event:', data);
+        //console.log('Received chat_changed event:', data);
         if (data.channel === currentChannel) {
             const chatMessages = document.querySelector('.chat-messages');
             if (chatMessages) {
@@ -198,13 +301,15 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Handle new messages for unread badges
     socket.on('message_created', function(data) {
-        console.log('Received message_created event:', data);
+        //console.log('Received message_created event:', data);
         // Only update badge if:
         // 1. We're not the author
         // 2. We're not currently viewing that channel
         if (data.author_id !== currentUserId && data.channel !== currentChannel) {
             console.log('Updating unread badge for channel:', data.channel);
             updateUnreadBadge(data.channel, true);
+        } else if (data.channel === currentChannel) {
+            scrollToBottom();
         }
     });
     
@@ -240,9 +345,6 @@ document.addEventListener('DOMContentLoaded', function() {
     tooltipTriggerList.map(function (tooltipTriggerEl) {
         return new bootstrap.Tooltip(tooltipTriggerEl);
     });
-
-    // Initial scroll to bottom
-    scrollToBottom();
 
     // Initialize delete modal and message actions
     let deleteModal;
@@ -310,9 +412,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 }
                                 return response.json();
                             })
-                            .then(data => {
-                                console.log('Pin toggled:', data);
-                                // Refresh the messages to show updated pin state
+                            .then(() => {
                                 loadChannelMessages(currentChannel);
                             })
                             .catch(error => {
@@ -337,8 +437,8 @@ document.addEventListener('DOMContentLoaded', function() {
     // Re-initialize after HTMX content swaps
     document.body.addEventListener('htmx:afterSwap', function(evt) {
         if (evt.detail.target.classList.contains('chat-messages')) {
-            scrollToBottom();
             initializeMessageActions();
+            scrollToBottom();
         }
     });
 }); 

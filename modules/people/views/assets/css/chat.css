@@ -2,9 +2,8 @@
 .chat-header {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-start;
     padding: 16px 20px;
-    margin-bottom: 20px;
     border-bottom: 1px solid #e5e7eb;
 }
 
@@ -164,11 +163,12 @@
     height: calc(100vh - 200px);
     background: #fff;
     overflow: hidden;
+    border-radius: 8px;
 }
 
 /* Sidebar */
 .chat-sidebar {
-    width: 260px;
+    width: 240px;
     background: #445063;
     color: #fff;
     display: flex;
@@ -196,6 +196,8 @@
 }
 
 .channel-list {
+    flex: 1;
+    overflow-y: auto;
     padding: 12px 0;
 }
 
@@ -203,12 +205,14 @@
     position: relative;
     display: flex;
     align-items: center;
-    padding: 8px 16px;
+    justify-content: space-between;
+    padding: 8px 12px;
     cursor: pointer;
     transition: all 0.2s ease-in-out;
     border-radius: 6px;
     margin: 0 8px;
     color: #d1d5db;
+    gap: 8px;
 }
 
 .channel:hover {
@@ -229,17 +233,15 @@
 }
 
 .unread-badge {
-    position: absolute;
-    right: 12px;
-    top: 50%;
-    transform: translateY(-50%);
+    position: static;
+    transform: none;
     background-color: var(--primary-color);
     color: white;
     border-radius: 10px;
-    padding: 2px 8px;
+    padding: 2px 6px;
     font-size: 0.75rem;
-    min-width: 20px;
-    height: 20px;
+    min-width: 18px;
+    height: 18px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -260,18 +262,28 @@
     flex-direction: column;
     flex: 1;
     background: #fff;
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
 }
 
 .chat-header-info h2 {
     margin: 0;
     font-size: 18px;
     font-weight: 600;
+    line-height: 36px;
+}
+
+.channel-description {
+    margin: 4px 0 0 0;
+    font-size: 14px;
+    color: #64748b;
 }
 
 .chat-header-actions {
     display: flex;
     gap: 16px;
     align-items: center;
+    padding-top: 2px;
 }
 
 .search-box {
@@ -291,6 +303,7 @@
     padding-left: 36px;
     border-radius: 20px;
     border: 1px solid #e2e8f0;
+    height: 36px;
 }
 
 /* Messages */
@@ -302,12 +315,10 @@
     display: flex;
     flex-direction: column;
     min-height: 0;
-    max-height: calc(100vh - 400px);
-    scroll-behavior: smooth;
 }
 
 .message {
-    margin-bottom: 20px;
+    margin-bottom: 10px;
     padding: 8px 20px;
     border-radius: 4px;
     border-bottom: 1px solid #e5e7eb;
@@ -316,13 +327,13 @@
     gap: 12px;
 }
 
-.message:hover {
-    background: #f8fafc;
-}
-
 .message:last-child {
     border-bottom: none;
     margin-bottom: 0;
+}
+
+.message:hover {
+    background: #f8fafc;
 }
 
 .message-avatar {
@@ -407,21 +418,35 @@
 
 /* Remove ALL other message-actions hover rules */
 .message-footer {
-    padding: 0 8px 8px 8px;
-    background: #fff;
-    border-bottom-left-radius: 8px;
-    border-bottom-right-radius: 8px;
+    display: flex;
+    align-items: center;
+    padding-left: 2px;
+    margin-top: 0px;
+    visibility: visible;
+    opacity: 1;
 }
 
 .message-footer .message-actions {
-    padding: 4px 0;
     display: flex;
+    gap: 8px;
     align-items: center;
-    gap: 4px;
+    visibility: visible;
+    opacity: 1;
 }
 
 .message-footer .message-actions .btn-link {
+    padding: 4px 8px;
     color: #6B7280;
+    transition: color 0.2s, background-color 0.2s;
+    visibility: visible;
+    opacity: 1;
+    border-radius: 4px;
+}
+
+.message-footer .message-actions .btn-link:hover {
+    color: #2563EB;
+    background: #e5e7eb;
+    text-decoration: none;
 }
 
 .message-content {
@@ -444,10 +469,9 @@
 
 /* Message Input Area */
 .message-input-area {
-    border-top: 1px solid #e2e8f0;
     background: #fff;
-    padding: 20px 20px;
-    margin: 0 20px;
+    padding: 16px;
+    border-bottom-right-radius: 8px;
 }
 
 .message-form {
@@ -551,4 +575,134 @@
 
 .badge.bg-warning i {
     font-size: 0.7rem;
+}
+
+.channel-filters {
+    margin-top: 8px;
+}
+
+.pin-filter {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: #64748b;
+    padding: 4px 8px;
+    font-size: 13px;
+    border-radius: 4px;
+    transition: all 0.2s ease-in-out;
+    text-decoration: none !important;
+}
+
+.pin-filter:hover, 
+.pin-filter:focus, 
+.pin-filter:active {
+    color: #2563EB;
+    background: #f1f5f9;
+    text-decoration: none !important;
+}
+
+.pin-filter.active {
+    color: #2563EB;
+    background: #e5e7eb;
+    text-decoration: none !important;
+}
+
+.pin-filter i {
+    font-size: 12px;
+}
+
+.pin-count {
+    background: #e5e7eb;
+    color: #64748b;
+    padding: 1px 6px;
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: 500;
+}
+
+.pin-filter.active .pin-count {
+    background: #2563EB;
+    color: white;
+}
+
+.channel-content {
+    display: flex;
+    align-items: center;
+    min-width: 0;
+    flex: 1;
+}
+
+.channel-name {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.channel-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.channel-actions {
+    opacity: 0;
+    transition: opacity 0.2s ease-in-out;
+    flex-shrink: 0;
+}
+
+.channel:hover .channel-actions {
+    opacity: 1;
+}
+
+.channel-options {
+    color: #9ca3af !important;
+    padding: 2px 4px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 24px;
+    text-decoration: none !important;
+    background: transparent;
+}
+
+.channel-options:hover,
+.channel-options:focus,
+.channel-options:active {
+    color: #f3f4f6 !important;
+    text-decoration: none !important;
+    background: transparent;
+}
+
+.channel .dropdown-menu {
+    background: #1f2937;
+    border-color: #374151;
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+}
+
+.channel .dropdown-item {
+    color: #d1d5db;
+    font-size: 13px;
+    padding: 6px 12px;
+}
+
+.channel .dropdown-item:hover {
+    background: #374151;
+    color: #f3f4f6;
+}
+
+.channel .dropdown-item.text-danger {
+    color: #ef4444 !important;
+}
+
+.channel .dropdown-item.text-danger:hover {
+    background: #991b1b;
+    color: #fecaca !important;
+}
+
+.channel .dropdown-divider {
+    border-color: #374151;
 } 
