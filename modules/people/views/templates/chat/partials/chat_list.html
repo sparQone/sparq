@@ -1,3 +1,13 @@
+{% if has_more %}
+<div class="load-more-container text-center mb-3">
+    <button class="btn btn-outline-secondary btn-sm load-more-btn" 
+            data-oldest-id="{{ oldest_id }}"
+            onclick="loadMoreMessages('{{ channel_name }}', this)">
+        <i class="fas fa-arrow-up me-1"></i>{{ _('Load More Messages') }}
+    </button>
+</div>
+{% endif %}
+
 {% for chat in chats %}
 <div class="message {% if chat.pinned %}pinned{% endif %}" id="message-{{ chat.id }}">
     <div class="message-avatar" 

@@ -191,12 +191,62 @@ document.addEventListener('DOMContentLoaded', function() {
         loadChannelMessages(channelName);
     };
 
+    // Function to load more messages
+    window.loadMoreMessages = function(channelName, button) {
+        const oldestId = button.dataset.oldestId;
+        const url = `/people/chat/channels/${channelName}/messages?before_id=${oldestId}&limit=10`;
+        
+        // Show loading state
+        button.disabled = true;
+        const originalContent = button.innerHTML;
+        button.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Loading...';
+        
+        // Get current scroll position and height before loading
+        const chatMessages = document.querySelector('.chat-messages');
+        const oldScrollHeight = chatMessages.scrollHeight;
+        const oldScrollTop = chatMessages.scrollTop;
+        
+        fetch(url)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.text();
+            })
+            .then(html => {
+                // Remove the existing load more button
+                button.closest('.load-more-container').remove();
+                
+                // Insert the new messages at the top
+                chatMessages.insertAdjacentHTML('afterbegin', html);
+                
+                // Calculate and set new scroll position to maintain relative position
+                const newScrollHeight = chatMessages.scrollHeight;
+                chatMessages.scrollTop = newScrollHeight - oldScrollHeight + oldScrollTop;
+                
+                // Initialize new message actions
+                initializeMessageActions();
+                
+                // Reinitialize tooltips for new messages
+                const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+                tooltipTriggerList.map(function (tooltipTriggerEl) {
+                    return new bootstrap.Tooltip(tooltipTriggerEl);
+                });
+            })
+            .catch(error => {
+                console.error('Error loading more messages:', error);
+                button.disabled = false;
+                button.innerHTML = originalContent;
+                alert('Error loading more messages. Please try again.');
+            });
+    };
+
     // Function to load channel messages
     function loadChannelMessages(channelName) {
         const chatMessages = document.querySelector('.chat-messages');
         if (!chatMessages) return;
 
-        const url = `/people/chat/channels/${channelName}/messages`;
+        const url = `/people/chat/channels/${channelName}/messages?limit=10`;
         
         // Show loading indicator
         chatMessages.innerHTML = '<div class="loading-indicator text-center p-4"><i class="fas fa-spinner fa-spin"></i> Loading messages...</div>';

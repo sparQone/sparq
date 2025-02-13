@@ -46,57 +46,55 @@ def chat():
 def get_channel_messages(channel_name):
     """Get messages for a specific channel"""
     try:
-        current_app.logger.info(f"Getting messages for channel: {channel_name}")
+        # Get query parameters
+        before_id = request.args.get('before_id', type=int)
+        limit = request.args.get('limit', 10, type=int)
         
         # Get channel
         channel = Channel.query.filter_by(name=channel_name).first()
         if not channel:
-            current_app.logger.error(f"Channel not found: {channel_name}")
             return f"Channel {channel_name} not found", 404
             
-        current_app.logger.info(f"Found channel with id: {channel.id}")
-        
-        # Get messages
-        try:
-            messages = channel.messages.order_by(Chat.created_at.asc()).all()
-            current_app.logger.info(f"Found {len(messages)} messages")
-        except Exception as msg_error:
-            current_app.logger.error(f"Error getting messages: {str(msg_error)}")
-            current_app.logger.exception(msg_error)
-            messages = []
-        
-        # Handle read status
-        try:
-            # Debug: Log unread count for this channel
-            unread_count = ChatMessageState.get_unread_count(current_user.id, channel.id)
-            current_app.logger.info(f"Unread messages in {channel_name}: {unread_count}")
-            
-            # Mark channel as read when viewing
-            ChatMessageState.mark_channel_read(current_user.id, channel.id)
-            current_app.logger.info(f"Marked channel {channel_name} as read for user {current_user.id}")
-        except Exception as read_error:
-            # Log the error but don't fail the request
-            current_app.logger.error(f"Error handling read status: {str(read_error)}")
-            current_app.logger.exception(read_error)
-            unread_count = 0
-        
-        # Render template
-        try:
+        # Build query - First get total count and latest ID
+        total_messages = channel.messages.count()
+        if total_messages == 0:
             return render_template(
                 "chat/partials/chat_list.html",
-                chats=messages,
+                chats=[],
                 current_user=current_user,
                 channel_description=channel.description,
-                ChatMessageState=ChatMessageState
+                ChatMessageState=ChatMessageState,
+                has_more=False,
+                oldest_id=None,
+                channel_name=channel_name
             )
-        except Exception as template_error:
-            current_app.logger.error(f"Error rendering template: {str(template_error)}")
-            current_app.logger.exception(template_error)
-            return str(template_error), 500
+        
+        # If before_id is not provided, get the latest messages
+        if not before_id:
+            messages = channel.messages.order_by(Chat.created_at.desc()).limit(limit).all()
+            messages = messages[::-1]  # Reverse to show in ascending order
+            has_more = channel.messages.filter(Chat.id < messages[0].id).first() is not None
+            oldest_id = messages[0].id
+        else:
+            # Get messages before the given ID
+            messages = channel.messages.filter(Chat.id < before_id).order_by(Chat.created_at.desc()).limit(limit).all()
+            messages = messages[::-1]  # Reverse to show in ascending order
+            has_more = channel.messages.filter(Chat.id < messages[0].id).first() is not None if messages else False
+            oldest_id = messages[0].id if messages else None
+        
+        return render_template(
+            "chat/partials/chat_list.html",
+            chats=messages,
+            current_user=current_user,
+            channel_description=channel.description,
+            ChatMessageState=ChatMessageState,
+            has_more=has_more,
+            oldest_id=oldest_id,
+            channel_name=channel_name
+        )
             
     except Exception as e:
         current_app.logger.error(f"Error getting channel messages: {str(e)}")
-        current_app.logger.exception(e)  # This will log the full traceback
         return str(e), 500
 
 
