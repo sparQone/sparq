@@ -235,3 +235,41 @@ class ChatMessageState(db.Model):
             current_app.logger.exception(e)
             db.session.rollback()
             return False
+
+    @classmethod
+    def mark_message_read(cls, user_id, message_id):
+        """Mark a specific message as read for a user"""
+        try:
+            # Get the message to get its channel_id
+            message = Chat.query.get(message_id)
+            if not message:
+                return False
+
+            # Check if we already have a read state for this user/message/type
+            existing = cls.query.filter_by(
+                user_id=user_id,
+                message_id=message_id,
+                channel_id=message.channel_id,
+                interaction_type=InteractionType.READ
+            ).first()
+
+            if existing:
+                # Update existing record
+                existing.data = {'last_read_message_id': message_id}
+                existing.updated_at = db.func.now()
+            else:
+                # Create new record
+                state = cls(
+                    user_id=user_id,
+                    message_id=message_id,
+                    channel_id=message.channel_id,
+                    interaction_type=InteractionType.READ,
+                    data={'last_read_message_id': message_id}
+                )
+                db.session.add(state)
+
+            return True
+        except Exception as e:
+            current_app.logger.error(f"Error marking message as read: {str(e)}")
+            current_app.logger.exception(e)
+            return False

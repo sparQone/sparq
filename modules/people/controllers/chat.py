@@ -9,6 +9,7 @@ from flask_socketio import join_room
 from flask_socketio import leave_room
 
 from system.db.database import db
+from modules.core.models.user import User
 
 from ..models.chat import Channel
 from ..models.chat import Chat
@@ -81,6 +82,11 @@ def get_channel_messages(channel_name):
             messages = messages[::-1]  # Reverse to show in ascending order
             has_more = channel.messages.filter(Chat.id < messages[0].id).first() is not None if messages else False
             oldest_id = messages[0].id if messages else None
+            
+        # Mark messages as read for the current user
+        for message in messages:
+            ChatMessageState.mark_message_read(current_user.id, message.id)
+        db.session.commit()
         
         return render_template(
             "chat/partials/chat_list.html",
@@ -157,6 +163,20 @@ def create_chat():
             content=content, author_id=current_user.id, channel_id=channel.id, pinned=pinned
         )
         db.session.add(chat)
+        db.session.flush()  # Get the chat ID without committing
+        
+        # Create message states for all users except the author
+        users = User.query.filter(User.id != current_user.id).all()
+        for user in users:
+            state = ChatMessageState(
+                user_id=user.id,
+                message_id=chat.id,
+                channel_id=channel.id,
+                interaction_type=InteractionType.READ,
+                data={'last_read_message_id': None}  # None indicates unread
+            )
+            db.session.add(state)
+        
         db.session.commit()
 
         # Debug: Log message creation
