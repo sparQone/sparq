@@ -46,17 +46,17 @@ def lookup_weather():
             return jsonify({"error": "City is required"}), 400
 
         weather_data = weather.get_current_weather(city)
+        
+        # Format the response
+        response = {
+            "temperature": weather_data["current"]["temperature_2m"],
+            "humidity": weather_data["current"]["relative_humidity_2m"],
+            "description": weather.get_weather_description(weather_data["current"]["weather_code"]),
+            "icon": weather.get_weather_icon(weather_data["current"]["weather_code"])
+        }
 
-        # Add some debug logging
-        print(f"Weather data for {city}:", weather_data)
-
-        if not weather_data:
-            return jsonify({"error": "City not found"}), 404
-
-        return jsonify(weather_data)
+        return jsonify(response)
     except ValueError as e:
-        print(f"ValueError for {city}:", str(e))
         return jsonify({"error": str(e)}), 404
     except Exception as e:
-        print(f"Error for {city}:", str(e))
-        return jsonify({"error": str(e)}), 500
+        return jsonify({"error": "Failed to fetch weather data"}), 500

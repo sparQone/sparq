@@ -9,152 +9,120 @@
 {% endblock %}
 
 {% block content %}
-<div class="content-card weather-card">
+<div class="content-card weather-card" 
+     x-data="{
+         state: 'loading',
+         city: 'Minneapolis',
+         weather: {
+             temperature: null,
+             humidity: null,
+             description: '',
+             icon: ''
+         },
+         errorMessage: '',
+         
+         async lookupWeather() {
+             const searchCity = this.city.trim();
+             if (!searchCity) return;
+             
+             this.state = 'loading';
+             
+             try {
+                 const response = await fetch('/weather/lookup', {
+                     method: 'POST',
+                     headers: {
+                         'Content-Type': 'application/json',
+                     },
+                     body: JSON.stringify({ city: searchCity })
+                 });
+                 
+                 const data = await response.json();
+                 
+                 if (response.ok) {
+                     this.weather = data;
+                     this.state = 'data';
+                 } else {
+                     throw new Error(data.error || 'Failed to fetch weather data');
+                 }
+             } catch (error) {
+                 this.errorMessage = error.message;
+                 this.state = 'error';
+             }
+         },
+         
+         get weatherIconClass() {
+             const iconMap = {
+                 '01d': 'sun',                    // Clear sky (code 0)
+                 '02d': 'cloud-sun',              // Mainly clear (code 1)
+                 '03d': 'cloud',                  // Partly cloudy (code 2)
+                 '04d': 'cloud',                  // Overcast (code 3)
+                 '09d': 'cloud-rain',             // Drizzle (codes 51,53,55)
+                 '10d': 'cloud-showers-heavy',    // Rain (codes 61,63,65)
+                 '11d': 'bolt',                   // Thunderstorm (codes 95,96,99)
+                 '13d': 'snowflake',              // Snow (codes 71,73,75,77)
+                 '50d': 'smog',                   // Fog (codes 45,48)
+                 // Night variations
+                 '01n': 'moon',                   // Clear night
+                 '02n': 'cloud-moon',             // Mainly clear night
+                 '03n': 'cloud',                  // Partly cloudy night
+                 '04n': 'cloud',                  // Overcast night
+                 '09n': 'cloud-rain',             // Drizzle night
+                 '10n': 'cloud-showers-heavy',    // Rain night
+                 '11n': 'bolt',                   // Thunderstorm night
+                 '13n': 'snowflake',              // Snow night
+                 '50n': 'smog'                    // Fog night
+             };
+             
+             const iconName = iconMap[this.weather.icon] || 'cloud';
+             return `weather-icon fas fa-${iconName}`;
+         },
+         
+         get formattedTemperature() {
+             return `${Math.round(this.weather.temperature)}°F`;
+         }
+     }" 
+     x-init="lookupWeather()">
     <div class="weather-search">
-        <input type="text" id="cityInput" class="form-control" placeholder="Enter city name..." value="Minneapolis">
-        <button id="searchBtn" class="btn btn-primary">
+        <input type="text" 
+               x-model="city" 
+               class="form-control" 
+               placeholder="Enter city name..." 
+               @keyup.enter="lookupWeather">
+        <button class="btn btn-primary" @click="lookupWeather">
             <i class="fas fa-search"></i>
         </button>
     </div>
 
-    <div id="weatherResult" class="weather-result">
-        <!-- Initial state / placeholder -->
-        <div class="weather-placeholder">
-            <i class="fas fa-cloud-sun-rain"></i>
-            <p>Enter a city to see the weather</p>
-        </div>
-
-        <!-- Loading state (hidden by default) -->
-        <div class="weather-loading" style="display: none;">
+    <div class="weather-result">
+        <!-- Loading state -->
+        <div class="weather-loading" x-show="state === 'loading'" style="display: none;">
             <div class="loading-spinner">
                 <i class="fas fa-circle-notch fa-spin"></i>
             </div>
             <p>Loading weather data...</p>
         </div>
 
-        <!-- Weather data (hidden by default) -->
-        <div class="weather-data" style="display: none;">
+        <!-- Weather data -->
+        <div class="weather-data" x-show="state === 'data'" style="display: none;">
             <div class="weather-main">
-                <i class="weather-icon"></i>
-                <div class="weather-temp"></div>
+                <i :class="weatherIconClass"></i>
+                <div class="weather-temp" x-text="formattedTemperature"></div>
             </div>
             <div class="weather-info">
-                <div class="weather-description"></div>
+                <div class="weather-description" x-text="weather.description"></div>
                 <div class="weather-details">
-                    <div>Humidity: <span class="humidity"></span>%</div>
+                    <div>Humidity: <span x-text="weather.humidity"></span>%</div>
                 </div>
             </div>
         </div>
 
-        <!-- Error state (hidden by default) -->
-        <div class="weather-error" style="display: none;">
+        <!-- Error state -->
+        <div class="weather-error" x-show="state === 'error'" style="display: none;">
             <i class="fas fa-exclamation-circle"></i>
-            <p>City not found. Please try again.</p>
+            <p x-text="errorMessage"></p>
         </div>
     </div>
 </div>
 {% endblock %}
 
-{% block additional_scripts %}
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const cityInput = document.getElementById('cityInput');
-    const searchBtn = document.getElementById('searchBtn');
-    const weatherResult = document.getElementById('weatherResult');
-    
-    function showLoading() {
-        weatherResult.querySelector('.weather-placeholder').style.display = 'none';
-        weatherResult.querySelector('.weather-loading').style.display = 'flex';
-        weatherResult.querySelector('.weather-data').style.display = 'none';
-        weatherResult.querySelector('.weather-error').style.display = 'none';
-    }
-    
-    function showError() {
-        weatherResult.querySelector('.weather-placeholder').style.display = 'none';
-        weatherResult.querySelector('.weather-loading').style.display = 'none';
-        weatherResult.querySelector('.weather-data').style.display = 'none';
-        weatherResult.querySelector('.weather-error').style.display = 'flex';
-    }
-    
-    function showWeather(data) {
-        const weatherData = weatherResult.querySelector('.weather-data');
-        weatherData.querySelector('.weather-icon').className = `weather-icon fas ${getWeatherIcon(data.icon)}`;
-        weatherData.querySelector('.weather-temp').textContent = `${data.temperature}°F`;
-        weatherData.querySelector('.weather-description').textContent = data.description;
-        weatherData.querySelector('.humidity').textContent = data.humidity;
-        weatherData.querySelector('.weather-details').innerHTML = `
-            <div>Humidity: <span class="humidity">${data.humidity}</span>%</div>
-        `;
-        
-        weatherResult.querySelector('.weather-placeholder').style.display = 'none';
-        weatherResult.querySelector('.weather-loading').style.display = 'none';
-        weatherResult.querySelector('.weather-error').style.display = 'none';
-        weatherData.style.display = 'block';
-    }
-    
-    function getWeatherIcon(code) {
-        const icons = {
-            '01d': 'fa-sun',
-            '01n': 'fa-moon',
-            '02d': 'fa-cloud-sun',
-            '02n': 'fa-cloud-moon',
-            '03d': 'fa-cloud',
-            '03n': 'fa-cloud',
-            '04d': 'fa-cloud',
-            '04n': 'fa-cloud',
-            '09d': 'fa-cloud-rain',
-            '09n': 'fa-cloud-rain',
-            '10d': 'fa-cloud-sun-rain',
-            '10n': 'fa-cloud-moon-rain',
-            '11d': 'fa-bolt',
-            '11n': 'fa-bolt',
-            '13d': 'fa-snowflake',
-            '13n': 'fa-snowflake',
-            '50d': 'fa-smog',
-            '50n': 'fa-smog'
-        };
-        return icons[code] || 'fa-cloud';
-    }
-    
-    function searchWeather() {
-        const city = cityInput.value.trim();
-        if (!city) return;
-        
-        console.log('Searching weather for:', city); // Debug line
-        showLoading();
-        
-        fetch('/weather/lookup', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ city: city })
-        })
-        .then(response => {
-            console.log('Response status:', response.status); // Debug line
-            return response.json();
-        })
-        .then(data => {
-            console.log('Weather data:', data); // Debug line
-            if (data.error) {
-                showError();
-            } else {
-                showWeather(data);
-            }
-        })
-        .catch(error => {
-            console.error('Weather fetch error:', error); // Debug line
-            showError();
-        });
-    }
-    
-    // Load Minneapolis weather on page load
-    setTimeout(searchWeather, 100); // Small delay to ensure DOM is ready
-    
-    searchBtn.addEventListener('click', searchWeather);
-    cityInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') searchWeather();
-    });
-});
-</script>
-{% endblock %} 
+{% block additional_scripts %}{% endblock %} 
