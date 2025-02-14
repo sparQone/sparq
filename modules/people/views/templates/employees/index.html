@@ -1,42 +1,54 @@
-{% extends "people-base.html" %}
+{% extends "base.html" %}
 
 {% block title %}{{ _("Employees") }}{% endblock %}
 
-{% block people_content %}
-<div class="content-card">
-    <!-- Header with actions -->
-    <div class="updates-header">
-        <h2>{{ _("Employees") }}</h2>
-        {% if current_user.is_admin %}
-        <a href="{{ url_for('people_bp.new_employee') }}" class="btn btn-primary">
-            <i class="fas fa-plus"></i> {{ _("Add Employee") }}
-        </a>
-        {% endif %}
-    </div>
+{% block app_class %}people-app{% endblock %}
 
-    <!-- Table content -->
-    <div class="table-responsive">
-        <table class="table table-hover">
-            <thead>
-                <tr>
-                    <th>{{ _("Name") }}</th>
-                    <th>{{ _("Email") }}</th>
-                    <th>{{ _("Position") }}</th>
-                    <th>{{ _("Department") }}</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for user in users %}
-                <tr style="cursor: pointer" 
-                    onclick="window.location.href='{{ url_for('people_bp.employee_detail', employee_id=user.employee_profile.id) }}'">
-                    <td>{{ user.first_name }} {{ user.last_name }}</td>
-                    <td>{{ user.email }}</td>
-                    <td>{{ user.employee_profile.position or _("N/A") }}</td>
-                    <td>{{ user.employee_profile.department or _("N/A") }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+{% block additional_styles %}
+<link rel="stylesheet" href="{{ url_for('people_bp.static', filename='css/people.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="d-flex">
+    {% include 'people_nav.html' with context %}
+    
+    <div class="content-wrapper flex-grow-1">
+        <div class="content-card">
+            <!-- Header with actions -->
+            <div class="updates-header">
+                <h2>{{ _("Employees") }}</h2>
+                {% if current_user.is_admin %}
+                <a href="{{ url_for('people_bp.new_employee') }}" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> {{ _("Add Employee") }}
+                </a>
+                {% endif %}
+            </div>
+
+            <!-- Table content -->
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>{{ _("Name") }}</th>
+                            <th>{{ _("Email") }}</th>
+                            <th>{{ _("Position") }}</th>
+                            <th>{{ _("Department") }}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in users %}
+                        <tr style="cursor: pointer" 
+                            onclick="window.location.href='{{ url_for('people_bp.employee_detail', employee_id=user.employee_profile.id) }}'">
+                            <td>{{ user.first_name }} {{ user.last_name }}</td>
+                            <td>{{ user.email }}</td>
+                            <td>{{ user.employee_profile.position or _("N/A") }}</td>
+                            <td>{{ user.employee_profile.department or _("N/A") }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %} 
