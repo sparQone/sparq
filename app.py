@@ -128,9 +128,12 @@ def create_app():
         g.installed_modules = current_app.config.get("INSTALLED_MODULES", {}).values()
         path = request.path.split("/")[1] or "core"
 
-        # Find current module from installed modules
+        # Find current module by matching the path against main_route
         current_module = next(
-            (m for m in g.installed_modules if m.get("name", "").lower() == path.lower()),
+            (
+                m for m in g.installed_modules 
+                if m.get("main_route", "").strip("/").lower() == path.lower()
+            ),
             next(
                 (m for m in g.installed_modules if m.get("name", "").lower() == "core"),
                 None,  # If neither path nor core module found, will be None

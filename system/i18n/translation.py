@@ -50,7 +50,7 @@ def preload_translations():
 def translate(text):
     """Custom translation function"""
     lang = g.get("lang", current_app.config.get("DEFAULT_LANGUAGE", "en"))
-    current_module = g.get("current_module", {}).get("name", "core")
+    current_module = g.get("current_module", {}).get("name", "core").lower()
 
     # If we're not in the core module, try the module-specific translation
     if current_module != "core":
@@ -91,7 +91,7 @@ def get_format_patterns(lang=None):
     patterns = TRANSLATIONS.get(lang, {}).get("core", {}).get("_meta", {}).copy()
 
     # Override with current module patterns if they exist, but only if the value is nonempty.
-    current_module = g.get("current_module", {}).get("name", "core")
+    current_module = g.get("current_module", {}).get("name", "core").lower()
     module_patterns = TRANSLATIONS.get(lang, {}).get(current_module, {}).get("_meta", {})
 
     for key, value in module_patterns.items():
