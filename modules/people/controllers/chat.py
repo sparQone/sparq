@@ -109,6 +109,10 @@ def get_channel_messages(channel_name):
 def create_channel():
     """Create a new channel"""
     try:
+        # Check if user is admin
+        if not current_user.is_admin:
+            return "Unauthorized: Only administrators can create channels", 403
+
         name = request.form.get("name")
         if not name:
             return "Channel name is required", 400
@@ -165,17 +169,29 @@ def create_chat():
         db.session.add(chat)
         db.session.flush()  # Get the chat ID without committing
         
-        # Create message states for all users except the author
+        # Create or update message states for all users except the author
         users = User.query.filter(User.id != current_user.id).all()
         for user in users:
-            state = ChatMessageState(
+            # Check if user already has a read state for this channel
+            existing_state = ChatMessageState.query.filter_by(
                 user_id=user.id,
-                message_id=chat.id,
                 channel_id=channel.id,
-                interaction_type=InteractionType.READ,
-                data={'last_read_message_id': None}  # None indicates unread
-            )
-            db.session.add(state)
+                interaction_type=InteractionType.READ
+            ).first()
+            
+            if existing_state:
+                # Don't modify existing state - let the user's current read status remain
+                continue
+            else:
+                # Create new state only if one doesn't exist
+                state = ChatMessageState(
+                    user_id=user.id,
+                    message_id=chat.id,
+                    channel_id=channel.id,
+                    interaction_type=InteractionType.READ,
+                    data={'last_read_message_id': None}  # None indicates unread
+                )
+                db.session.add(state)
         
         db.session.commit()
 
@@ -248,6 +264,64 @@ def delete_chat(chat_id):
         return "", 204
     except Exception as e:
         db.session.rollback()
+        return jsonify({"error": str(e)}), 400
+
+
+@blueprint.route("/chat/channels/<channel_name>/mark_read", methods=["POST"])
+@login_required
+def mark_channel_read(channel_name):
+    """Mark all messages in a channel as read for the current user"""
+    try:
+        channel = Channel.query.filter_by(name=channel_name).first()
+        if not channel:
+            return jsonify({"error": f"Channel {channel_name} not found"}), 404
+            
+        success = ChatMessageState.mark_channel_read(current_user.id, channel.id)
+        if success:
+            return "", 204
+        else:
+            return jsonify({"error": "Failed to mark channel as read"}), 500
+            
+    except Exception as e:
+        current_app.logger.error(f"Error marking channel as read: {str(e)}")
+        return jsonify({"error": str(e)}), 500
+
+
+@blueprint.route("/chat/channels/<channel_name>", methods=["DELETE"])
+@login_required
+def delete_channel(channel_name):
+    """Delete a channel and all its messages"""
+    try:
+        # Don't allow deleting the general channel
+        if channel_name == "general":
+            return jsonify({"error": "Cannot delete the general channel"}), 400
+
+        channel = Channel.query.filter_by(name=channel_name).first()
+        if not channel:
+            return jsonify({"error": f"Channel {channel_name} not found"}), 404
+
+        if not current_user.is_admin:
+            return jsonify({"error": "Unauthorized"}), 403
+
+        # Delete all message states for this channel
+        ChatMessageState.query.filter_by(channel_id=channel.id).delete()
+        
+        # Delete all messages in the channel
+        Chat.query.filter_by(channel_id=channel.id).delete()
+        
+        # Delete the channel
+        db.session.delete(channel)
+        db.session.commit()
+
+        # Emit WebSocket event for channel deletion
+        current_app.socketio.emit("channel_deleted", {
+            "name": channel_name
+        })
+
+        return "", 204
+    except Exception as e:
+        db.session.rollback()
+        current_app.logger.error(f"Error deleting channel: {str(e)}")
         return jsonify({"error": str(e)}), 400
 
 

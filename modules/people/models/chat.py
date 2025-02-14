@@ -159,8 +159,9 @@ class ChatMessageState(db.Model):
     updated_at = db.Column(db.DateTime, default=db.func.now(), onupdate=db.func.now())
 
     __table_args__ = (
-        db.UniqueConstraint('user_id', 'message_id', 'interaction_type', 
-                          name='unique_user_message_interaction'),
+        # Change unique constraint to be per user/channel/interaction_type
+        db.UniqueConstraint('user_id', 'channel_id', 'interaction_type', 
+                          name='unique_user_channel_interaction'),
     )
 
     # Relationships
@@ -172,23 +173,29 @@ class ChatMessageState(db.Model):
     def get_unread_count(cls, user_id, channel_id):
         """Get number of unread messages in a channel for a user"""
         try:
-            last_read = cls.query.filter_by(
+            # Get the latest read state for this user in this channel
+            read_state = cls.query.filter_by(
                 user_id=user_id,
                 channel_id=channel_id,
                 interaction_type=InteractionType.READ
-            ).order_by(cls.updated_at.desc()).first()
+            ).first()
             
-            if not last_read or not last_read.data:
+            if not read_state or not read_state.data:
+                # If no read state exists, all messages are unread
                 return Chat.query.filter_by(channel_id=channel_id).count()
             
-            last_read_id = last_read.data.get('last_read_message_id')
+            last_read_id = read_state.data.get('last_read_message_id')
             if last_read_id is None:
+                # If last_read_id is None, all messages are unread
                 return Chat.query.filter_by(channel_id=channel_id).count()
             
-            return Chat.query.filter(
+            # Count messages newer than the last read message
+            unread_count = Chat.query.filter(
                 Chat.channel_id == channel_id,
                 Chat.id > last_read_id
             ).count()
+            
+            return unread_count
         except Exception as e:
             current_app.logger.error(f"Error getting unread count: {str(e)}")
             current_app.logger.exception(e)
@@ -203,30 +210,29 @@ class ChatMessageState(db.Model):
                 .order_by(Chat.created_at.desc()).first()
             
             if not last_message:
-                return False
-
-            # Check if we already have a read state for this user/message/type
-            existing = cls.query.filter_by(
+                return True  # No messages to mark as read
+            
+            # Get or create read state for this user/channel
+            read_state = cls.query.filter_by(
                 user_id=user_id,
-                message_id=last_message.id,
                 channel_id=channel_id,
                 interaction_type=InteractionType.READ
             ).first()
-
-            if existing:
+            
+            if read_state:
                 # Update existing record
-                existing.data = {'last_read_message_id': last_message.id}
-                existing.updated_at = db.func.now()
+                read_state.data = {'last_read_message_id': last_message.id}
+                read_state.updated_at = db.func.now()
             else:
                 # Create new record
-                state = cls(
+                read_state = cls(
                     user_id=user_id,
-                    message_id=last_message.id,
+                    message_id=last_message.id,  # Use latest message ID
                     channel_id=channel_id,
                     interaction_type=InteractionType.READ,
                     data={'last_read_message_id': last_message.id}
                 )
-                db.session.add(state)
+                db.session.add(read_state)
 
             db.session.commit()
             return True
@@ -245,31 +251,34 @@ class ChatMessageState(db.Model):
             if not message:
                 return False
 
-            # Check if we already have a read state for this user/message/type
-            existing = cls.query.filter_by(
+            # Get or create read state for this user/channel
+            read_state = cls.query.filter_by(
                 user_id=user_id,
-                message_id=message_id,
                 channel_id=message.channel_id,
                 interaction_type=InteractionType.READ
             ).first()
 
-            if existing:
-                # Update existing record
-                existing.data = {'last_read_message_id': message_id}
-                existing.updated_at = db.func.now()
+            if read_state:
+                # Only update if this message is newer than the last read
+                current_last_read = read_state.data.get('last_read_message_id', 0)
+                if message_id > current_last_read:
+                    read_state.data = {'last_read_message_id': message_id}
+                    read_state.updated_at = db.func.now()
             else:
                 # Create new record
-                state = cls(
+                read_state = cls(
                     user_id=user_id,
                     message_id=message_id,
                     channel_id=message.channel_id,
                     interaction_type=InteractionType.READ,
                     data={'last_read_message_id': message_id}
                 )
-                db.session.add(state)
+                db.session.add(read_state)
 
+            db.session.commit()
             return True
         except Exception as e:
             current_app.logger.error(f"Error marking message as read: {str(e)}")
             current_app.logger.exception(e)
+            db.session.rollback()
             return False

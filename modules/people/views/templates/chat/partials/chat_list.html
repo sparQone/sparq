@@ -1,8 +1,7 @@
 {% if has_more %}
 <div class="load-more-container text-center mb-3">
     <button class="btn btn-outline-secondary btn-sm load-more-btn" 
-            data-oldest-id="{{ oldest_id }}"
-            onclick="loadMoreMessages('{{ channel_name }}', this)">
+            @click="loadMoreMessages('{{ oldest_id }}')">
         <i class="fas fa-arrow-up me-1"></i>{{ _('Load More Messages') }}
     </button>
 </div>
@@ -37,21 +36,20 @@
         </div>
         <div class="message-actions">
             <button class="btn btn-sm btn-link action-btn" 
-                    data-action="reply"
+                    @click="handleMessageAction('reply', {{ chat.id }})"
                     data-bs-toggle="tooltip" 
                     title="{{ _('Reply') }}">
                 <i class="fas fa-reply"></i>
             </button>
             <button class="btn btn-sm btn-link action-btn" 
-                    data-action="like"
+                    @click="handleMessageAction('like', {{ chat.id }})"
                     data-bs-toggle="tooltip" 
                     title="{{ _('Like') }}">
                 <i class="far fa-heart"></i>
             </button>
             {% if current_user.is_admin %}
             <button class="btn btn-sm btn-link action-btn" 
-                    data-action="pin"
-                    data-message-id="{{ chat.id }}"
+                    @click="handleMessageAction('pin', {{ chat.id }})"
                     data-bs-toggle="tooltip" 
                     title="{{ _('Pin') if not chat.pinned else _('Unpin') }}">
                 <i class="fas fa-thumbtack {% if chat.pinned %}text-warning{% endif %}"></i>
@@ -60,8 +58,7 @@
             {% endif %}
             {% if current_user.is_admin or chat.is_author %}
             <button class="btn btn-sm btn-link action-btn" 
-                    data-action="delete"
-                    data-message-id="{{ chat.id }}"
+                    @click.prevent="handleMessageAction('delete', {{ chat.id }})"
                     data-bs-toggle="tooltip" 
                     title="{{ _('Delete') }}">
                 <i class="fas fa-trash"></i>
@@ -71,25 +68,6 @@
     </div>
 </div>
 {% endfor %}
-
-<!-- Delete Confirmation Modal -->
-<div class="modal fade" id="deleteModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">{{ _('Delete Message') }}</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <p>{{ _('Are you sure you want to delete this message? This action cannot be undone.') }}</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ _('Cancel') }}</button>
-                <button type="button" class="btn btn-danger" id="confirmDeleteBtn">{{ _('Delete') }}</button>
-            </div>
-        </div>
-    </div>
-</div>
 
 {% if channel_description %}
 <script>

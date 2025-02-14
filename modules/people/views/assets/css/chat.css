@@ -689,16 +689,29 @@
     background: transparent;
 }
 
+.channel .dropdown {
+    position: relative;
+}
+
 .channel .dropdown-menu {
     background: #1f2937;
     border-color: #374151;
     box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    position: absolute;
+    right: 0;
+    min-width: 160px;
+    z-index: 1000;
+}
+
+.channel .dropdown-menu.show {
+    display: block;
 }
 
 .channel .dropdown-item {
     color: #d1d5db;
     font-size: 13px;
     padding: 6px 12px;
+    white-space: nowrap;
 }
 
 .channel .dropdown-item:hover {
