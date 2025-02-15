@@ -38,7 +38,7 @@ def chat():
         channels=channels,
         default_channel=default_channel,
         module_home="people_bp.people_home",
-        ChatMessageState=ChatMessageState
+        ChatMessageState=ChatMessageState,
     )
 
 
@@ -48,14 +48,14 @@ def get_channel_messages(channel_name):
     """Get messages for a specific channel"""
     try:
         # Get query parameters
-        before_id = request.args.get('before_id', type=int)
-        limit = request.args.get('limit', 10, type=int)
-        
+        before_id = request.args.get("before_id", type=int)
+        limit = request.args.get("limit", 10, type=int)
+
         # Get channel
         channel = Channel.query.filter_by(name=channel_name).first()
         if not channel:
             return f"Channel {channel_name} not found", 404
-            
+
         # Build query - First get total count and latest ID
         total_messages = channel.messages.count()
         if total_messages == 0:
@@ -67,9 +67,9 @@ def get_channel_messages(channel_name):
                 ChatMessageState=ChatMessageState,
                 has_more=False,
                 oldest_id=None,
-                channel_name=channel_name
+                channel_name=channel_name,
             )
-        
+
         # If before_id is not provided, get the latest messages
         if not before_id:
             messages = channel.messages.order_by(Chat.created_at.desc()).limit(limit).all()
@@ -78,16 +78,25 @@ def get_channel_messages(channel_name):
             oldest_id = messages[0].id
         else:
             # Get messages before the given ID
-            messages = channel.messages.filter(Chat.id < before_id).order_by(Chat.created_at.desc()).limit(limit).all()
+            messages = (
+                channel.messages.filter(Chat.id < before_id)
+                .order_by(Chat.created_at.desc())
+                .limit(limit)
+                .all()
+            )
             messages = messages[::-1]  # Reverse to show in ascending order
-            has_more = channel.messages.filter(Chat.id < messages[0].id).first() is not None if messages else False
+            has_more = (
+                channel.messages.filter(Chat.id < messages[0].id).first() is not None
+                if messages
+                else False
+            )
             oldest_id = messages[0].id if messages else None
-            
+
         # Mark messages as read for the current user
         for message in messages:
             ChatMessageState.mark_message_read(current_user.id, message.id)
         db.session.commit()
-        
+
         return render_template(
             "chat/partials/chat_list.html",
             chats=messages,
@@ -96,9 +105,9 @@ def get_channel_messages(channel_name):
             ChatMessageState=ChatMessageState,
             has_more=has_more,
             oldest_id=oldest_id,
-            channel_name=channel_name
+            channel_name=channel_name,
         )
-            
+
     except Exception as e:
         current_app.logger.error(f"Error getting channel messages: {str(e)}")
         return str(e), 500
@@ -133,10 +142,9 @@ def create_channel():
         db.session.commit()
 
         # Emit WebSocket event for new channel
-        current_app.socketio.emit("channel_created", {
-            "name": channel.name, 
-            "description": channel.description
-        })  # No 'to' needed since this should go to everyone
+        current_app.socketio.emit(
+            "channel_created", {"name": channel.name, "description": channel.description}
+        )  # No 'to' needed since this should go to everyone
 
         return jsonify({"id": channel.id, "name": channel.name})
     except Exception as e:
@@ -168,17 +176,15 @@ def create_chat():
         )
         db.session.add(chat)
         db.session.flush()  # Get the chat ID without committing
-        
+
         # Create or update message states for all users except the author
         users = User.query.filter(User.id != current_user.id).all()
         for user in users:
             # Check if user already has a read state for this channel
             existing_state = ChatMessageState.query.filter_by(
-                user_id=user.id,
-                channel_id=channel.id,
-                interaction_type=InteractionType.READ
+                user_id=user.id, channel_id=channel.id, interaction_type=InteractionType.READ
             ).first()
-            
+
             if existing_state:
                 # Don't modify existing state - let the user's current read status remain
                 continue
@@ -189,10 +195,10 @@ def create_chat():
                     message_id=chat.id,
                     channel_id=channel.id,
                     interaction_type=InteractionType.READ,
-                    data={'last_read_message_id': None}  # None indicates unread
+                    data={"last_read_message_id": None},  # None indicates unread
                 )
                 db.session.add(state)
-        
+
         db.session.commit()
 
         # Debug: Log message creation
@@ -200,19 +206,22 @@ def create_chat():
 
         # Emit two events:
         # 1. To users in the channel to refresh their messages
-        current_app.socketio.emit("chat_changed", {
-            "channel": channel_name,
-            "message_id": chat.id,
-            "author_id": current_user.id,
-            "type": "refresh"
-        }, to=channel_name)
+        current_app.socketio.emit(
+            "chat_changed",
+            {
+                "channel": channel_name,
+                "message_id": chat.id,
+                "author_id": current_user.id,
+                "type": "refresh",
+            },
+            to=channel_name,
+        )
 
         # 2. To all users to update unread badges
-        current_app.socketio.emit("message_created", {
-            "channel": channel_name,
-            "message_id": chat.id,
-            "author_id": current_user.id
-        })  # No 'to' means broadcast to everyone
+        current_app.socketio.emit(
+            "message_created",
+            {"channel": channel_name, "message_id": chat.id, "author_id": current_user.id},
+        )  # No 'to' means broadcast to everyone
 
         return ""
     except Exception as e:
@@ -231,12 +240,16 @@ def toggle_pin(chat_id):
             return jsonify({"error": "Unauthorized"}), 403
 
         is_pinned = chat.toggle_pin()
-        current_app.socketio.emit("chat_changed", {
-            "channel": chat.channel.name,
-            "message_id": chat.id,
-            "author_id": current_user.id,
-            "pinned": is_pinned
-        }, to=chat.channel.name)
+        current_app.socketio.emit(
+            "chat_changed",
+            {
+                "channel": chat.channel.name,
+                "message_id": chat.id,
+                "author_id": current_user.id,
+                "pinned": is_pinned,
+            },
+            to=chat.channel.name,
+        )
         return jsonify({"pinned": is_pinned})
     except Exception as e:
         return jsonify({"error": str(e)}), 400
@@ -252,10 +265,10 @@ def delete_chat(chat_id):
             return jsonify({"error": "Unauthorized"}), 403
 
         channel_name = chat.channel.name
-        
+
         # First delete all associated message states
         ChatMessageState.query.filter_by(message_id=chat_id).delete()
-        
+
         # Then delete the message
         db.session.delete(chat)
         db.session.commit()
@@ -275,13 +288,13 @@ def mark_channel_read(channel_name):
         channel = Channel.query.filter_by(name=channel_name).first()
         if not channel:
             return jsonify({"error": f"Channel {channel_name} not found"}), 404
-            
+
         success = ChatMessageState.mark_channel_read(current_user.id, channel.id)
         if success:
             return "", 204
         else:
             return jsonify({"error": "Failed to mark channel as read"}), 500
-            
+
     except Exception as e:
         current_app.logger.error(f"Error marking channel as read: {str(e)}")
         return jsonify({"error": str(e)}), 500
@@ -305,18 +318,16 @@ def delete_channel(channel_name):
 
         # Delete all message states for this channel
         ChatMessageState.query.filter_by(channel_id=channel.id).delete()
-        
+
         # Delete all messages in the channel
         Chat.query.filter_by(channel_id=channel.id).delete()
-        
+
         # Delete the channel
         db.session.delete(channel)
         db.session.commit()
 
         # Emit WebSocket event for channel deletion
-        current_app.socketio.emit("channel_deleted", {
-            "name": channel_name
-        })
+        current_app.socketio.emit("channel_deleted", {"name": channel_name})
 
         return "", 204
     except Exception as e:
