@@ -1,8 +1,8 @@
 -r requirements.txt
 
+mypy
 playwright
+pyfakefs
 pytest
 ruff
 types-requests
-pip-tools
-mypy

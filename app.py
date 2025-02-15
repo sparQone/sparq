@@ -131,7 +131,8 @@ def create_app():
         # Find current module by matching the path against main_route
         current_module = next(
             (
-                m for m in g.installed_modules 
+                m
+                for m in g.installed_modules
                 if m.get("main_route", "").strip("/").lower() == path.lower()
             ),
             next(

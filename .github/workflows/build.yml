@@ -18,3 +18,18 @@ jobs:
         uses: astral-sh/ruff-action@v3
         with:
           args: format --check
+
+      - name: Install Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Python dependencies
+        run: |
+          pip install -r requirements-dev.txt
+
+      - name: Run static type check (mypy)
+        shell: bash {0}
+        run: |
+          mkdir -p .mypy_cache
+          mypy .
