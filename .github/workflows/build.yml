@@ -18,3 +18,9 @@ jobs:
         uses: astral-sh/ruff-action@v3
         with:
           args: format --check
+
+      - name: Run static type check (mypy)
+        shell: bash {0}
+        run: |
+          mkdir -p .mypy_cache
+          mypy .
