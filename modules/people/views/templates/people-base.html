@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block app_class %}people-app{% endblock %}
+
+{% block additional_styles %}
+<link rel="stylesheet" href="{{ url_for('people_bp.static', filename='css/people.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="d-flex">
+    <!-- Side Navigation -->
+    {% include 'people_nav.html' with context %}
+    
+    <!-- Main Content Area -->
+    <div class="content-wrapper flex-grow-1">
+        {% block people_content %}{% endblock %}
+    </div>
+</div>
+{% endblock %} 
