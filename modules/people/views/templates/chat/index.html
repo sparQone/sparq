@@ -4,41 +4,56 @@
 
 {% block app_class %}people-app{% endblock %}
 
-{% block additional_styles %}
-<link rel="stylesheet" href="{{ url_for('people_bp.static', filename='css/people.css') }}">
-<link rel="stylesheet" href="{{ url_for('people_bp.static', filename='css/chat.css') }}">
-{% endblock %}
+<div class="content-card">
+    <div class="chat-container">
+        <div class="chat-layout">
+            <!-- Channel Sidebar -->
+            <aside class="chat-sidebar">
+                <div class="sidebar-header">
+                    <h3>{{ _('Channels') }}</h3>
+                    {% if current_user.is_admin %}
+                    <button class="btn btn-sm btn-link" data-bs-toggle="modal" data-bs-target="#newChannelModal">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                    {% endif %}
+                </div>
 
-{% block content %}
-<div class="d-flex">
-    {% include 'people_nav.html' with context %}
-    
-    <div class="content-wrapper flex-grow-1">
-        <!-- Add user ID meta tag -->
-        <meta name="user-id" content="{{ current_user.id }}">
-
-        <div class="content-card" x-data="chatApp" x-init="initializeApp" @delete-message.window="deleteMessage()">
-            <div class="chat-container">
-                <div class="chat-layout">
-                    <!-- Channel Sidebar -->
-                    <aside class="chat-sidebar">
-                        <div class="sidebar-header">
-                            <h3>{{ _('Channels') }}</h3>
-                            {% if current_user.is_admin %}
-                            <button class="btn btn-sm btn-link" data-bs-toggle="modal" data-bs-target="#newChannelModal">
-                                <i class="fas fa-plus"></i>
-                            </button>
-                            {% endif %}
+                <!-- Channel List -->
+                <div class="channel-list">
+                    {% for channel in channels %}
+                    <div class="channel {% if channel.name == default_channel.name %}active{% endif %}" 
+                         data-channel="{{ channel.name }}"
+                         data-description="{{ channel.description }}"
+                         onclick="switchChannel('{{ channel.name }}')">
+                        <div class="channel-content">
+                            <div class="channel-name">
+                                <span class="channel-prefix">#</span> {{ channel.name }}
+                            </div>
                         </div>
+                        <div class="channel-meta">
+                            {% if ChatMessageState is defined %}
+                                {% set unread_count = ChatMessageState.get_unread_count(current_user.id, channel.id) %}
+                                {% if unread_count > 0 %}
+                                <span class="unread-badge">{{ unread_count }}</span>
+                                {% endif %}
+                            {% endif %}
 
-                        <div class="channel-list">
-                            {% for channel in channels %}
-                            <div class="channel" 
-                                 :class="{ 'active': currentChannel === '{{ channel.name }}' }"
-                                 x-data="{ id: {{ channel.id }}, name: '{{ channel.name }}' }">
-                                <div class="channel-content" @click="switchChannel(name, id)">
-                                    <div class="channel-name">
-                                        <span class="channel-prefix">#</span> {{ channel.name }}
+                            <!-- Channel Actions -->
+                            {% if current_user.is_admin and channel.name not in ['general', 'announcements', 'events'] %}
+                                <div class="channel-actions" onclick="event.stopPropagation();">
+                                    <div class="dropdown">
+                                        <button class="btn btn-link btn-sm channel-options" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="fas fa-ellipsis-v"></i>
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-end">
+                                            <li><a class="dropdown-item" href="#" onclick="editChannel('{{ channel.name }}')">
+                                                <i class="fas fa-edit me-2"></i>{{ _('Edit Channel') }}
+                                            </a></li>
+                                            <li><hr class="dropdown-divider"></li>
+                                            <li><a class="dropdown-item text-danger" href="#" onclick="confirmDeleteChannel('{{ channel.name }}')">
+                                                <i class="fas fa-trash-alt me-2"></i>{{ _('Delete Channel') }}
+                                            </a></li>
+                                        </ul>
                                     </div>
                                 </div>
                                 <div class="channel-meta">
@@ -258,7 +273,8 @@
                 <h5 class="modal-title" id="newChannelModalLabel">{{ _('Create New Channel') }}</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form @submit.prevent="submit">
+            <form id="newChannelForm" hx-post="{{ url_for('people_bp.create_channel') }}" 
+                hx-redirect="/chat">
                 <div class="modal-body">
                     <div class="mb-3">
                         <label for="channel-name" class="form-label">{{ _('Channel Name') }}</label>
