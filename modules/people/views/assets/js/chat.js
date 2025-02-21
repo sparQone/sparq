@@ -27,8 +27,8 @@ document.addEventListener('DOMContentLoaded', function() {
         confirmDeleteChannelBtn.addEventListener('click', function() {
             if (!channelToDelete) return;
             
-            fetch(`/people/chat/channels/${channelToDelete}/delete`, {
-                method: 'POST',
+            fetch(`/people/chat/channels/${channelToDelete}`, {
+                method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json'
                 }
@@ -282,32 +282,29 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // New Channel Modal
-    const channelModal = document.getElementById('newChannelModal');
-    if (channelModal) {
-        const form = channelModal.querySelector('form');
-        form.addEventListener('submit', function(e) {
-            e.preventDefault();
+    document.addEventListener('htmx:afterRequest', function(evt) {
+        if (evt.detail.target.id === 'newChannelForm') {
+            // Get the modal element
+            const channelModal = document.getElementById('newChannelModal');
+            // Retrieve the Bootstrap modal instance
+            const modalInstance = bootstrap.Modal.getInstance(channelModal);
             
-            const formData = new FormData(this);
-            
-            fetch(this.action, {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                // Close modal and clear form
-                bootstrap.Modal.getInstance(channelModal).hide();
-                this.reset();
+            if (modalInstance) {
+                // Hide the modal
+                modalInstance.hide();
                 
-                // Switch to new channel
-                switchChannel(data.name);
-            })
-            .catch(error => {
-                alert('Error creating channel: ' + error);
-            });
-        });
-    }
+                // Listen for the modal hidden event before disposing
+                channelModal.addEventListener('hidden.bs.modal', function () {
+                    modalInstance.dispose();
+                }, { once: true });
+            }
+            
+            // Optionally, reset the form fields
+            evt.detail.target.reset();
+        }
+    });
+    
+    
     
     // Quick Message Form
     const quickMessageForm = document.getElementById('quickMessageForm');
@@ -364,13 +361,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     socket.on('channel_created', function(data) {
-        const channelList = document.querySelector('.channel-list');
-        const newChannel = document.createElement('div');
-        newChannel.className = 'channel';
-        newChannel.dataset.channel = data.name;
-        newChannel.onclick = () => switchChannel(data.name);
-        newChannel.innerHTML = `<span class="channel-prefix">#</span> ${data.name}`;
-        channelList.appendChild(newChannel);
+        console.log('Channel created:', data.name);
     });
     
     socket.on('status', function(data) {

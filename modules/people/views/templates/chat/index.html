@@ -18,11 +18,14 @@
             <aside class="chat-sidebar">
                 <div class="sidebar-header">
                     <h3>{{ _('Channels') }}</h3>
+                    {% if current_user.is_admin %}
                     <button class="btn btn-sm btn-link" data-bs-toggle="modal" data-bs-target="#newChannelModal">
                         <i class="fas fa-plus"></i>
                     </button>
+                    {% endif %}
                 </div>
 
+                <!-- Channel List -->
                 <div class="channel-list">
                     {% for channel in channels %}
                     <div class="channel {% if channel.name == default_channel.name %}active{% endif %}" 
@@ -41,7 +44,9 @@
                                 <span class="unread-badge">{{ unread_count }}</span>
                                 {% endif %}
                             {% endif %}
-                            {% if current_user.is_admin %}
+
+                            <!-- Channel Actions -->
+                            {% if current_user.is_admin and channel.name not in ['general', 'announcements', 'events'] %}
                                 <div class="channel-actions" onclick="event.stopPropagation();">
                                     <div class="dropdown">
                                         <button class="btn btn-link btn-sm channel-options" data-bs-toggle="dropdown" aria-expanded="false">
@@ -51,12 +56,10 @@
                                             <li><a class="dropdown-item" href="#" onclick="editChannel('{{ channel.name }}')">
                                                 <i class="fas fa-edit me-2"></i>{{ _('Edit Channel') }}
                                             </a></li>
-                                            {% if channel.name != 'general' %}
                                             <li><hr class="dropdown-divider"></li>
                                             <li><a class="dropdown-item text-danger" href="#" onclick="confirmDeleteChannel('{{ channel.name }}')">
                                                 <i class="fas fa-trash-alt me-2"></i>{{ _('Delete Channel') }}
                                             </a></li>
-                                            {% endif %}
                                         </ul>
                                     </div>
                                 </div>
@@ -156,7 +159,8 @@
                 <h5 class="modal-title" id="newChannelModalLabel">{{ _('Create New Channel') }}</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form id="newChannelForm" action="{{ url_for('people_bp.create_channel') }}" method="POST">
+            <form id="newChannelForm" hx-post="{{ url_for('people_bp.create_channel') }}" 
+                hx-redirect="/chat">
                 <div class="modal-body">
                     <div class="mb-3">
                         <label for="name" class="form-label">{{ _('Channel Name') }}</label>
