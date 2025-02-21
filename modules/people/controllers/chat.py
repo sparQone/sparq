@@ -254,7 +254,7 @@ def delete_chat(chat_id):
 @blueprint.route("/chat/channels/<channel_name>", methods=["DELETE"])
 @login_required
 def delete_channel(channel_name):
-    """Delete a channel by name"""
+    """Delete a channel and all its messages and message states"""
     try:
         channel = Channel.query.filter_by(name=channel_name).first()
         if not channel:
@@ -264,6 +264,13 @@ def delete_channel(channel_name):
         if not current_user.is_admin:
             return jsonify({"error": "Unauthorized"}), 403
 
+        # Delete all message states for this channel
+        ChatMessageState.query.filter_by(channel_id=channel.id).delete()
+
+        # Delete all messages in the channel
+        Chat.query.filter_by(channel_id=channel.id).delete()
+
+        # Delete the channel
         db.session.delete(channel)
         db.session.commit()
 
