@@ -115,7 +115,7 @@ def create_channel():
 
         name = request.form.get("name")
         if not name:
-            return "Channel name is required", 400
+            return jsonify({"error": "Channel name is required"}), 400
 
         name = name.lower().replace(" ", "-")
         description = request.form.get("description")
@@ -124,7 +124,7 @@ def create_channel():
         # Check if channel already exists
         existing = Channel.query.filter_by(name=name).first()
         if existing:
-            return "Channel already exists", 400
+            return jsonify({"error": "Channel already exists"}), 400
 
         channel = Channel(
             name=name, description=description, created_by_id=current_user.id, is_private=is_private
@@ -142,7 +142,7 @@ def create_channel():
     except Exception as e:
         db.session.rollback()
         current_app.logger.error(f"Error creating channel: {str(e)}")
-        return str(e), 400
+        return jsonify({"error": str(e)}), 400
 
 
 @blueprint.route("/chat/create", methods=["POST"])
@@ -264,6 +264,32 @@ def delete_chat(chat_id):
         return "", 204
     except Exception as e:
         db.session.rollback()
+        return jsonify({"error": str(e)}), 400
+
+
+@blueprint.route("/chat/channels/<channel_name>", methods=["DELETE"])
+@login_required
+def delete_channel(channel_name):
+    """Delete a channel by name"""
+    try:
+        channel = Channel.query.filter_by(name=channel_name).first()
+        if not channel:
+            return jsonify({"error": "Channel not found"}), 404
+
+        # Ensure only admins can delete the channel
+        if not current_user.is_admin:
+            return jsonify({"error": "Unauthorized"}), 403
+
+        db.session.delete(channel)
+        db.session.commit()
+
+        # Emit WebSocket event for channel deletion
+        current_app.socketio.emit("channel_deleted", {"name": channel_name})
+
+        return jsonify({"success": True})
+    except Exception as e:
+        db.session.rollback()
+        current_app.logger.error(f"Error deleting channel: {str(e)}")
         return jsonify({"error": str(e)}), 400
 
 
