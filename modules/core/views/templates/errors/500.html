@@ -5,8 +5,9 @@
 {% block app_class %}error-page{% endblock %}
 
 {% block content %}
-<div class="error-container">
-    <div class="error-content">
+<div class="error-container d-flex align-items-center justify-content-center p-4" style="min-height: calc(100vh - 60px);">
+    <div>
+        <p class="text-secondary mb-4">
         <h1>{{ _("Oops! Something went wrong") }}</h1>
         <p>{{ error }}</p>
         <a href="{{ url_for(module_home) }}" class="btn btn-primary">

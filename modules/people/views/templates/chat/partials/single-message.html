@@ -1,0 +1,93 @@
+<div class="p-2 rounded message position-relative" 
+     id="message-{{ chat.id }}" 
+     data-message-id="{{ chat.id }}"
+     data-content="{{ chat.content|escape }}"
+     data-author="{{ chat.author.first_name|escape }} {{ chat.author.last_name|escape if chat.author else 'Unknown User' }}"
+     data-pinned="{{ 'true' if chat.pinned else 'false' }}"
+     style="transition: background-color 0.15s ease-in-out; {% if chat.pinned %}background-color: #fff8e6;{% endif %}">
+    <input type="hidden" name="message_id" value="{{ chat.id }}">
+    <div class="d-flex gap-2 align-items-center">
+        <div class="rounded message-avatar" 
+             style="width: 40px; height: 40px; background-color: {{ chat.author.avatar_color if chat.author else '#ccc' }}; flex-shrink: 0;">
+            <i class="fas fa-user text-white d-flex align-items-center justify-content-center h-100"></i>
+        </div>
+        <div class="d-flex flex-column flex-grow-1">
+            <div class="d-flex gap-2 align-items-center">
+                <span class="fw-semibold">
+                    {% if chat.author %}
+                        {{ chat.author.first_name }} {{ chat.author.last_name }}
+                    {% else %}
+                        Unknown User
+                    {% endif %}
+                </span>
+                <span class="text-muted small" data-bs-toggle="tooltip" title="{{ chat.created_at_formatted }}">
+                    {{ chat.created_at|timeago }}
+                </span>
+                {% if chat.pinned %}
+                <span class="badge bg-warning-subtle text-warning border border-warning-subtle rounded-pill d-flex align-items-center gap-1">
+                    <i class="fas fa-thumbtack small"></i>
+                    <span class="small">{{ _('Pinned') }}</span>
+                </span>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="ps-5 pt-1">{{ chat.formatted_content|safe }}</div>
+    <div class="d-flex gap-3 ps-5 mt-2 message-actions position-absolute bottom-0 end-0 p-2" 
+         style="transition: opacity 0.15s ease-in-out; opacity: 0;">
+        <button class="btn btn-link text-secondary p-0 action-btn" 
+                data-action="reply" 
+                data-bs-toggle="tooltip" 
+                title="{{ _('Reply') }}">
+            <i class="fas fa-reply"></i>
+        </button>
+        <button class="btn btn-link text-secondary p-0 action-btn" 
+                data-action="like" 
+                data-bs-toggle="tooltip" 
+                title="{{ _('Like') }}">
+            <i class="far fa-heart"></i>
+        </button>
+        {% if current_user.is_admin %}
+        <button class="btn btn-link text-secondary p-0" 
+                hx-post="/people/chat/messages/{{ chat.id }}/pin"
+                hx-target="#message-{{ chat.id }}"
+                hx-swap="outerHTML"
+                hx-trigger="click"
+                hx-indicator=".htmx-indicator">
+            <i class="fas fa-thumbtack {% if chat.pinned %}text-warning{% endif %}"></i>
+            <div class="htmx-indicator">
+                <i class="fas fa-spinner fa-spin"></i>
+            </div>
+        </button>
+        {% endif %}
+        {% if current_user.is_admin or chat.is_author %}
+        <button class="btn btn-link text-secondary p-0 action-btn" 
+                data-action="delete" 
+                data-message-id="{{ chat.id }}" 
+                data-bs-toggle="tooltip" 
+                title="{{ _('Delete') }}"
+                onclick="confirmDelete('{{ chat.id }}')">
+            <i class="fas fa-trash"></i>
+        </button>
+        {% endif %}
+    </div>
+</div>
+
+{% if total_pin_count is defined %}
+<script>
+    // Dispatch custom event with pin count
+    document.dispatchEvent(new CustomEvent('updatePinCount', {
+        detail: {
+            count: {{ total_pin_count }}
+        }
+    }));
+</script>
+{% endif %}
+
+<script>
+document.body.addEventListener('htmx:afterSwap', function(evt) {
+    // Reinitialize tooltips after HTMX content swaps
+    const tooltips = evt.detail.target.querySelectorAll('[data-bs-toggle="tooltip"]');
+    tooltips.forEach(el => new bootstrap.Tooltip(el));
+});
+</script> 

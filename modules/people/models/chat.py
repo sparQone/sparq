@@ -13,6 +13,7 @@
 
 import re
 from enum import Enum
+from datetime import datetime
 
 from flask import current_app
 from flask_login import current_user
@@ -195,45 +196,104 @@ class ChatMessageState(db.Model):
             return 0  # Return 0 on error to avoid breaking the UI
 
     @classmethod
-    def mark_channel_read(cls, user_id, channel_id):
-        """Mark all messages in a channel as read"""
+    def has_unread(cls, user_id, channel_id):
+        """Check if a channel has any unread messages for a user"""
         try:
-            # Get the latest message in the channel
-            last_message = Chat.query.filter_by(channel_id=channel_id)\
-                .order_by(Chat.created_at.desc()).first()
+            channel = Channel.query.get(channel_id)
+            current_app.logger.debug(f"Checking unread status for channel {channel.name} (ID: {channel_id}) for user {user_id}")
             
-            if not last_message:
+            # First check if there are any messages in the channel
+            message_count = Chat.query.filter_by(channel_id=channel_id).count()
+            current_app.logger.debug(f"Channel {channel.name} has {message_count} messages")
+            
+            if message_count == 0:
+                current_app.logger.debug(f"Channel {channel.name} has no messages, returning False")
                 return False
-
-            # Check if we already have a read state for this user/message/type
-            existing = cls.query.filter_by(
+                
+            # Get the latest message in the channel
+            latest_message = Chat.query.filter_by(channel_id=channel_id).order_by(Chat.id.desc()).first()
+            current_app.logger.debug(f"Latest message ID in channel {channel.name}: {latest_message.id}")
+            
+            # Get the last read state for this user and channel
+            last_read = cls.query.filter_by(
                 user_id=user_id,
-                message_id=last_message.id,
+                channel_id=channel_id,
+                interaction_type=InteractionType.READ
+            ).order_by(cls.updated_at.desc()).first()
+            
+            # If no read state exists, the channel has unread messages
+            if not last_read:
+                current_app.logger.debug(f"No read state exists for channel {channel.name}, returning True")
+                return True
+                
+            if not last_read.data:
+                current_app.logger.debug(f"Read state exists but has no data for channel {channel.name}, returning True")
+                return True
+            
+            # Get the ID of the last read message
+            last_read_id = last_read.data.get('last_read_message_id')
+            current_app.logger.debug(f"Last read message ID for channel {channel.name}: {last_read_id}")
+            
+            if last_read_id is None:
+                current_app.logger.debug(f"Last read message ID is None for channel {channel.name}, returning True")
+                return True
+            
+            # Check if the latest message is newer than the last read message
+            result = latest_message.id > last_read_id
+            current_app.logger.debug(f"Channel {channel.name} has unread messages: {result} (latest: {latest_message.id}, last read: {last_read_id})")
+            return result
+        except Exception as e:
+            current_app.logger.error(f"Error checking for unread messages: {str(e)}")
+            current_app.logger.exception(e)
+            return False  # Return False on error to avoid breaking the UI
+
+    @classmethod
+    def mark_channel_read(cls, user_id, channel_id):
+        """Mark all messages in a channel as read for a user"""
+        try:
+            channel = Channel.query.get(channel_id)
+            current_app.logger.debug(f"Marking channel {channel.name} (ID: {channel_id}) as read for user {user_id}")
+            
+            # Get the latest message in the channel
+            latest_message = Chat.query.filter_by(channel_id=channel_id).order_by(Chat.id.desc()).first()
+            if not latest_message:
+                current_app.logger.debug(f"No messages in channel {channel.name}, nothing to mark as read")
+                return True  # No messages to mark as read
+                
+            current_app.logger.debug(f"Latest message ID in channel {channel.name}: {latest_message.id}")
+                
+            # Get or create a read state for this user and channel
+            read_state = cls.query.filter_by(
+                user_id=user_id,
                 channel_id=channel_id,
                 interaction_type=InteractionType.READ
             ).first()
-
-            if existing:
-                # Update existing record
-                existing.data = {'last_read_message_id': last_message.id}
-                existing.updated_at = db.func.now()
-            else:
-                # Create new record
-                state = cls(
+            
+            if not read_state:
+                current_app.logger.debug(f"Creating new read state for channel {channel.name}")
+                read_state = cls(
                     user_id=user_id,
-                    message_id=last_message.id,
                     channel_id=channel_id,
+                    message_id=latest_message.id,  # Associate with the latest message
                     interaction_type=InteractionType.READ,
-                    data={'last_read_message_id': last_message.id}
+                    data={'last_read_message_id': latest_message.id}
                 )
-                db.session.add(state)
-
+                db.session.add(read_state)
+            else:
+                current_app.logger.debug(f"Updating existing read state for channel {channel.name}")
+                current_app.logger.debug(f"Previous last read message ID: {read_state.data.get('last_read_message_id')}")
+                # Don't change the message_id field to avoid unique constraint violation
+                # read_state.message_id = latest_message.id  <- This line was causing the issue
+                read_state.data = {'last_read_message_id': latest_message.id}
+                read_state.updated_at = datetime.utcnow()
+                
             db.session.commit()
+            current_app.logger.debug(f"Successfully marked channel {channel.name} as read")
             return True
         except Exception as e:
+            db.session.rollback()
             current_app.logger.error(f"Error marking channel as read: {str(e)}")
             current_app.logger.exception(e)
-            db.session.rollback()
             return False
 
     @classmethod

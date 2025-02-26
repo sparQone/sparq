@@ -21,12 +21,14 @@ class EmployeeNickname(db.Model):
     __tablename__ = "employee_nickname"
 
     id = db.Column(db.Integer, primary_key=True)
-    employee_id = db.Column(db.Integer, db.ForeignKey("employee.id"), unique=True, nullable=False)
+    employee_id = db.Column(db.Integer, db.ForeignKey("employee.id"), 
+        unique=True, nullable=False)
     nickname = db.Column(db.String(50))
     created_at = db.Column(db.DateTime, default=db.func.now())
 
     # Relationship back to employee
-    employee = db.relationship("Employee", backref=db.backref("nickname_data", uselist=False))
+    employee = db.relationship("Employee", backref=db.backref("nickname_data", 
+                                                              uselist=False))
 
     @classmethod
     def create_or_update(cls, employee, nickname):

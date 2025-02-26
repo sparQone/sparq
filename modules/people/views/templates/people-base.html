@@ -7,37 +7,11 @@
 {% endblock %}
 
 {% block content %}
-<div class="d-flex">
     <!-- Side Navigation -->
     {% include 'people_nav.html' with context %}
     
     <!-- Main Content Area -->
-    <div class="content-wrapper flex-grow-1">
+    <div class="content-wrapper d-flex flex-fill px-3">
         {% block people_content %}{% endblock %}
     </div>
-</div>
-
-<!-- Language Selection Modal -->
-<div class="modal fade" id="languageModal" tabindex="-1" aria-labelledby="languageModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="languageModalLabel">{{ _("Select Language") }}</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div class="list-group">
-                    <a href="{{ url_for('core_bp.update_language', lang='en') }}" 
-                       class="list-group-item list-group-item-action {% if session.get('lang') == 'en' %}active{% endif %}">
-                        English
-                    </a>
-                    <a href="{{ url_for('core_bp.update_language', lang='es') }}" 
-                       class="list-group-item list-group-item-action {% if session.get('lang') == 'es' %}active{% endif %}">
-                        Español
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 {% endblock %} 

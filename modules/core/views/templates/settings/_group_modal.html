@@ -4,14 +4,14 @@
     <form hx-post="{{ url }}"
           hx-target="body"
           hx-swap="none">
-        <div class="modal-header">
+        <div class="d-flex justify-content-between align-items-center mb-3">
             <h5>{{ _(title) }}</h5>
             <button type="button" 
                     hx-get="{{ url_for('core_bp.clear_modal') }}"
                     hx-target="#modals"
                     hx-swap="innerHTML"
                     tabindex="0"
-                    class="close-btn">
+                    class="btn btn-link p-0 fs-3" style="cursor: pointer;">
                 <i class="fas fa-times"></i>
             </button>
         </div>

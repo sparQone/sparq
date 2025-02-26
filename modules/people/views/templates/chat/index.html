@@ -2,144 +2,269 @@
 
 {% block additional_styles %}
 {{ super() }}
-<link rel="stylesheet" href="{{ url_for('people_bp.static', filename='css/chat.css') }}">
+<style>
+/* Only keeping custom styles that can't be replaced with Bootstrap utilities */
+.chat-sidebar {
+    width: 240px;
+    background: rgb(77, 86, 103);
+}
+
+.channel-prefix {
+    opacity: 0.7;
+}
+
+.message-avatar i {
+    opacity: 0.9;
+    font-size: 28px;
+}
+
+/* Hover states and transitions */
+.channel:hover { 
+        background-color: rgba(255, 255, 255, 0.1); 
+        cursor: pointer;
+}
+.channel.active { 
+    background-color: rgba(255, 255, 255, 0.15); 
+    color: #fff;
+}
+
+/* Channel actions visibility */
+.channel:hover .channel-actions {
+    opacity: 1 !important;
+}
+
+/* Dropdown menu in dark sidebar */
+.chat-sidebar .dropdown-menu {
+    background-color: #fff;
+    border: none;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+.chat-sidebar .dropdown-item {
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+}
+
+.chat-sidebar .dropdown-item:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+/* Unread channel indicator */
+.channel .text-truncate.fw-bold {
+    opacity: 1 !important;
+    color: white;
+}
+
+/* Message input styles */
+.message-form {
+    border-color: #E2E8F0 !important;
+}
+
+
+</style>
 {% endblock %}
 
 {% block title %}{{ _('Company Chat') }}{% endblock %}
 
 {% block people_content %}
-<!-- Add user ID meta tag -->
 <meta name="user-id" content="{{ current_user.id }}">
 
-<div class="content-card">
-    <div class="chat-container">
-        <div class="chat-layout">
+<div class="d-flex flex-column flex-grow-1 overflow-hidden rounded-3">
+    
+        <div class="d-flex flex-grow-1 min-h-0">
             <!-- Channel Sidebar -->
-            <aside class="chat-sidebar">
-                <div class="sidebar-header">
-                    <h3>{{ _('Channels') }}</h3>
+            <aside class="chat-sidebar d-flex flex-column flex-shrink-0">
+                <div class="d-flex justify-content-between align-items-center p-3">
+                    <h3 class="m-0 fs-6 fw-semibold text-white opacity-90">{{ _('Channels') }}</h3>
                     {% if current_user.is_admin %}
-                    <button class="btn btn-sm btn-link" data-bs-toggle="modal" data-bs-target="#newChannelModal">
+                    <button class="btn btn-link btn-sm text-white opacity-75 hover:opacity-100 p-0" 
+                            data-bs-toggle="modal" 
+                            data-bs-target="#newChannelModal">
                         <i class="fas fa-plus"></i>
                     </button>
                     {% endif %}
                 </div>
 
                 <!-- Channel List -->
-                <div class="channel-list">
+                <div class="channel-list flex-grow-1 overflow-auto py-2">
                     {% for channel in channels %}
-                    <div class="channel {% if channel.name == default_channel.name %}active{% endif %}" 
+                    <div class="channel d-flex align-items-center justify-content-between p-2 mx-2 rounded-1 cursor-pointer text-white {% if channel.name == default_channel.name %}active{% endif %}"
                          data-channel="{{ channel.name }}"
                          data-description="{{ channel.description }}"
                          onclick="switchChannel('{{ channel.name }}')">
-                        <div class="channel-content">
-                            <div class="channel-name">
+                        <div class="d-flex align-items-center flex-grow-1 min-w-0">
+                            <div class="text-truncate {% if ChatMessageState.has_unread(current_user.id, channel.id) %}fw-bold opacity-100{% else %}opacity-75{% endif %}" id="channel-name-{{ channel.name }}">
                                 <span class="channel-prefix">#</span> {{ channel.name }}
                             </div>
                         </div>
-                        <div class="channel-meta">
-                            {% if ChatMessageState is defined %}
-                                {% set unread_count = ChatMessageState.get_unread_count(current_user.id, channel.id) %}
-                                {% if unread_count > 0 %}
-                                <span class="unread-badge">{{ unread_count }}</span>
-                                {% endif %}
-                            {% endif %}
-
-                            <!-- Channel Actions -->
-                            {% if current_user.is_admin and channel.name not in ['general', 'announcements', 'events'] %}
-                                <div class="channel-actions" onclick="event.stopPropagation();">
-                                    <div class="dropdown">
-                                        <button class="btn btn-link btn-sm channel-options" data-bs-toggle="dropdown" aria-expanded="false">
-                                            <i class="fas fa-ellipsis-v"></i>
-                                        </button>
-                                        <ul class="dropdown-menu dropdown-menu-end">
-                                            <li><a class="dropdown-item" href="#" onclick="editChannel('{{ channel.name }}')">
-                                                <i class="fas fa-edit me-2"></i>{{ _('Edit Channel') }}
-                                            </a></li>
-                                            <li><hr class="dropdown-divider"></li>
-                                            <li><a class="dropdown-item text-danger" href="#" onclick="confirmDeleteChannel('{{ channel.name }}')">
-                                                <i class="fas fa-trash-alt me-2"></i>{{ _('Delete Channel') }}
-                                            </a></li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            {% endif %}
+                        {% if current_user.is_admin and channel.name not in ['general', 'announcements', 'events'] %}
+                        <div class="dropdown channel-actions opacity-0" onclick="event.stopPropagation();">
+                            <button class="btn btn-link btn-sm text-white p-0 opacity-75" 
+                                    data-bs-toggle="dropdown"
+                                    aria-expanded="false"
+                                    title="{{ _('Channel options') }}">
+                                <i class="fas fa-ellipsis-v"></i>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li>
+                                    <a class="dropdown-item" href="#" 
+                                       data-channel-name="{{ channel.name }}"
+                                       data-channel-description="{{ channel.description }}"
+                                       onclick="event.stopPropagation(); editChannel(this.getAttribute('data-channel-name'), this.getAttribute('data-channel-description'));">
+                                        <i class="fas fa-edit me-2"></i> {{ _('Edit channel') }}
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item text-danger" href="#" 
+                                       onclick="event.stopPropagation(); confirmDeleteChannel('{{ channel.name }}');">
+                                        <i class="fas fa-trash me-2"></i> {{ _('Delete channel') }}
+                                    </a>
+                                </li>
+                            </ul>
                         </div>
+                        {% endif %}
                     </div>
                     {% endfor %}
                 </div>
             </aside>
 
             <!-- Main Chat Area -->
-            <main class="chat-main">
-                <header class="chat-header">
-                    <div class="chat-header-top">
-                        <div class="chat-header-info">
-                            <h2><span class="channel-prefix">#</span><span id="current-channel">{{ default_channel.name }}</span></h2>
+            <main class="d-flex flex-column flex-grow-1 min-w-0 bg-white ">
+                <header class="flex-shrink-0 p-3 border-bottom border-light">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="d-flex flex-column">
+                            <h2 class="m-0 fs-5 fw-semibold text-dark">
+                                <span class="channel-prefix text-muted">#</span>
+                                <span id="current-channel">{{ default_channel.name }}</span>
+                            </h2>
+                            <p class="text-muted mb-0 mt-1 fs-sm" id="channel-description">{{ default_channel.description }}</p>
                         </div>
-                        <div class="chat-header-actions">
-                            <button class="btn btn-link pin-filter" id="pinFilter">
-                                <i class="fas fa-thumbtack"></i> {{ _('Pins') }}
-                                <span class="pin-count" id="pinCount"></span>
-                            </button>
-                            <div class="search-box">
-                                <i class="fas fa-search"></i>
-                                <input type="text" id="chatSearch" placeholder="{{ _('Search messages...') }}" class="form-control">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="pin-filter-wrapper">
+                                <button class="btn btn-link text-decoration-none text-muted pin-filter d-flex align-items-center gap-1" 
+                                        style="transition: all 0.15s ease-in-out;"
+                                        hx-get="/people/chat/channels/{{ default_channel.name }}/messages"
+                                        hx-target=".chat-messages"
+                                        hx-swap="innerHTML"
+                                        hx-trigger="pinRequest"
+                                        onclick="
+                                            this.addEventListener('htmx:configRequest', function(evt) {
+                                                if (this.classList.contains('text-primary')) {
+                                                    evt.detail.path = '/people/chat/channels/{{ default_channel.name }}/messages?pinned_only=true';
+                                                } else {
+                                                    evt.detail.path = '/people/chat/channels/{{ default_channel.name }}/messages';
+                                                }
+                                            }, { once: true });
+                                            if (!this.classList.contains('text-primary')) {
+                                                this.classList.add('text-primary');
+                                            } else {
+                                                this.classList.remove('text-primary');
+                                            }
+                                            htmx.trigger(this, 'pinRequest');
+                                            return false;">
+                                    <i class="fas fa-thumbtack"></i> 
+                                    <span>{{ _('Pins') }}</span>
+                                    <span class="badge bg-primary rounded-pill ms-1" id="pinCount"></span>
+                                </button>
+                            </div>
+                            <div class="position-relative">
+                                <input type="text" 
+                                       id="chatSearch" 
+                                       name="search"
+                                       placeholder="{{ _('Search messages...') }}" 
+                                       class="form-control form-control-sm bg-light border-0 ps-4"
+                                       hx-post="/people/chat/channels/{{ default_channel.name }}/search"
+                                       hx-trigger="input changed delay:500ms, search"
+                                       hx-target=".chat-messages"
+                                       hx-indicator=".search-indicator"
+                                       hx-preserve="true">
+                                <i class="fas fa-search position-absolute start-2 top-50 translate-middle-y text-muted opacity-50"></i>
+                                <div class="search-indicator position-absolute end-2 top-50 translate-middle-y" style="display: none;">
+                                    <i class="fas fa-spinner fa-spin text-muted"></i>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <p class="channel-description" id="channel-description">{{ default_channel.description }}</p>
                 </header>
 
-                <div class="chat-messages-container">
-                    <div class="chat-messages">
-                        <div class="loading-indicator text-center p-4">
-                            <i class="fas fa-spinner fa-spin"></i> Loading messages...
+                <div class="flex-grow-1 overflow-hidden position-relative bg-white">
+                    <div class="chat-messages position-absolute top-0 start-0 end-0 bottom-0 overflow-auto p-3">
+                        <!-- Message example -->
+                        <div class="chat-message p-2 rounded"
+                             data-content="zzzzz"
+                             data-author="Sarah Baker">
+                            <div class="d-flex gap-2 align-items-center">
+                                <div class="rounded" style="width: 40px; height: 40px; background-color: #7C3AED; flex-shrink: 0;">
+                                    <i class="fas fa-user text-white d-flex align-items-center justify-content-center h-100"></i>
+                                </div>
+                                <span class="fw-semibold">Sarah Baker</span>
+                                <span class="text-muted small">26 minutes ago</span>
+                            </div>
+                            <div class="ps-5 pt-1">zzzzz</div>
+                        </div>
+                        <!-- Loading indicator -->
+                        <div class="text-center p-4 text-muted">
+                            <i class="fas fa-spinner fa-spin me-2"></i> Loading messages...
                         </div>
                     </div>
                 </div>
 
-                <footer class="message-input-area">
-                    <form class="message-form" id="quickMessageForm">
-                        <div class="format-toolbar">
-                            <button type="button" class="btn btn-sm btn-link" title="{{ _('Bold') }}">
+                <!-- Message Input Area -->
+                <footer class="flex-shrink-0 px-3 pt-2">
+                    <form class="bg-white border rounded-3" id="quickMessageForm" style="--bs-border-color: #E2E8F0">
+                        <!-- Formatting Toolbar -->
+                        <div class="d-flex align-items-center gap-2 p-2 border-bottom bg-light" style="--bs-border-color: #E2E8F0">
+                            <button type="button" class="btn btn-link btn-sm text-muted p-1 text-decoration-none opacity-75 hover-opacity-100" title="{{ _('Bold') }}">
                                 <i class="fas fa-bold"></i>
                             </button>
-                            <button type="button" class="btn btn-sm btn-link" title="{{ _('Italic') }}">
+                            <button type="button" class="btn btn-link btn-sm text-muted p-1 text-decoration-none opacity-75 hover-opacity-100" title="{{ _('Italic') }}">
                                 <i class="fas fa-italic"></i>
                             </button>
-                            <button type="button" class="btn btn-sm btn-link" title="{{ _('Strikethrough') }}">
+                            <button type="button" class="btn btn-link btn-sm text-muted p-1 text-decoration-none opacity-75 hover-opacity-100" title="{{ _('Strikethrough') }}">
                                 <i class="fas fa-strikethrough"></i>
                             </button>
-                            <button type="button" class="btn btn-sm btn-link" title="{{ _('Code') }}">
+                            <button type="button" class="btn btn-link btn-sm text-muted p-1 text-decoration-none opacity-75 hover-opacity-100" title="{{ _('Code') }}">
                                 <i class="fas fa-code"></i>
                             </button>
-                            <button type="button" class="btn btn-sm btn-link" title="{{ _('Link') }}">
+                            <button type="button" class="btn btn-link btn-sm text-muted p-1 text-decoration-none opacity-75 hover-opacity-100" title="{{ _('Link') }}">
                                 <i class="fas fa-link"></i>
                             </button>
-                            <button type="button" class="btn btn-sm btn-link" title="{{ _('List') }}">
-                                <i class="fas fa-list-ul"></i>
+                            <button type="button" class="btn btn-link btn-sm text-muted p-1 text-decoration-none opacity-75 hover-opacity-100" title="{{ _('List') }}">
+                                <i class="fas fa-list"></i>
                             </button>
                         </div>
                         
-                        <div class="input-group">
-                            <textarea class="form-control" 
+                        <!-- Message Input -->
+                        <div class="position-relative">
+                            <textarea class="form-control border-0 px-3 py-2 shadow-none" 
                                      placeholder="{{ _('Message in #') }}{{ default_channel.name }}"
                                      name="content"
-                                     rows="1"></textarea>
-                            <button type="submit" class="btn btn-link send-button" title="{{ _('Send message') }}">
+                                     rows="3"
+                                     style="resize: none; min-height: 70px;"
+                                     oninput="const btn = this.parentElement.querySelector('.submit-btn'); 
+                                             const hasContent = this.value.trim().length > 0;
+                                             btn.disabled = !hasContent;
+                                             btn.classList.toggle('opacity-75', !hasContent);
+                                             btn.classList.toggle('text-primary', hasContent);
+                                             btn.classList.toggle('text-muted', !hasContent);"></textarea>
+                            <button type="submit" 
+                                    class="btn btn-link submit-btn position-absolute end-0 bottom-0 mb-2 me-2 text-muted text-decoration-none opacity-75" 
+                                    style="transition: all 0.2s ease-in-out;"
+                                    disabled>
                                 <i class="fas fa-paper-plane"></i>
                             </button>
                         </div>
-                        <div class="message-footer">
-                            <div class="message-actions">
-                                <button type="button" class="btn btn-link" title="{{ _('Add attachment') }}">
+
+                        <!-- Action Buttons -->
+                        <div class="d-flex justify-content-between align-items-center p-2 border-top" style="--bs-border-color: #E2E8F0">
+                            <div class="d-flex gap-2">
+                                <button type="button" class="btn btn-link text-muted p-1 text-decoration-none opacity-75 hover-opacity-100" title="{{ _('Add attachment') }}">
                                     <i class="fas fa-plus"></i>
                                 </button>
-                                <button type="button" class="btn btn-link" title="{{ _('Add emoji') }}">
+                                <button type="button" class="btn btn-link text-muted p-1 text-decoration-none opacity-75 hover-opacity-100" title="{{ _('Add emoji') }}">
                                     <i class="far fa-smile"></i>
                                 </button>
-                                <button type="button" class="btn btn-link" title="{{ _('Mention someone') }}">
+                                <button type="button" class="btn btn-link text-muted p-1 text-decoration-none opacity-75 hover-opacity-100" title="{{ _('@mention someone') }}">
                                     <i class="fas fa-at"></i>
                                 </button>
                             </div>
@@ -148,9 +273,10 @@
                 </footer>
             </main>
         </div>
-    </div>
+
 </div>
 
+<!-- Modals remain largely unchanged, just adding some Bootstrap classes -->
 <!-- New Channel Modal -->
 <div class="modal fade" id="newChannelModal" tabindex="-1" aria-labelledby="newChannelModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -159,30 +285,62 @@
                 <h5 class="modal-title" id="newChannelModalLabel">{{ _('Create New Channel') }}</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form id="newChannelForm" hx-post="{{ url_for('people_bp.create_channel') }}" 
-                hx-redirect="/chat">
-                <div class="modal-body">
+            <div class="modal-body">
+                <form id="newChannelForm" hx-post="/people/chat/channels" hx-swap="none">
                     <div class="mb-3">
-                        <label for="name" class="form-label">{{ _('Channel Name') }}</label>
-                        <input type="text" class="form-control" name="name" id="name" required>
-                        <small class="form-text text-muted">{{ _('Channel names can only contain lowercase letters, numbers, and hyphens.') }}</small>
+                        <label for="channelName" class="form-label">{{ _('Channel Name') }}</label>
+                        <input type="text" class="form-control" id="channelName" name="name" required
+                               placeholder="{{ _('Enter channel name (lowercase, no spaces)') }}">
+                        <div class="form-text">{{ _('Channel names should be lowercase with no spaces.') }}</div>
                     </div>
                     <div class="mb-3">
-                        <label for="description" class="form-label">{{ _('Description') }}</label>
-                        <textarea class="form-control" name="description" id="description" rows="2"></textarea>
+                        <label for="channelDescription" class="form-label">{{ _('Description') }}</label>
+                        <textarea class="form-control" id="channelDescription" name="description" rows="2"
+                                  placeholder="{{ _('Brief description of the channel purpose') }}"></textarea>
                     </div>
-                    {% if current_user.is_admin %}
                     <div class="mb-3 form-check">
-                        <input type="checkbox" class="form-check-input" name="is_private" id="is_private">
-                        <label class="form-check-label" for="is_private">{{ _('Private Channel') }}</label>
+                        <input type="checkbox" class="form-check-input" id="isPrivate" name="is_private">
+                        <label class="form-check-label" for="isPrivate">{{ _('Private Channel') }}</label>
+                        <div class="form-text">{{ _('Private channels are only visible to invited members.') }}</div>
                     </div>
-                    {% endif %}
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ _('Cancel') }}</button>
-                    <button type="submit" class="btn btn-primary">{{ _('Create Channel') }}</button>
-                </div>
-            </form>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ _('Cancel') }}</button>
+                <button type="submit" class="btn btn-primary" form="newChannelForm">{{ _('Create Channel') }}</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Channel Modal -->
+<div class="modal fade" id="editChannelModal" tabindex="-1" aria-labelledby="editChannelModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editChannelModalLabel">{{ _('Edit Channel') }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editChannelForm">
+                    <input type="hidden" id="originalChannelName" name="original_channel_name">
+                    <div class="mb-3">
+                        <label for="editChannelName" class="form-label">{{ _('Channel Name') }}</label>
+                        <input type="text" class="form-control" id="editChannelName" name="channel_name" 
+                               placeholder="{{ _('Enter channel name (lowercase, no spaces)') }}">
+                        <div class="form-text">{{ _('Channel names should be lowercase with no spaces. Only letters, numbers, underscores and hyphens are allowed.') }}</div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editChannelDescription" class="form-label">{{ _('Description') }}</label>
+                        <textarea class="form-control" id="editChannelDescription" name="description" rows="2"
+                                  placeholder="{{ _('Brief description of the channel purpose') }}"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ _('Cancel') }}</button>
+                <button type="submit" class="btn btn-primary" form="editChannelForm">{{ _('Save Changes') }}</button>
+            </div>
         </div>
     </div>
 </div>
@@ -196,8 +354,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <p>{{ _('Are you sure you want to delete this channel? This action cannot be undone.') }}</p>
-                <p class="text-danger">{{ _('All messages in this channel will be permanently deleted.') }}</p>
+                <p>{{ _('Are you sure you want to delete this channel? All messages will be permanently removed. This action cannot be undone.') }}</p>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ _('Cancel') }}</button>
@@ -213,4 +370,5 @@
 {{ super() }}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.4/socket.io.js"></script>
 <script src="{{ url_for('people_bp.static', filename='js/chat.js') }}"></script>
-{% endblock %} 
+
+{% endblock %}

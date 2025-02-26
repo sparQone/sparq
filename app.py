@@ -35,6 +35,9 @@ from system.i18n.translation import preload_translations
 from system.i18n.translation import translate
 from system.module.utils import initialize_modules
 
+# Configure logging to suppress fsevents debug messages
+logging.getLogger('fsevents').setLevel(logging.WARNING)
+logging.getLogger('watchdog.observers.fsevents').setLevel(logging.WARNING)
 
 def get_locale():
     """Get locale from URL parameters or default to English"""
@@ -50,12 +53,12 @@ def create_app():
     )
 
     # Configure logging
-    logging.basicConfig(level=logging.DEBUG)
-    app.logger.setLevel(logging.DEBUG)
+    logging.basicConfig(level=logging.WARNING)
+    app.logger.setLevel(logging.WARNING)
 
-    # Log handler to show debug messages in console
+    # Log handler to show warning and error messages in console
     console_handler = logging.StreamHandler()
-    console_handler.setLevel(logging.DEBUG)
+    console_handler.setLevel(logging.WARNING)
     formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
     console_handler.setFormatter(formatter)
     app.logger.addHandler(console_handler)

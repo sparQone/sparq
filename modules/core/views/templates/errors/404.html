@@ -3,12 +3,13 @@
 {% block title %}{{ _("Page Not Found") }}{% endblock %}
 
 {% block content %}
-<div class="error-container">
-    <div class="error-content">
+<div class="error-container d-flex align-items-center justify-content-center p-4" style="min-height: calc(100vh - 60px);">
+    <div>
+        <p class="text-secondary mb-4"></p>
         <img src="{{ url_for('core_bp.static', filename='images/sparq-logo.png') }}" alt="SparqOne" class="error-logo">
         <h1>{{ _("Oops! Page Not Found") }}</h1>
         <p>{{ _("The page you're looking for doesn't exist or has been moved.") }}</p>
-        <div class="error-actions">
+        <div class="error-actions d-flex gap-3 justify-content-center mb-4">
             <a href="{{ url_for('core_bp.index') }}" class="btn btn-primary">
                 <i class="fas fa-home"></i> {{ _("Return Home") }}
             </a>

@@ -17,71 +17,8 @@ body {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
-    padding: 0 1.5rem;  /* Add horizontal padding */
-}
-
-/* Base Layout Styles */
-body {
+    padding: 0 1.5rem;  
     background-color: #f8f9fa;
-}
-
-/* Header Styles */
-.app-header {
-    background-color: #f8f9fa;
-    border-bottom: 3px solid;
-    padding: 1rem 0;
-    border-bottom-color: var(--module-color, #6c757d);
-    position: sticky;
-    top: 0;
-    z-index: 1030;
-    margin-left: -1.5rem;  /* Compensate for body padding */
-    margin-right: -1.5rem; /* Compensate for body padding */
-}
-
-/* Core app specific */
-.core-app .app-header {
-    border-bottom-color: #6c757d;  /* Bootstrap secondary gray */
-}
-
-/* Remove all other app-specific styles */
-
-/* App Title and Navigation */
-.app-title {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    margin-left: 0;     /* Ensure no margin on left */
-}
-
-.app-logo-link {
-    display: flex;
-    align-items: center;
-}
-
-.app-logo {
-    height: 40px;
-    width: auto;
-}
-
-.app-name {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-size: 1.5rem;
-    color: #333;
-    text-decoration: none;
-}
-
-.app-name:hover {
-    color: #555;
-    text-decoration: none;
-}
-
-.app-title-divider {
-    width: 1px;
-    height: 30px;
-    background-color: #dee2e6;
-    margin: 0 0.5rem;
 }
 
 .container {
@@ -89,203 +26,14 @@ body {
     padding: 0;
 }
 
-.header-content {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 1.5rem;  /* Keep header content aligned */
-    width: 100%;        /* Ensure full width */
-}
 
-/* User Navigation */
-.user-nav {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    margin-right: 0;    /* Ensure no margin on right */
-}
-
-.user-info {
-    text-align: right;
-}
-
-.user-name {
-    font-weight: 500;
-    color: #333;
-}
-
-.user-role {
-    font-size: 0.8rem;
-    color: #666;
-}
-
-/* Apps Menu */
-.apps-menu-btn {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: none;
-    background: transparent;
-    position: relative;
-    margin-right: 0.5rem;  /* Add space between apps menu and user avatar */
-}
-
-.apps-menu-btn:hover {
-    background: rgba(0,0,0,0.05);
-}
-
-.apps-menu-btn i {
-    font-size: 1.2rem;
-    color: #555;
-}
-
-.apps-dropdown {
-    width: 320px;
-    padding: 1rem;
-}
-
-.apps-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 0.5rem;
-}
-
-.app-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 0.5rem;
-    border-radius: 0.5rem;
-    text-decoration: none;
-    color: inherit;
-}
-
-.app-item:hover {
-    background: rgba(0,0,0,0.05);
-    color: inherit;
-}
-
-.app-item i {
-    font-size: 1.5rem;
-    margin-bottom: 0.25rem;
-}
-
-.app-item span {
-    font-size: 0.8rem;
-    text-align: center;
-}
-
-/* User Avatar Button */
-.user-avatar-btn {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: none;
-    background: #e9ecef;
-    color: #495057;
-    font-weight: 500;
-    font-size: 0.9rem;
-    transition: background-color 0.2s ease;
-    padding: 0;
-}
-
-.user-avatar-btn:hover {
-    background: #dee2e6;
-}
-
-.user-initials {
-    text-transform: uppercase;
-}
-
-/* User Dropdown */
-.user-dropdown {
-    min-width: 200px;
-    padding: 0;
-    margin-top: 0.5rem;
-}
-
-.user-dropdown .user-info {
-    background: #f8f9fa;
-}
-
-.user-dropdown .dropdown-item {
-    padding: 0.5rem 1rem;
-    color: #495057;
-}
-
-.user-dropdown .dropdown-item i {
-    width: 1.5rem;
-    color: #6c757d;
-}
-
-.user-dropdown .dropdown-item:hover {
-    background: #f8f9fa;
-}
-
-/* Remove all module-specific colors */
-[data-app] i {
-    color: var(--module-color);
-}
-
-/* Coming Soon Page */
-.coming-soon-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: calc(100vh - 200px);
-}
-
-.coming-soon {
-    text-align: center;
-    padding: 2rem;
-    max-width: 600px;
-}
-
-.coming-soon i {
-    font-size: 4rem;
-    margin-bottom: 1.5rem;
-}
-
-.coming-soon h2 {
-    font-size: 2rem;
-    margin-bottom: 1rem;
-    color: #212529;
-}
-
-.coming-soon p {
-    color: #6c757d;
-    font-size: 1.1rem;
-    line-height: 1.5;
-}
-
-/* Content Card Layout - for settings pages */
 .content-card {
-    padding: 2rem 4rem;
-    margin: 0 2rem;
-    max-width: 1800px;
     background: white;
+    padding: 1.25rem;
     border-radius: 0.5rem;
     box-shadow: 0 0 20px rgba(0,0,0,0.05);
-    padding-bottom: 4rem;  /* Add extra padding at the bottom */
-}
-
-.error-container {
-    min-height: calc(100vh - 60px);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 2rem;
-}
-
-.error-content {
-    text-align: center;
-    max-width: 600px;
+    flex: 1;
+    max-width: 1200px;
 }
 
 .error-logo {
@@ -305,20 +53,6 @@ body {
     margin-bottom: 2rem;
 }
 
-.error-actions {
-    display: flex;
-    gap: 1rem;
-    justify-content: center;
-    margin-bottom: 2rem;
-}
-
-/* Responsive padding */
-@media (max-width: 768px) {
-    .content-card {
-        padding: 1rem;
-        margin: 0 1rem;
-    }
-}
 
 .flash-messages-container {
     position: fixed;
@@ -360,17 +94,6 @@ body {
     animation: slideIn 0.3s ease-out;
 }
 
-@keyframes slideIn {
-    from {
-        transform: translateX(100%);
-        opacity: 0;
-    }
-    to {
-        transform: translateX(0);
-        opacity: 0.98;
-    }
-}
-
 /* Typography */
 h1 {
     font-size: 1.25rem;  /* Changed from 1rem (16px) to 1.25rem (20px) */
@@ -409,9 +132,73 @@ h1 {
     margin-bottom: 1rem;
 }
 
-.close-btn {
-    background: none;
-    border: none;
+
+/* App dropdown styles */
+.apps-grid .app-item i,
+.apps-dropdown .app-item i {
+    color: var(--module-color, #6c757d);
+}
+
+.apps-dropdown .app-item:hover {
+    background-color: rgba(0,0,0,0.05);
+}
+
+.app-item i {
     font-size: 1.5rem;
-    cursor: pointer;
+    margin-bottom: 0.5rem;
+    color: var(--app-color);
+}
+
+[data-app] i {
+    color: var(--app-color) !important;
+}
+
+/* App manager styles */
+/* Keep this as it's a specific size that Bootstrap doesn't provide */
+.app-version {
+    font-size: 0.75rem;
+    color: #6c757d;
+    font-weight: normal;
+}
+
+/* Keep icon size as Bootstrap doesn't provide this exact size */
+.fa-xs {
+    font-size: 0.75rem;
+}
+
+/* Keep app manager icon styles as they're specific to the design */
+.app-manager-icon {
+    width: 40px;
+    height: 40px;
+    background: rgba(var(--bs-primary-rgb), 0.1);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.app-manager-icon i {
+    font-size: 1.25rem;
+    opacity: 0.9;
+}
+
+/* Add hover effect for cards */
+.content-card .bg-white {
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.content-card .bg-white:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1) !important;
+}
+
+Desktop Styles
+@media (min-width: 769px) {
+    .apps-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 2rem;
+        padding: 0.5rem 0;
+    }
+    /* Rest of desktop styles remain the same... */
 } 

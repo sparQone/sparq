@@ -1,68 +1,82 @@
-<nav class="side-nav">
-    <ul class="nav-menu">
-        <li class="nav-item">
+<nav class="bg-white rounded shadow-sm h-100 overflow-y-auto" style="width: 240px; min-width: 250px; flex: 0 0 240px;">
+    <ul class="list-unstyled p-0 m-0">
+        <li class="mb-2">
             <a href="{{ url_for('people_bp.dashboard') }}" 
-               class="nav-link {% if active_page == 'dashboard' %}active{% endif %}">
+               class="nav-link d-flex align-items-center gap-2 p-3 text-dark text-decoration-none rounded {% if active_page == 'dashboard' %}bg-primary bg-opacity-10 text-primary{% endif %}" 
+               style="transition: all 0.2s ease; white-space: nowrap;">
                 <i class="fas fa-chart-line"></i>
                 {{ _("Dashboard") }}
             </a>
         </li>
 
-        <li class="nav-item">
+        <li class="mb-2">
             <a href="{{ url_for('people_bp.chat') }}" 
-               class="nav-link {% if active_page == 'chat' %}active{% endif %}">
+               class="nav-link d-flex align-items-center gap-2 p-3 text-dark text-decoration-none rounded {% if active_page == 'chat' %}bg-primary bg-opacity-10 text-primary{% endif %}"
+               style="transition: all 0.2s ease; white-space: nowrap;">
                 <i class="fas fa-comments"></i>
                 {{ _("Chat") }}
             </a>
         </li>
-        <li class="nav-item">
-            <a href="{{ url_for('people_bp.hiring') }}" class="nav-link {% if active_page == 'hiring' %}active{% endif %}">
+        <li class="mb-2">
+            <a href="{{ url_for('people_bp.hiring') }}" 
+               class="nav-link d-flex align-items-center gap-2 p-3 text-dark text-decoration-none rounded {% if active_page == 'hiring' %}bg-primary bg-opacity-10 text-primary{% endif %}"
+               style="transition: all 0.2s ease; white-space: nowrap;">
                 <i class="fas fa-user-plus"></i>
                 {{ _("Hiring") }}
             </a>
         </li>
-        <li class="nav-item">
+        <li class="mb-2">
             <a href="{{ url_for('people_bp.onboarding') }}" 
-               class="nav-link {% if active_page == 'onboarding' %}active{% endif %}">
+               class="nav-link d-flex align-items-center gap-2 p-3 text-dark text-decoration-none rounded {% if active_page == 'onboarding' %}bg-primary bg-opacity-10 text-primary{% endif %}"
+               style="transition: all 0.2s ease; white-space: nowrap;">
                 <i class="fas fa-handshake"></i>
                 {{ _("Onboarding") }}
             </a>
         </li>
-        <li class="nav-item">
+        <li class="mb-2">
             <a href="{{ url_for('people_bp.employees') }}" 
-               class="nav-link {% if active_page == 'employees' %}active{% endif %}">
+               class="nav-link d-flex align-items-center gap-2 p-3 text-dark text-decoration-none rounded {% if active_page == 'employees' %}bg-primary bg-opacity-10 text-primary{% endif %}"
+               style="transition: all 0.2s ease; white-space: nowrap;">
                 <i class="fas fa-users"></i>
                 {{ _("Employees") }}
             </a>
         </li>
-        <li class="nav-item">
-            <a href="{{ url_for('people_bp.time_tracking') }}" class="nav-link {% if active_page == 'time_tracking' %}active{% endif %}">
+        <li class="mb-2">
+            <a href="{{ url_for('people_bp.time_tracking') }}" 
+               class="nav-link d-flex align-items-center gap-2 p-3 text-dark text-decoration-none rounded {% if active_page == 'time_tracking' %}bg-primary bg-opacity-10 text-primary{% endif %}"
+               style="transition: all 0.2s ease; white-space: nowrap;">
                 <i class="fas fa-clock"></i>
                 {{ _("Time Tracking") }}
             </a>
         </li>
-        <li class="nav-item">
-            <a href="{{ url_for('people_bp.scheduling') }}" class="nav-link {% if active_page == 'scheduling' %}active{% endif %}">
+        <li class="mb-2">
+            <a href="{{ url_for('people_bp.scheduling') }}" 
+               class="nav-link d-flex align-items-center gap-2 p-3 text-dark text-decoration-none rounded {% if active_page == 'scheduling' %}bg-primary bg-opacity-10 text-primary{% endif %}"
+               style="transition: all 0.2s ease; white-space: nowrap;">
                 <i class="fas fa-calendar-alt"></i>
                 {{ _("Shift Scheduling") }}
             </a>
         </li>
-        <li class="nav-item">
-            <a href="{{ url_for('people_bp.forms') }}" class="nav-link {% if active_page == 'forms' %}active{% endif %}">
+        <li class="mb-2">
+            <a href="{{ url_for('people_bp.forms') }}" 
+               class="nav-link d-flex align-items-center gap-2 p-3 text-dark text-decoration-none rounded {% if active_page == 'forms' %}bg-primary bg-opacity-10 text-primary{% endif %}"
+               style="transition: all 0.2s ease; white-space: nowrap;">
                 <i class="fas fa-file-alt"></i>
                 {{ _("Forms") }}
             </a>
         </li>
-        <li class="nav-item">
+        <li class="mb-2">
             <a href="{{ url_for('people_bp.docs') }}" 
-               class="nav-link {% if active_page == 'docs' %}active{% endif %}">
+               class="nav-link d-flex align-items-center gap-2 p-3 text-dark text-decoration-none rounded {% if active_page == 'docs' %}bg-primary bg-opacity-10 text-primary{% endif %}"
+               style="transition: all 0.2s ease; white-space: nowrap;">
                 <i class="fas fa-folder"></i>
                 {{ _("Documents") }}
             </a>
         </li>
-        <li class="nav-item">
+        <li class="mb-2">
             <a href="{{ url_for('people_bp.knowledge') }}" 
-               class="nav-link {% if active_page == 'knowledge' %}active{% endif %}">
+               class="nav-link d-flex align-items-center gap-2 p-3 text-dark text-decoration-none rounded {% if active_page == 'knowledge' %}bg-primary bg-opacity-10 text-primary{% endif %}"
+               style="transition: all 0.2s ease; white-space: nowrap;">
                 <i class="fas fa-book"></i>
                 {{ _("Knowledge Base") }}
             </a>

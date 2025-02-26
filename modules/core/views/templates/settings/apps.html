@@ -3,63 +3,73 @@
 {% block title %}Manage Apps{% endblock %}
 
 {% block additional_styles %}
-<link rel="stylesheet" href="{{ url_for('core_bp.static', filename='css/app_manager.css') }}">
 {% endblock %}
 
 {% block content %}
 <div class="content-card">
     <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
+        <ol class="breadcrumb py-2 mb-4 bg-transparent">
             <li class="breadcrumb-item">
-                <a href="{{ url_for('core_bp.settings') }}">
-                    <i class="fas fa-cog"></i> {{ _("Settings") }}
+                <a href="{{ url_for('core_bp.settings') }}" class="text-secondary text-decoration-none">
+                    <i class="fas fa-cog me-2"></i> {{ _("Settings") }}
                 </a>
             </li>
-            <li class="breadcrumb-item active" aria-current="page">
-                <i class="fas fa-puzzle-piece" style="color: var(--bs-primary)"></i> {{ _("App Manager") }}
+            <li class="breadcrumb-item active text-body" aria-current="page">
+                <i class="fas fa-puzzle-piece me-2" style="color: var(--bs-primary)"></i> {{ _("App Manager") }}
             </li>
         </ol>
     </nav>
 
-    <div class="settings-header">
-        <h2><i class="fas fa-puzzle-piece" style="color: var(--bs-primary)"></i> {{ _("Manage Applications") }}</h2>
-        <p class="text-muted">{{ _("Enable, disable, or remove installed applications") }}</p>
+    <div class="mb-4">
+        <h2 class="fs-4 fw-medium text-body d-flex align-items-center mb-2">
+            <i class="fas fa-puzzle-piece me-3" style="color: var(--bs-primary)"></i> 
+            {{ _("Manage Applications") }}
+        </h2>
+        <p class="text-muted m-0">{{ _("Enable, disable, or remove installed applications") }}</p>
     </div>
 
-    <div class="apps-grid">
-        {% for mod in modules %}
-            <div class="app-card">
-                <div class="app-card-content">
-                    <div class="app-manager-icon">
-                        <i class="{{ mod.icon_class }}" style="color: {{ mod.color }}"></i>
-                    </div>
-                    <div class="app-details">
-                        <div class="app-manager-header">
-                            <h3>{{ mod.name }} <span class="app-version">v{{ mod.version }}</span></h3>
-                            <p class="short-desc">{{ mod.description }}</p>
+    <div class="container-fluid px-0">
+        <div class="row g-3 mx-0">
+            {% for mod in modules %}
+                <div class="col-12 col-md-6 col-lg-4 col-xl-3 px-2">
+                    <div class="bg-white border rounded-3 shadow-sm h-100">
+                        <div class="p-3">
+                            <div class="d-flex gap-3">
+                                <div class="app-manager-icon flex-shrink-0">
+                                    <i class="{{ mod.icon_class }}" style="color: {{ mod.color }}"></i>
+                                </div>
+                                <div class="flex-grow-1 min-w-0">
+                                    <div class="mb-2">
+                                        <h3 class="fs-6 fw-semibold m-0 text-truncate">
+                                            {{ mod.name }} <span class="app-version ms-2">v{{ mod.version }}</span>
+                                        </h3>
+                                        <p class="text-muted small mb-1 text-break">{{ mod.description }}</p>
+                                    </div>
+                                    <p class="text-muted mb-3 small text-break">{{ mod.long_description }}</p>
+                                </div>
+                            </div>
+                            
+                            {% if mod.type != 'System' and mod.name != 'People' %}
+                                <div class="d-flex justify-content-between align-items-center pt-2 border-top mt-auto">
+                                    <div class="d-flex gap-3 align-items-center">
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" 
+                                                   role="switch"
+                                                   id="toggle-{{ mod.name|lower }}"
+                                                   {% if mod.enabled %}checked{% endif %}
+                                                   onchange="toggleModule('{{ mod.name }}', this.checked)">
+                                        </div>
+                                        <button class="btn btn-link text-danger p-0 border-0 bg-transparent" onclick="confirmRemove('{{ mod.name }}')">
+                                            <i class="fas fa-trash-alt fa-xs"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            {% endif %}
                         </div>
-                        <p class="long-desc">{{ mod.long_description }}</p>
                     </div>
                 </div>
-                
-                {% if mod.type != 'System' and mod.name != 'People' %}
-                    <div class="app-footer">
-                        <div class="footer-controls">
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" 
-                                       role="switch"
-                                       id="toggle-{{ mod.name|lower }}"
-                                       {% if mod.enabled %}checked{% endif %}
-                                       onchange="toggleModule('{{ mod.name }}', this.checked)">
-                            </div>
-                            <button class="btn-icon" onclick="confirmRemove('{{ mod.name }}')">
-                                <i class="fas fa-trash-alt fa-xs"></i>
-                            </button>
-                        </div>
-                    </div>
-                {% endif %}
-            </div>
-        {% endfor %}
+            {% endfor %}
+        </div>
     </div>
 </div>
 
@@ -219,7 +229,8 @@ async function waitForServer(retries = 20) {
 }
 
 function confirmRemove(moduleName) {
-    if (confirm(`{{ _("Are you sure you want to remove") }} ${moduleName}? {{ _("This cannot be undone") }}.`)) {
+    if (confirm(`{{ _("Are you sure you want to remove") }} ${moduleName}? 
+        {{ _("This cannot be undone") }}.`)) {
         removeModule(moduleName);
     }
 }

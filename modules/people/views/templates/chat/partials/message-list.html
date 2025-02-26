@@ -1,0 +1,149 @@
+<style>
+    /* Message hover effect */
+    .message:hover {
+        background-color: rgba(16, 16, 16, 0.02);
+    }
+
+    .channel:hover .channel-actions { opacity: 1; }
+    .message:hover .message-actions { opacity: 1 !important; }
+
+    /* Action button hover colors */
+    .action-btn[data-action="reply"]:hover { color: #2563EB !important; }
+    .action-btn[data-action="like"]:hover { color: #dc3545 !important; }
+    .btn-link:hover .fa-thumbtack { color: #ffc107 !important; }
+    .action-btn[data-action="delete"]:hover { color: #dc3545 !important; }
+
+    /* Pin state */
+    .fa-thumbtack.text-warning { color: #ffc107 !important; }
+    .pin-filter.active {
+        color: #2563EB !important;
+        font-weight: 500;
+    }
+
+    /* HTMX Loading Indicator */
+    .htmx-indicator {
+        display: none;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+    .htmx-request .htmx-indicator {
+        display: inline-block;
+    }
+    .htmx-request.htmx-indicator {
+        display: inline-block;
+    }
+</style>
+
+{% set pinned_count = chats|selectattr('pinned')|list|length %}
+<input type="hidden" id="pinCountHidden" value="{{ total_pin_count }}">
+
+{% if has_more %}
+<div class="load-more-container text-center mb-3">
+    <button class="btn btn-outline-secondary btn-sm load-more-btn" 
+            data-oldest-id="{{ oldest_id }}"
+            onclick="loadMoreMessages('{{ channel_name }}', this)">
+        <i class="fas fa-arrow-up me-1"></i>{{ _('Load More Messages') }}
+    </button>
+</div>
+{% endif %}
+
+{% for chat in chats %}
+<div class="p-2 rounded message position-relative" 
+     id="message-{{ chat.id }}" 
+     data-message-id="{{ chat.id }}"
+     data-content="{{ chat.content|escape }}"
+     data-author="{{ chat.author.first_name|escape }} {{ chat.author.last_name|escape if chat.author else 'Unknown User' }}"
+     data-pinned="{{ 'true' if chat.pinned else 'false' }}"
+     style="transition: background-color 0.15s ease-in-out; {% if chat.pinned %}background-color: #fff8e6;{% endif %}">
+    <div class="d-flex gap-2 align-items-center">
+        <div class="rounded message-avatar" 
+             style="width: 40px; height: 40px; background-color: {{ chat.author.avatar_color if chat.author else '#ccc' }}; flex-shrink: 0;">
+            <i class="fas fa-user text-white d-flex align-items-center justify-content-center h-100"></i>
+        </div>
+        <div class="d-flex flex-column flex-grow-1">
+            <div class="d-flex gap-2 align-items-center">
+                <span class="fw-semibold">
+                    {% if chat.author %}
+                        {{ chat.author.first_name }} {{ chat.author.last_name }}
+                    {% else %}
+                        Unknown User
+                    {% endif %}
+                </span>
+                <span class="text-muted small" data-bs-toggle="tooltip" title="{{ chat.created_at_formatted }}">
+                    {{ chat.created_at|timeago }}
+                </span>
+                {% if chat.pinned %}
+                <span class="badge bg-warning-subtle text-warning border border-warning-subtle rounded-pill d-flex align-items-center gap-1">
+                    <i class="fas fa-thumbtack small"></i>
+                    <span class="small">{{ _('Pinned') }}</span>
+                </span>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="ps-5 pt-1">{{ chat.formatted_content|safe }}</div>
+    <div class="d-flex gap-3 ps-5 mt-2 message-actions position-absolute bottom-0 end-0 p-2" 
+         style="transition: opacity 0.15s ease-in-out; opacity: 0;">
+        <button class="btn btn-link text-secondary p-0 action-btn" 
+                data-action="reply"           
+                title="{{ _('Reply') }}">
+            <i class="fas fa-reply"></i>
+        </button>
+        <button class="btn btn-link text-secondary p-0 action-btn" 
+                data-action="like" 
+                title="{{ _('Like') }}">
+            <i class="far fa-heart"></i>
+        </button>
+        {% if current_user.is_admin %}
+        <button class="btn btn-link text-secondary p-0" 
+                hx-post="/people/chat/messages/{{ chat.id }}/pin"
+                hx-target="#message-{{ chat.id }}"
+                hx-swap="outerHTML"
+                hx-trigger="click"
+                hx-indicator=".htmx-indicator">
+            <i class="fas fa-thumbtack {% if chat.pinned %}text-warning{% endif %}"></i>
+            <div class="htmx-indicator">
+                <i class="fas fa-spinner fa-spin"></i>
+            </div>
+        </button>
+        {% endif %}
+        {% if current_user.is_admin or chat.is_author %}
+        <button class="btn btn-link text-secondary p-0 action-btn" 
+                data-action="delete" 
+                data-message-id="{{ chat.id }}" 
+                title="{{ _('Delete') }}"
+                hx-delete="/people/chat/messages/{{ chat.id }}"
+                hx-confirm="{{ _('Are you sure you want to delete this message? This action cannot be undone.') }}"
+                hx-target="#message-{{ chat.id }}"
+                hx-swap="outerHTML"
+                hx-on::after-request="if(event.detail.successful) { 
+                    const toast = document.createElement('div');
+                    toast.className = 'alert alert-success alert-dismissible fade show position-fixed bottom-0 end-0 m-3';
+                    toast.innerHTML = `
+                        <div>{{ _('Message deleted successfully') }}</div>
+                        <button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button>
+                    `;
+                    document.body.appendChild(toast);
+                    setTimeout(() => toast.remove(), 3000);
+                }">
+            <i class="fas fa-trash"></i>
+        </button>
+        {% endif %}
+    </div>
+</div>
+{% endfor %}
+
+<!-- Update pin count -->
+<script>
+    document.getElementById('pinCount').textContent = '{{ total_pin_count }}';
+    document.getElementById('pinCount').style.display = '{{ 'inline' if total_pin_count > 0 else 'none' }}';
+</script>
+
+{% if channel_description %}
+<script>
+    document.getElementById('channel-description').textContent = {{ channel_description|tojson|safe }};
+</script>
+{% endif %}
+
