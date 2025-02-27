@@ -11,6 +11,7 @@
 # -----------------------------------------------------------------------------
 
 import logging
+from datetime import datetime
 
 from flask import flash
 from flask import g
@@ -28,6 +29,7 @@ from system.decorators import admin_required
 from modules.people.models.employee import Employee
 from modules.people.models.employee import EmployeeStatus
 from modules.people.models.employee import EmployeeType
+from modules.people.models.employee import Gender
 from system.db.database import db
 
 from . import blueprint
@@ -203,7 +205,56 @@ def update_employee(employee_id):
             else:
                 user.remove_from_group(admin_group)
 
-        # Update other fields...
+        # Update user fields
+        user.first_name = request.form.get("first_name", user.first_name)
+        user.last_name = request.form.get("last_name", user.last_name)
+        user.email = request.form.get("email", user.email)
+        
+        # Update password if provided
+        password = request.form.get("password")
+        if password:
+            user.set_password(password)
+            
+        # Update employee fields
+        employee.department = request.form.get("department", employee.department)
+        employee.position = request.form.get("position", employee.position)
+        
+        # Update manager if selected
+        manager_id = request.form.get("manager_id")
+        if manager_id:
+            employee.manager_id = int(manager_id)
+        else:
+            employee.manager_id = None
+            
+        # Update other employee fields
+        if request.form.get("type"):
+            employee.type = EmployeeType[request.form.get("type")]
+        
+        # Update address information
+        employee.address = request.form.get("address", employee.address)
+        employee.city = request.form.get("city", employee.city)
+        employee.state = request.form.get("state", employee.state)
+        employee.zip_code = request.form.get("zip_code", employee.zip_code)
+        employee.phone = request.form.get("phone", employee.phone)
+        
+        # Update personal information
+        if request.form.get("birthday"):
+            employee.birthday = datetime.strptime(request.form.get("birthday"), "%Y-%m-%d")
+        if request.form.get("start_date"):
+            employee.start_date = datetime.strptime(request.form.get("start_date"), "%Y-%m-%d")
+        if request.form.get("gender"):
+            employee.gender = Gender[request.form.get("gender")]
+        
+        employee.emergency_contact_name = request.form.get("emergency_contact_name", employee.emergency_contact_name)
+        employee.emergency_contact_phone = request.form.get("emergency_contact_phone", employee.emergency_contact_phone)
+        employee.emergency_contact_relationship = request.form.get("emergency_contact_relationship", employee.emergency_contact_relationship)
+        
+        # Update salary if provided
+        if request.form.get("salary"):
+            try:
+                employee.salary = float(request.form.get("salary"))
+            except ValueError:
+                pass
 
         db.session.commit()
         flash("Employee updated successfully", "success")
