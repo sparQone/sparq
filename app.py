@@ -14,6 +14,7 @@
 
 import logging
 import os
+import sys
 
 from flask import Flask
 from flask import current_app
@@ -35,9 +36,17 @@ from system.i18n.translation import preload_translations
 from system.i18n.translation import translate
 from system.module.utils import initialize_modules
 
-# Configure logging to suppress fsevents debug messages
+# Configure logging - MAIN CONFIGURATION
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    stream=sys.stdout
+)
+
+# Suppress noisy loggers
 logging.getLogger('fsevents').setLevel(logging.WARNING)
 logging.getLogger('watchdog.observers.fsevents').setLevel(logging.WARNING)
+logging.getLogger('werkzeug').setLevel(logging.WARNING)
 
 def get_locale():
     """Get locale from URL parameters or default to English"""
@@ -52,13 +61,12 @@ def create_app():
         static_url_path="/assets",
     )
 
-    # Configure logging
-    logging.basicConfig(level=logging.WARNING)
-    app.logger.setLevel(logging.WARNING)
+    # Configure app logger - DO NOT RESET ROOT LOGGER
+    app.logger.setLevel(logging.INFO)
 
     # Log handler to show warning and error messages in console
     console_handler = logging.StreamHandler()
-    console_handler.setLevel(logging.WARNING)
+    console_handler.setLevel(logging.INFO)
     formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
     console_handler.setFormatter(formatter)
     app.logger.addHandler(console_handler)

@@ -24,7 +24,7 @@ from flask_login import login_required
 
 from modules.core.models.group import Group
 from modules.core.models.user import User
-from modules.people.decorators import admin_required
+from system.decorators import admin_required
 from modules.people.models.employee import Employee
 from modules.people.models.employee import EmployeeStatus
 from modules.people.models.employee import EmployeeType
@@ -39,6 +39,9 @@ logger = logging.getLogger(__name__)
 @login_required
 def people_home():
     """People dashboard page"""
+    # Get total employee count
+    total_employees = Employee.query.count()
+    
     return render_template(
         "dashboard/index.html",
         title=g.current_module["name"],
@@ -48,6 +51,7 @@ def people_home():
         icon_color=g.current_module["color"],
         module_home="people_bp.people_home",
         installed_modules=g.installed_modules,
+        total_employees=total_employees,
     )
 
 
@@ -55,8 +59,14 @@ def people_home():
 @login_required
 def dashboard():
     """People dashboard page"""
+    # Get total employee count
+    total_employees = Employee.query.count()
+    
     return render_template(
-        "dashboard/index.html", active_page="dashboard", module_home="people_bp.people_home"
+        "dashboard/index.html", 
+        active_page="dashboard", 
+        module_home="people_bp.people_home",
+        total_employees=total_employees,
     )
 
 

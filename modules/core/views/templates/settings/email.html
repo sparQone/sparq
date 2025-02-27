@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <div class="col-12">
+            <h2 class="mb-4">Email Settings</h2>
+            
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+            
+            <!-- Test Email Result Alert -->
+            <div id="test-email-result" class="mb-4">
+                <!-- This will be replaced by HTMX when testing email settings -->
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">SendGrid Configuration</h5>
+                </div>
+                <div class="card-body">
+                    <form action="{{ url_for('core_bp.update_email_settings') }}" 
+                          method="POST"
+                          class="needs-validation"
+                          novalidate>
+                        
+                        <div class="mb-3">
+                            <label for="sendgrid_api_key" class="form-label">SendGrid API Key</label>
+                            <input type="password" 
+                                   class="form-control" 
+                                   id="sendgrid_api_key" 
+                                   name="sendgrid_api_key"
+                                   value="{{ sendgrid_api_key }}"
+                                   required>
+                            <div class="invalid-feedback">
+                                Please provide a valid API key.
+                            </div>
+                            <div class="form-text">
+                                Enter your SendGrid API key. This will be used for sending all system emails.
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="sendgrid_from_email" class="form-label">From Email Address</label>
+                            <input type="email" 
+                                   class="form-control" 
+                                   id="sendgrid_from_email" 
+                                   name="sendgrid_from_email"
+                                   value="{{ sendgrid_from_email }}"
+                                   required>
+                            <div class="invalid-feedback">
+                                Please provide a valid email address.
+                            </div>
+                            <div class="form-text">
+                                This email address will be used as the sender for all system emails.
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="sendgrid_from_name" class="form-label">From Name</label>
+                            <input type="text" 
+                                   class="form-control" 
+                                   id="sendgrid_from_name" 
+                                   name="sendgrid_from_name"
+                                   value="{{ sendgrid_from_name }}"
+                                   required>
+                            <div class="invalid-feedback">
+                                Please provide a sender name.
+                            </div>
+                            <div class="form-text">
+                                This name will appear as the sender for all system emails.
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between">
+                            <button type="button" 
+                                    class="btn btn-outline-primary"
+                                    hx-post="{{ url_for('core_bp.test_email_settings') }}"
+                                    hx-include="form"
+                                    hx-target="#test-email-result"
+                                    hx-indicator="#spinner">
+                                <i class="fas fa-paper-plane me-1"></i> Send Test Email
+                            </button>
+                            
+                            <button type="submit" 
+                                    class="btn btn-primary">
+                                <i class="fas fa-save me-1"></i> Save Settings
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <div id="spinner" class="htmx-indicator position-fixed top-50 start-50 translate-middle">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Form validation
+    document.querySelectorAll('.needs-validation').forEach(form => {
+        form.addEventListener('submit', event => {
+            if (!form.checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            form.classList.add('was-validated');
+        });
+    });
+</script>
+{% endblock %} 

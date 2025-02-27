@@ -15,6 +15,7 @@ import importlib
 import os
 import sys
 from functools import wraps
+from datetime import datetime
 
 from flask import Blueprint
 from flask import current_app
@@ -34,10 +35,12 @@ from flask_login import logout_user
 
 from system.db.database import db
 from system.i18n.translation import _  # Use our existing translation module
+from system.decorators import admin_required
 
 from ..models.group import Group
 from ..models.user import User
 from ..models.user_setting import UserSetting
+from ..models.company_setting import CompanySetting
 
 # Create blueprint
 blueprint = Blueprint(
@@ -122,18 +125,6 @@ def register():
 SUPPORTED_LANGUAGES = {"en": "English", "es": "Español", "nl": "Nederlands"}
 
 
-@blueprint.route("/settings/language", methods=["POST"])
-@login_required
-def update_language():
-    lang = request.form.get("language")
-    if lang in SUPPORTED_LANGUAGES:
-        session["lang"] = lang
-        if current_user.is_authenticated:
-            UserSetting.set(current_user.id, "language", lang)
-        return jsonify({"success": True})
-    return jsonify({"error": "Invalid language"}), 400
-
-
 @blueprint.route("/settings")
 @login_required
 def settings():
@@ -147,6 +138,19 @@ def settings():
         module_icon="fa-solid fa-cog",
         module_home="core_bp.settings",
     )
+
+
+@blueprint.route("/settings/language", methods=["POST"])
+@login_required
+def update_user_language():
+    """Update user's language preference"""
+    lang = request.form.get("language")
+    if lang in SUPPORTED_LANGUAGES:
+        session["lang"] = lang
+        if current_user.is_authenticated:
+            UserSetting.set(current_user.id, "language", lang)
+        return jsonify({"success": True})
+    return jsonify({"error": "Invalid language"}), 400
 
 
 @blueprint.route("/settings/apps")
@@ -484,3 +488,148 @@ def update_group(group_id):
 @admin_required
 def clear_modal():
     return ""
+
+
+@blueprint.route("/settings/email", methods=["GET"])
+@login_required
+@admin_required
+def email_settings():
+    """Email settings page"""
+    email_settings = CompanySetting.get_email_settings()
+    
+    # Use current user's name and email as default values if not already set
+    from_email = email_settings['sendgrid_from_email'] or current_user.email
+    from_name = email_settings['sendgrid_from_name'] or f"{current_user.first_name} {current_user.last_name}".strip()
+    
+    return render_template(
+        "settings/email.html",
+        sendgrid_api_key=email_settings['sendgrid_api_key'],
+        sendgrid_from_email=from_email,
+        sendgrid_from_name=from_name,
+        module_name="Settings",
+        module_icon="fa-solid fa-cog",
+        module_home="core_bp.settings"
+    )
+
+
+@blueprint.route("/settings/email", methods=["POST"])
+@login_required
+@admin_required
+def update_email_settings():
+    """Update email settings"""
+    api_key = request.form.get('sendgrid_api_key')
+    from_email = request.form.get('sendgrid_from_email')
+    from_name = request.form.get('sendgrid_from_name')
+    
+    if not all([api_key, from_email, from_name]):
+        flash('All fields are required', 'error')
+        return redirect(url_for('core_bp.email_settings'))
+    
+    CompanySetting.update_email_settings(api_key, from_email, from_name)
+    
+    flash('Email settings updated successfully', 'success')
+    return redirect(url_for('core_bp.settings'))
+
+
+@blueprint.route("/settings/email/test", methods=["POST"])
+@login_required
+@admin_required
+def test_email_settings():
+    """Test SendGrid email configuration by sending a test email"""
+    try:
+        import sendgrid
+        from sendgrid.helpers.mail import Mail, Email, To, Content
+        
+        # Get data from form
+        api_key = request.form.get('sendgrid_api_key')
+        from_email = request.form.get('sendgrid_from_email')
+        from_name = request.form.get('sendgrid_from_name')
+        
+        # Validate inputs
+        if not all([api_key, from_email, from_name]):
+            return render_template(
+                "settings/_test_email_result.html", 
+                test_success=False,
+                test_result="Email settings are incomplete. Please configure all settings first."
+            )
+        
+        # Get company name for the test email
+        company_name = CompanySetting.get('company_name', 'sparQ')
+        
+        # Create SendGrid client
+        sg = sendgrid.SendGridAPIClient(api_key=api_key)
+        
+        # Create test email
+        from_email_obj = Email(from_email, from_name)
+        to_email = To(current_user.email)
+        subject = f"SendGrid Test Email from {company_name}"
+        content = Content("text/html", f"""
+            <h1>SendGrid Test Email</h1>
+            <p>This is a test email sent from {company_name} using SendGrid.</p>
+            <p>If you received this email, your SendGrid configuration is working correctly.</p>
+            <p>Sent to: {current_user.email}</p>
+            <p>Sent from: {from_email}</p>
+            <p>Sent at: {datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S UTC')}</p>
+        """)
+        
+        mail = Mail(from_email_obj, to_email, subject, content)
+        
+        # Send the email
+        try:
+            response = sg.client.mail.send.post(request_body=mail.get())
+            
+            # Check response
+            if response.status_code >= 200 and response.status_code < 300:
+                return render_template(
+                    "settings/_test_email_result.html", 
+                    test_success=True,
+                    test_result=f"Test email sent successfully to {current_user.email}"
+                )
+            else:
+                # Try to extract detailed error information
+                error_body = response.body.decode('utf-8') if hasattr(response, 'body') and response.body else None
+                error_detail = None
+                
+                try:
+                    if error_body:
+                        import json
+                        error_json = json.loads(error_body)
+                        if 'errors' in error_json and len(error_json['errors']) > 0:
+                            error_detail = error_json['errors'][0].get('message', None)
+                except:
+                    pass
+                
+                error_message = f"Failed to send test email. Status code: {response.status_code}"
+                if error_detail:
+                    error_message += f" - {error_detail}"
+                
+                return render_template(
+                    "settings/_test_email_result.html", 
+                    test_success=False,
+                    test_result=error_message,
+                    test_details=error_body
+                )
+        
+        except sendgrid.SendGridException as e:
+            return render_template(
+                "settings/_test_email_result.html", 
+                test_success=False,
+                test_result=f"SendGrid API Error: {str(e)}"
+            )
+            
+    except ImportError:
+        return render_template(
+            "settings/_test_email_result.html", 
+            test_success=False,
+            test_result="SendGrid package is not installed. Please install it with 'pip install sendgrid'."
+        )
+    except Exception as e:
+        import traceback
+        error_details = traceback.format_exc()
+        
+        return render_template(
+            "settings/_test_email_result.html", 
+            test_success=False,
+            test_result=f"Error sending test email: {str(e)}",
+            test_details=error_details
+        )

@@ -53,6 +53,19 @@
         {% if current_user.is_admin %}
         <div class="settings-column">
             <h3>{{ _("System Settings") }}</h3>
+            
+            <div class="card mb-4">
+                <div class="card-header">
+                    <i class="fas fa-envelope"></i> {{ _("Email Settings") }}
+                </div>
+                <div class="card-body">
+                    <p>{{ _("Configure email settings for system notifications") }}</p>
+                    <a href="{{ url_for('core_bp.email_settings') }}" class="btn btn-primary">
+                        {{ _("Configure Email") }}
+                    </a>
+                </div>
+            </div>
+            
             <div class="card mb-4">
                 <div class="card-header">
                     <i class="fas fa-puzzle-piece"></i> {{ _("App Manager") }}

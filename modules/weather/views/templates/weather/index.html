@@ -9,120 +9,49 @@
 {% endblock %}
 
 {% block content %}
-<div class="content-card weather-card" 
-     x-data="{
-         state: 'loading',
-         city: 'Minneapolis',
-         weather: {
-             temperature: null,
-             humidity: null,
-             description: '',
-             icon: ''
-         },
-         errorMessage: '',
-         
-         async lookupWeather() {
-             const searchCity = this.city.trim();
-             if (!searchCity) return;
-             
-             this.state = 'loading';
-             
-             try {
-                 const response = await fetch('/weather/lookup', {
-                     method: 'POST',
-                     headers: {
-                         'Content-Type': 'application/json',
-                     },
-                     body: JSON.stringify({ city: searchCity })
-                 });
-                 
-                 const data = await response.json();
-                 
-                 if (response.ok) {
-                     this.weather = data;
-                     this.state = 'data';
-                 } else {
-                     throw new Error(data.error || 'Failed to fetch weather data');
-                 }
-             } catch (error) {
-                 this.errorMessage = error.message;
-                 this.state = 'error';
-             }
-         },
-         
-         get weatherIconClass() {
-             const iconMap = {
-                 '01d': 'sun',                    // Clear sky (code 0)
-                 '02d': 'cloud-sun',              // Mainly clear (code 1)
-                 '03d': 'cloud',                  // Partly cloudy (code 2)
-                 '04d': 'cloud',                  // Overcast (code 3)
-                 '09d': 'cloud-rain',             // Drizzle (codes 51,53,55)
-                 '10d': 'cloud-showers-heavy',    // Rain (codes 61,63,65)
-                 '11d': 'bolt',                   // Thunderstorm (codes 95,96,99)
-                 '13d': 'snowflake',              // Snow (codes 71,73,75,77)
-                 '50d': 'smog',                   // Fog (codes 45,48)
-                 // Night variations
-                 '01n': 'moon',                   // Clear night
-                 '02n': 'cloud-moon',             // Mainly clear night
-                 '03n': 'cloud',                  // Partly cloudy night
-                 '04n': 'cloud',                  // Overcast night
-                 '09n': 'cloud-rain',             // Drizzle night
-                 '10n': 'cloud-showers-heavy',    // Rain night
-                 '11n': 'bolt',                   // Thunderstorm night
-                 '13n': 'snowflake',              // Snow night
-                 '50n': 'smog'                    // Fog night
-             };
-             
-             const iconName = iconMap[this.weather.icon] || 'cloud';
-             return `weather-icon fas fa-${iconName}`;
-         },
-         
-         get formattedTemperature() {
-             return `${Math.round(this.weather.temperature)}°F`;
-         }
-     }" 
-     x-init="lookupWeather()">
-    <div class="weather-search">
-        <input type="text" 
-               x-model="city" 
-               class="form-control" 
-               placeholder="Enter city name..." 
-               @keyup.enter="lookupWeather">
-        <button class="btn btn-primary" @click="lookupWeather">
-            <i class="fas fa-search"></i>
-        </button>
+<div class="card shadow mx-auto my-4 p-4" style="max-width: 600px;">
+    <div class="d-flex justify-content-center mb-4">
+        <form id="weather-form" class="d-flex w-100 gap-2" style="max-width: 400px;"
+              hx-post="{{ url_for('weather_bp.lookup_weather') }}" 
+              hx-target="#weather-result" 
+              hx-indicator="#loading-indicator">
+            <input type="text" 
+                   name="city" 
+                   id="city-input"
+                   class="form-control" 
+                   placeholder="Enter city name..." 
+                   value="Minneapolis">
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-search"></i>
+            </button>
+        </form>
     </div>
 
-    <div class="weather-result">
-        <!-- Loading state -->
-        <div class="weather-loading" x-show="state === 'loading'" style="display: none;">
-            <div class="loading-spinner">
+    <div id="weather-result-container" class="position-relative">
+        <!-- Loading indicator - positioned relative to the result container -->
+        <div id="loading-indicator" class="position-absolute top-0 start-0 w-100 h-100 d-flex flex-column align-items-center justify-content-center bg-white bg-opacity-90 htmx-indicator" style="z-index: 10;">
+            <div class="loading-spinner mb-3">
                 <i class="fas fa-circle-notch fa-spin"></i>
             </div>
             <p>Loading weather data...</p>
         </div>
-
-        <!-- Weather data -->
-        <div class="weather-data" x-show="state === 'data'" style="display: none;">
-            <div class="weather-main">
-                <i :class="weatherIconClass"></i>
-                <div class="weather-temp" x-text="formattedTemperature"></div>
+        
+        <div id="weather-result" class="weather-result"
+             hx-get="{{ url_for('weather_bp.lookup_weather') }}"
+             hx-trigger="load"
+             hx-vals='{"city": "Minneapolis"}'
+             hx-indicator="#loading-indicator">
+            
+            <!-- Initial state - will be replaced by HTMX -->
+            <div class="d-flex flex-column align-items-center justify-content-center p-5 text-secondary text-center">
+                <i class="fas fa-cloud-sun weather-placeholder i mb-3"></i>
+                <p>Enter a city name to get weather information</p>
             </div>
-            <div class="weather-info">
-                <div class="weather-description" x-text="weather.description"></div>
-                <div class="weather-details">
-                    <div>Humidity: <span x-text="weather.humidity"></span>%</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Error state -->
-        <div class="weather-error" x-show="state === 'error'" style="display: none;">
-            <i class="fas fa-exclamation-circle"></i>
-            <p x-text="errorMessage"></p>
         </div>
     </div>
 </div>
 {% endblock %}
 
-{% block additional_scripts %}{% endblock %} 
+{% block additional_scripts %}
+<!-- No JavaScript needed - HTMX handles everything -->
+{% endblock %} 

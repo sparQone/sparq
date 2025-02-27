@@ -1,0 +1,25 @@
+<!-- Test Email Result Partial Template -->
+<div id="test-email-result" class="mb-4" hx-swap-oob="true">
+    {% if test_result %}
+        <div class="alert alert-{{ 'success' if test_success else 'danger' }} alert-dismissible fade show" role="alert">
+            <i class="fas fa-{{ 'check-circle' if test_success else 'exclamation-circle' }} me-2"></i>
+            {{ test_result }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        
+        {% if not test_success and test_details %}
+            <div class="mt-2">
+                <button class="btn btn-sm btn-outline-secondary" type="button" 
+                        data-bs-toggle="collapse" data-bs-target="#errorDetails" 
+                        aria-expanded="false" aria-controls="errorDetails">
+                    Show Technical Details
+                </button>
+                <div class="collapse mt-2" id="errorDetails">
+                    <div class="card card-body">
+                        <pre class="mb-0 text-danger" style="white-space: pre-wrap;">{{ test_details }}</pre>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    {% endif %}
+</div> 
